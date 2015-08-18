@@ -78,8 +78,8 @@ float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 // ESC Settings
 #define ESC_ARM_DELAY 3000
 #define MAX_SIGNAL 2000		// Simulate throttle at full
-#define MAX_THRUST 1450   // safety setting while testing.
-#define MIN_SIGNAL 1125		// Minimum ESC signal to ARM <= this is OFF
+#define MAX_THRUST 1350   // safety setting while testing.
+#define MIN_SIGNAL 1110		// Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A 9		// ESC signal wire conected to pin 9
 #define MOTOR_PIN_B 111		// ESC signal wire conected to pin ??
 #define MOTOR_PIN_C 6		// ESC signal wire conected to pin 6
@@ -119,6 +119,8 @@ boolean pid_ready = false;
 float calib_y, calib_p, calib_r;
 float calib_yi, calib_pi, calib_ri;
 int calib_index;
+float thrust = 0.0;
+#define NEUTRAL_THRUST 130
 
 
 // ================================================================
@@ -349,9 +351,9 @@ bool read_mpu()
     ypr_last[BD] = ypr[BD];
 
     // Update the PID input values
-    input_ypr[YW] = ypr[YW];
-    input_ypr[AC] = ypr[AC];
-    input_ypr[BD] = ypr[BD];
+    input_ypr[YW] = ((int)((ypr[YW] * 100.0) + 0.050))/100.0;
+    input_ypr[AC] = ((int)((ypr[AC] * 100.0) + 0.050))/100.0;
+    input_ypr[BD] = ((int)((ypr[BD] * 100.0) + 0.050))/100.0;
 
     return true;
   }
@@ -368,11 +370,14 @@ bool read_mpu()
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
+  return 0.0;
   return map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 234.0);
 }
 
 double read_kp()
 {
+  if(thrust < NEUTRAL_THRUST) return 0.0;  
+  
   double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
 
   foo = foo / 3000.0;
@@ -384,8 +389,10 @@ double read_kp()
 }
 double read_ki()
 {
-  return 0.1;
+  if(thrust < NEUTRAL_THRUST) return 0.0;  
+  
   double foo = map(analogRead(Ki_PIN), 0.0, 668.0, 0.0, 10000.0);
+  
   foo = foo / 2000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
@@ -395,6 +402,8 @@ double read_ki()
 }
 double read_kd()
 {
+  if(thrust < NEUTRAL_THRUST) return 0.0;
+  
   return 0.75;
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
   foo = foo / 2000.0;
@@ -407,15 +416,20 @@ double read_kd()
 
 void process_pilot()
 {
-  float thrust = read_throttle();
+  // thrust = read_throttle();
+  if( thrust < NEUTRAL_THRUST ) thrust += 0.05;
+  if( thrust >= NEUTRAL_THRUST ) thrust = NEUTRAL_THRUST;
 
+/*
   if( input_ypr[AC] == setpoint_ac) {
-    ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
+    ac_pid.SetTunings(0.0, 0.0, 0.0);
   }
   else {
     ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
   }
+*/
 
+  ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
   yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
   bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
 
@@ -463,7 +477,7 @@ void process_pilot()
   {
     mpu_debug_info_hz = millis();
 
-    Serial.print(setpoint_ac, 4);
+    Serial.print(thrust, 4);
     Serial.print("\t");
     Serial.print(input_ypr[AC], 4);
     Serial.print("\t");
