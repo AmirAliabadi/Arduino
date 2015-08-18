@@ -10,7 +10,7 @@
 #define DEBUG
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-#define DELAY  300	// DEBUG Logging interval
+#define DELAY  50 // DEBUG Logging interval
 
 //////////////////////////////////////////////////////////////////
 // function pointer to what should be happing in the loop()
@@ -351,9 +351,9 @@ bool read_mpu()
     ypr_last[BD] = ypr[BD];
 
     // Update the PID input values
-    input_ypr[YW] = ((int)((ypr[YW] * 100.0) + 0.050))/100.0;
-    input_ypr[AC] = ((int)((ypr[AC] * 100.0) + 0.050))/100.0;
-    input_ypr[BD] = ((int)((ypr[BD] * 100.0) + 0.050))/100.0;
+    input_ypr[YW] = ((int)((ypr[YW] * 1000.0) + 0.0050))/1000.0;
+    input_ypr[AC] = ((int)((ypr[AC] * 1000.0) + 0.0050))/1000.0;
+    input_ypr[BD] = ((int)((ypr[BD] * 1000.0) + 0.0050))/1000.0;
 
     return true;
   }
@@ -376,8 +376,6 @@ float read_throttle()
 
 double read_kp()
 {
-  if(thrust < NEUTRAL_THRUST) return 0.0;  
-  
   double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
 
   foo = foo / 3000.0;
@@ -389,8 +387,6 @@ double read_kp()
 }
 double read_ki()
 {
-  if(thrust < NEUTRAL_THRUST) return 0.0;  
-  
   double foo = map(analogRead(Ki_PIN), 0.0, 668.0, 0.0, 10000.0);
   
   foo = foo / 2000.0;
@@ -402,8 +398,6 @@ double read_ki()
 }
 double read_kd()
 {
-  if(thrust < NEUTRAL_THRUST) return 0.0;
-  
   return 0.75;
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
   foo = foo / 2000.0;
@@ -433,9 +427,11 @@ void process_pilot()
   yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
   bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
 
-  yw_pid.Compute();
-  ac_pid.Compute();
-  bd_pid.Compute();
+  if(thrust >= NEUTRAL_THRUST) {
+    yw_pid.Compute();
+    ac_pid.Compute();
+    bd_pid.Compute();
+  }
 
   //////////////////////////////////////////////////////
   // compute the boom velocity
