@@ -78,6 +78,7 @@ float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 // ESC Settings
 #define ESC_ARM_DELAY 3000
 #define MAX_SIGNAL 2000		// Simulate throttle at full
+#define MAX_THRUST 1450   // safety setting while testing.
 #define MIN_SIGNAL 1125		// Minimum ESC signal to ARM <= this is OFF
 #define MOTOR_PIN_A 9		// ESC signal wire conected to pin 9
 #define MOTOR_PIN_B 111		// ESC signal wire conected to pin ??
@@ -206,9 +207,9 @@ void init_pid()
   if ( !pid_ready )
   {
     //turn the PID on
-    yw_pid.SetOutputLimits(0.0, 255.0);
-    ac_pid.SetOutputLimits(0.0, 255.0);
-    bd_pid.SetOutputLimits(0.0, 255.0);
+    yw_pid.SetOutputLimits(-255.0, 255.0);
+    ac_pid.SetOutputLimits(-255.0, 255.0);
+    bd_pid.SetOutputLimits(-255.0, 255.0);
 
     setpoint_ac = 0.0f ;
     setpoint_bd = 0.0f ;
@@ -406,11 +407,17 @@ double read_kd()
 
 void process_pilot()
 {
-  float velocity = read_throttle();
+  float thrust = read_throttle();
 
-  //yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
-  ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
-  //bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
+  if( input_ypr[AC] == setpoint_ac) {
+    ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
+  }
+  else {
+    ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
+  }
+
+  yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
+  bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
 
   yw_pid.Compute();
   ac_pid.Compute();
@@ -418,8 +425,8 @@ void process_pilot()
 
   //////////////////////////////////////////////////////
   // compute the boom velocity
-  float v_ac = (abs(output_yw - 100) / 100) * velocity;
-  float v_bd = (   (output_yw + 100) / 100) * velocity;
+  float v_ac = (abs(output_yw - 100) / 100) * thrust;
+  float v_bd = (   (output_yw + 100) / 100) * thrust;
 
   // distribute the boom velocity to each boom motor
   float va = ((output_ac + 100) / 100) * v_ac;
@@ -430,40 +437,41 @@ void process_pilot()
   //
   //////////////////////////////////////////////////////
 
-  float a = (MIN_SIGNAL + velocity) + (output_ac / 1.0);
-  float c = (MIN_SIGNAL + velocity) - (output_ac / 2.0);
-  float b = (MIN_SIGNAL + velocity) + (output_bd / 2.0);
-  float d = (MIN_SIGNAL + velocity) - (output_bd / 2.0);
+  float a = (MIN_SIGNAL + thrust) + (output_ac / 2.0);
+  float c = (MIN_SIGNAL + thrust) - (output_ac / 2.0);
+  float b = (MIN_SIGNAL + thrust) + (output_bd / 2.0);
+  float d = (MIN_SIGNAL + thrust) - (output_bd / 2.0);
 
   a = a <= MIN_SIGNAL ? 0.0 : a;
   c = c <= MIN_SIGNAL ? 0.0 : c;
   b = b <= MIN_SIGNAL ? 0.0 : b;
   d = d <= MIN_SIGNAL ? 0.0 : d;
 
+  a = a > MAX_THRUST ? MAX_THRUST : a;
+  c = c > MAX_THRUST ? MAX_THRUST : c;
+  b = b > MAX_THRUST ? MAX_THRUST : b;
+  d = d > MAX_THRUST ? MAX_THRUST : d;  
+
   esc_a.writeMicroseconds(a);
   esc_c.writeMicroseconds(c);
 
-  esc_b.writeMicroseconds(b);
-  esc_d.writeMicroseconds(d);
+  //esc_b.writeMicroseconds(b);
+ // esc_d.writeMicroseconds(d);
 
 #ifdef DEBUG
   if (millis() - mpu_debug_info_hz > DELAY)
   {
     mpu_debug_info_hz = millis();
 
+    Serial.print(setpoint_ac, 4);
+    Serial.print("\t");
     Serial.print(input_ypr[AC], 4);
     Serial.print("\t");
-    //Serial.print(ypr[BD]);
-    //Serial.print("\t");
-    //Serial.print(ypr[YW]);
-    //      Serial.print("\t");
     Serial.print(output_ac, 4);
     Serial.print("\t");
     Serial.print(a, 4);
-    //      Serial.print("\t");
-    //Serial.print(vb);Serial.print("\t");
-    //Serial.print(c);Serial.print("\t");
-    //Serial.print(vd);Serial.print("\t");
+    Serial.print("\t");
+    Serial.print(c, 4);
     Serial.print("\n");
 
     //print_mpu_readings(mode,fifoBuffer);
