@@ -51,6 +51,12 @@ class PID
 	int GetMode();						  //  inside the PID.
 	int GetDirection();					  //
 
+	// update the p,i and d terms being used to the caller can see them and log them
+  public:
+	double pterm;
+	double iterm;
+	double dterm;
+	
   private:
 	void Initialize();
 	
