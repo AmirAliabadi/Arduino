@@ -393,10 +393,10 @@ double read_kp()
   return 2.0;
   double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
 
-  foo = foo / 3000.0;
+  foo = foo / 4000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Kp: "); Serial.println(foo);
+    Serial.print("Kp:"); Serial.print(foo,2);
   }
   return foo;
 }
@@ -408,7 +408,7 @@ double read_ki()
   foo = foo / 2000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Ki: "); Serial.println(foo);
+    Serial.print(" Ki:"); Serial.print(foo,2);
   }
   return foo;
 }
@@ -416,14 +416,18 @@ double read_kd()
 {
   return 0.75;
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
-  foo = foo / 2000.0;
+  
+  foo = foo / 8000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Kd: "); Serial.println(foo);
+    Serial.print(" Kd:"); Serial.print(foo,2); Serial.println("");
   }
   return foo;
 }
+///////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// main autopilot routine
 void process_pilot()
 {
   thrust = read_throttle();
@@ -502,9 +506,10 @@ void process_pilot()
   }
 #endif
 }
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+// setup
 void setup()
 {
 
@@ -522,6 +527,7 @@ void setup()
   process = &calibrate_mpu;
 
 }
+//////////////////////////////////////////////////////////////////////
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
