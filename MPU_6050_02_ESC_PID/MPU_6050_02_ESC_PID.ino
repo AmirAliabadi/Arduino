@@ -213,9 +213,9 @@ void init_pid()
     ac_pid.SetOutputLimits(-255.0, 255.0);
     bd_pid.SetOutputLimits(-255.0, 255.0);
 
-    setpoint_ac = 0.0f ;
-    setpoint_bd = 0.0f ;
-    setpoint_yw = 0.0f ;
+    setpoint_ac = ypr_offset[AC] ;
+    setpoint_bd = ypr_offset[BD] ;
+    setpoint_yw = ypr_offset[YW] ;
 
     //turn the PID on
     yw_pid.SetMode(AUTOMATIC);
@@ -275,9 +275,9 @@ void calibrate_mpu()
   }
 
   if ( calib_index++ >= 2000 ) {
-    ypr_offset[0] = calib_y;
-    ypr_offset[1] = calib_p;
-    ypr_offset[2] = calib_r;
+    input_ypr[YW] = (double)((int)((calib_y * 10.0) + 0.5))/10.0;
+    input_ypr[AC] = (double)((int)((calib_p * 10.0) + 0.5))/10.0;
+    input_ypr[BD] = (double)((int)((calib_r * 10.0) + 0.5))/10.0;    
 
     dmp_stable = true;
 
@@ -336,35 +336,23 @@ bool read_mpu()
     ypr[AC] = (ypr[AC]) * 180.0 / M_PI ;
     ypr[BD] = (ypr[BD]) * 180.0 / M_PI ;
  
-    //ypr[AC] = (float)(digitalSmooth( (int)(ypr[AC]*1000.0), sensSmoothArray1 )/1000.0);
-    //ypr[BD] = (float)(digitalSmooth( (int)(ypr[BD]*1000.0), sensSmoothArray1 )/1000.0);
-
     if ( dmp_stable ) {
-      ypr[YW] -= ypr_offset[YW];
-      ypr[AC] -= ypr_offset[AC];
-      ypr[BD] -= ypr_offset[BD];
-      
-      //ypr[YW] = (float)((int)((((ypr[YW]) * 180.0 / M_PI)*10.0)+.5))/10.0 ;
-      //ypr[AC] = (float)((int)((((ypr[AC]) * 180.0 / M_PI)*10.0)+.5))/10.0 ;
-      //ypr[BD] = (float)((int)((((ypr[BD]) * 180.0 / M_PI)*10.0)+.5))/10.0 ;
-    
+      //ypr[YW] -= ypr_offset[YW];
+      //ypr[AC] -= ypr_offset[AC];
+      //ypr[BD] -= ypr_offset[BD];
     }
 
     //if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
     //if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
     //if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];
-
     ypr_last[YW] = ypr[YW];
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
 
     // Update the PID input values
-    input_ypr[YW] = ((int)((ypr[YW] * 1.0) + 0.5))/1.0;
-    input_ypr[AC] = ((int)((ypr[AC] * 1.0) + 0.5))/1.0;
-    input_ypr[BD] = ((int)((ypr[BD] * 1.0) + 0.5))/1.0;
-    //input_ypr[YW] = (double)((int)(ypr[YW]+.5));
-    //input_ypr[AC] = (double)((int)(ypr[AC]+.5));
-    //input_ypr[BD] = (double)((int)(ypr[BD]+.5));
+    input_ypr[YW] = (double)((int)((ypr[YW] * 10.0) + 0.5))/10.0;
+    input_ypr[AC] = (double)((int)((ypr[AC] * 10.0) + 0.5))/10.0;
+    input_ypr[BD] = (double)((int)((ypr[BD] * 10.0) + 0.5))/10.0;
 
     return true;
   }
@@ -393,7 +381,7 @@ double read_kp()
   return 2.0;
   double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
 
-  foo = foo / 4000.0;
+  foo = foo / 1000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
     Serial.print("Kp:"); Serial.print(foo,2);
@@ -402,10 +390,11 @@ double read_kp()
 }
 double read_ki()
 {
-  return 0.02;
+  return 0.2;
+  //double foo = read_kp() * 0.25 ;
   double foo = map(analogRead(Ki_PIN), 0.0, 668.0, 0.0, 10000.0);
   
-  foo = foo / 2000.0;
+  //foo = foo / 2000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
     Serial.print(" Ki:"); Serial.print(foo,2);
@@ -417,7 +406,7 @@ double read_kd()
   return 0.75;
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
   
-  foo = foo / 8000.0;
+  foo = foo / 1000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
     Serial.print(" Kd:"); Serial.print(foo,2); Serial.println("");
