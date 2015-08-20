@@ -103,9 +103,9 @@ double output_yw = 0.0;
 
 //Specify the links and initial tuning parameters
 double input_ypr[3] = {0.0, 0.0, 0.0};
-PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 1.5, .1, .75, DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 1.5, .1, .75, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 1.5, .1, .75, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 2.0, .1, .75, DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 2.0, .1, .75, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 2.0, .1, .75, REVERSE);
 
 ////////////////////////////////////////////////////////////////
 // MISC items
