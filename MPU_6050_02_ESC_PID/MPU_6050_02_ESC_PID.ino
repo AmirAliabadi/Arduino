@@ -93,13 +93,13 @@ Servo esc_d;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-double setpoint_ac = 0.0f;
-double setpoint_bd = 0.0f;
-double setpoint_yw = 0.0f;
+double setpoint_ac = 0.0;
+double setpoint_bd = 0.0;
+double setpoint_yw = 0.0;
 
-double output_ac = 0.0f;
-double output_bd = 0.0f;
-double output_yw = 0.0f;
+double output_ac = 0.0;
+double output_bd = 0.0;
+double output_yw = 0.0;
 
 //Specify the links and initial tuning parameters
 double input_ypr[3] = {0.0, 0.0, 0.0};
@@ -213,9 +213,9 @@ void init_pid()
     ac_pid.SetOutputLimits(-255.0, 255.0);
     bd_pid.SetOutputLimits(-255.0, 255.0);
 
-    setpoint_ac = 0.0f ;
-    setpoint_bd = 0.0f ;
-    setpoint_yw = 0.0f ;
+    setpoint_ac = ypr_offset[AC] ;
+    setpoint_bd = ypr_offset[BD] ;
+    setpoint_yw = ypr_offset[YW] ;
 
     //turn the PID on
     yw_pid.SetMode(AUTOMATIC);
@@ -275,9 +275,9 @@ void calibrate_mpu()
   }
 
   if ( calib_index++ >= 2000 ) {
-    ypr_offset[0] = calib_y;
-    ypr_offset[1] = calib_p;
-    ypr_offset[2] = calib_r;
+    input_ypr[YW] = (double)((int)((calib_y * 10.0) + 0.5))/10.0;
+    input_ypr[AC] = (double)((int)((calib_p * 10.0) + 0.5))/10.0;
+    input_ypr[BD] = (double)((int)((calib_r * 10.0) + 0.5))/10.0;    
 
     dmp_stable = true;
 
@@ -335,25 +335,24 @@ bool read_mpu()
     ypr[YW] = (ypr[YW]) * 180.0 / M_PI ;
     ypr[AC] = (ypr[AC]) * 180.0 / M_PI ;
     ypr[BD] = (ypr[BD]) * 180.0 / M_PI ;
-
+ 
     if ( dmp_stable ) {
-      ypr[YW] -= ypr_offset[YW];
-      ypr[AC] -= ypr_offset[AC];
-      ypr[BD] -= ypr_offset[BD];
+      //ypr[YW] -= ypr_offset[YW];
+      //ypr[AC] -= ypr_offset[AC];
+      //ypr[BD] -= ypr_offset[BD];
     }
 
-    if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
-    if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-    if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];
-
+    //if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
+    //if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
+    //if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];
     ypr_last[YW] = ypr[YW];
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
 
     // Update the PID input values
-    input_ypr[YW] = ((int)((ypr[YW] * 1000.0) + 0.0050))/1000.0;
-    input_ypr[AC] = ((int)((ypr[AC] * 1000.0) + 0.0050))/1000.0;
-    input_ypr[BD] = ((int)((ypr[BD] * 1000.0) + 0.0050))/1000.0;
+    input_ypr[YW] = (double)((int)((ypr[YW] * 10.0) + 0.5))/10.0;
+    input_ypr[AC] = (double)((int)((ypr[AC] * 10.0) + 0.5))/10.0;
+    input_ypr[BD] = (double)((int)((ypr[BD] * 10.0) + 0.5))/10.0;
 
     return true;
   }
@@ -370,29 +369,35 @@ bool read_mpu()
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  return 0.0;
+  if( thrust < NEUTRAL_THRUST ) thrust += .10;
+  if( thrust >= NEUTRAL_THRUST ) thrust = NEUTRAL_THRUST;
+  return thrust;
+
   return map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 234.0);
 }
 
 double read_kp()
 {
+  return 2.0;
   double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
 
-  foo = foo / 3000.0;
+  foo = foo / 1000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Kp: "); Serial.println(foo);
+    Serial.print("Kp:"); Serial.print(foo,2);
   }
   return foo;
 }
 double read_ki()
 {
+  return 0.2;
+  //double foo = read_kp() * 0.25 ;
   double foo = map(analogRead(Ki_PIN), 0.0, 668.0, 0.0, 10000.0);
   
-  foo = foo / 2000.0;
+  //foo = foo / 2000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Ki: "); Serial.println(foo);
+    Serial.print(" Ki:"); Serial.print(foo,2);
   }
   return foo;
 }
@@ -400,33 +405,26 @@ double read_kd()
 {
   return 0.75;
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
-  foo = foo / 2000.0;
+  
+  foo = foo / 1000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Kd: "); Serial.println(foo);
+    Serial.print(" Kd:"); Serial.print(foo,2); Serial.println("");
   }
   return foo;
 }
+///////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// main autopilot routine
 void process_pilot()
 {
-  // thrust = read_throttle();
-  if( thrust < NEUTRAL_THRUST ) thrust += 0.05;
-  if( thrust >= NEUTRAL_THRUST ) thrust = NEUTRAL_THRUST;
-
-/*
-  if( input_ypr[AC] == setpoint_ac) {
-    ac_pid.SetTunings(0.0, 0.0, 0.0);
-  }
-  else {
-    ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
-  }
-*/
-
+  thrust = read_throttle();
+  
   ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
   yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
   bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
-
+  
   if(thrust >= NEUTRAL_THRUST) {
     yw_pid.Compute();
     ac_pid.Compute();
@@ -435,6 +433,7 @@ void process_pilot()
 
   //////////////////////////////////////////////////////
   // compute the boom velocity
+  /*
   float v_ac = (abs(output_yw - 100) / 100) * thrust;
   float v_bd = (   (output_yw + 100) / 100) * thrust;
 
@@ -444,6 +443,7 @@ void process_pilot()
 
   float vc = (abs((output_ac - 100) / 100)) * v_ac;
   float vd = (abs((output_bd - 100) / 100)) * v_bd;
+  */
   //
   //////////////////////////////////////////////////////
 
@@ -464,9 +464,8 @@ void process_pilot()
 
   esc_a.writeMicroseconds(a);
   esc_c.writeMicroseconds(c);
-
   //esc_b.writeMicroseconds(b);
- // esc_d.writeMicroseconds(d);
+  //esc_d.writeMicroseconds(d);
 
 #ifdef DEBUG
   if (millis() - mpu_debug_info_hz > DELAY)
@@ -475,13 +474,19 @@ void process_pilot()
 
     Serial.print(thrust, 4);
     Serial.print("\t");
-    Serial.print(input_ypr[AC], 4);
+    Serial.print(input_ypr[AC], 2);
     Serial.print("\t");
-    Serial.print(output_ac, 4);
+    Serial.print(output_ac, 2);
     Serial.print("\t");
     Serial.print(a, 4);
     Serial.print("\t");
     Serial.print(c, 4);
+    Serial.print("\t");
+    Serial.print(ac_pid.pterm);
+    Serial.print("\t");
+    Serial.print(ac_pid.iterm);
+    Serial.print("\t");
+    Serial.print(ac_pid.dterm);
     Serial.print("\n");
 
     //print_mpu_readings(mode,fifoBuffer);
@@ -490,9 +495,10 @@ void process_pilot()
   }
 #endif
 }
+//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+// setup
 void setup()
 {
 
@@ -510,6 +516,7 @@ void setup()
   process = &calibrate_mpu;
 
 }
+//////////////////////////////////////////////////////////////////////
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
@@ -537,3 +544,6 @@ void loop()
     }
   }
 }
+
+
+

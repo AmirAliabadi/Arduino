@@ -54,16 +54,24 @@ bool PID::Compute()
       /*Compute all the working error variables*/
 	  double input = *myInput;
       double error = *mySetpoint - input;
-      ITerm+= (ki * error);
-      if(ITerm > outMax) ITerm= outMax;
-      else if(ITerm < outMin) ITerm= outMin;
-      double dInput = (input - lastInput);
+	  
+      ITerm += (ki * error);
+      
+	  if(ITerm > outMax) ITerm = outMax;
+      else if(ITerm < outMin) ITerm = outMin;
+      
+	  double dInput = (input - lastInput);
  
-      /*Compute PID Output*/
-      double output = kp * error + ITerm- kd * dInput;
+	  pterm = (kp * error);
+	  iterm = (ITerm);
+	  dterm = (kd * dInput);
+
+	  /*Compute PID Output*/
+      double output = (kp * error) + ITerm - (kd * dInput);
       
 	  if(output > outMax) output = outMax;
       else if(output < outMin) output = outMin;
+	  
 	  *myOutput = output;
 	  
       /*Remember some variables for next time*/
@@ -91,7 +99,7 @@ void PID::SetTunings(double Kp, double Ki, double Kd)
    ki = Ki * SampleTimeInSec;
    kd = Kd / SampleTimeInSec;
  
-  if(controllerDirection ==REVERSE)
+  if(controllerDirection == REVERSE)
    {
       kp = (0 - kp);
       ki = (0 - ki);
