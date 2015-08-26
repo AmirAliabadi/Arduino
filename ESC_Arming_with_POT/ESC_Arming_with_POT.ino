@@ -23,23 +23,34 @@ void setup()
   Serial.begin(115200);
   
   esc1.attach(MOTOR_PIN1);
+  delay(300);
 }
 
 void loop()
 {
+  esc();
+}
 
+void esc()
+{
+  float throt = map(analogRead(VELOCITY_INPUT_PIN),0,644,0,400);
+  Serial.println(MIN_SIGNAL+throt,4);
+  esc1.writeMicroseconds(MIN_SIGNAL+throt);  
+  
+}
+
+void pid()
+{
   float p = map(analogRead(P_PIN),0,644,0,10000.0)/1000.0;
   float i = map(analogRead(I_PIN),0,644,0,10000.0)/1000.0;
   float d = map(analogRead(D_PID),0,644,0,10000.0)/1000.0;
-
+  
   Serial.print((int)(p*10.0+.5)/10.0);Serial.print("\t");
   Serial.print((int)(i*10.0+.5)/10.0);Serial.print("\t");
   Serial.print((int)(d*10.0+.5)/10.0);Serial.println("\t");
- 
-  //Serial.println(MIN_SIGNAL+pot,4);
   
-  //esc1.writeMicroseconds(MIN_SIGNAL+pot);
+
   
   delay(100);
-    
 }
+

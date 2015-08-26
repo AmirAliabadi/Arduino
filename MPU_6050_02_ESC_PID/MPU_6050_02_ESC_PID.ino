@@ -77,9 +77,9 @@ float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 ////////////////////////////////////////////////////////////////
 // ESC Settings
 #define ESC_ARM_DELAY 3000
-#define MAX_SIGNAL 2000		// Simulate throttle at full
+//#define MAX_SIGNAL 2000		// Simulate throttle at full
 #define MAX_THRUST 1350   // safety setting while testing.
-#define MIN_SIGNAL 1110		// Minimum ESC signal to ARM less than or equal to this should turn off motor completely
+#define MIN_SIGNAL 1100		// Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A 9		// ESC signal wire conected to pin 9
 #define MOTOR_PIN_B 111		// ESC signal wire conected to pin ??
 #define MOTOR_PIN_C 6		// ESC signal wire conected to pin 6
@@ -274,7 +274,7 @@ void calibrate_mpu()
     }
   }
 
-  if ( calib_index++ >= 2000 ) {
+  if ( calib_index++ >= 1000 ) {
     input_ypr[YW] = (double)((int)((calib_y * 10.0) + 0.5))/10.0;
     input_ypr[AC] = (double)((int)((calib_p * 10.0) + 0.5))/10.0;
     input_ypr[BD] = (double)((int)((calib_r * 10.0) + 0.5))/10.0;    
@@ -369,7 +369,7 @@ bool read_mpu()
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  if( thrust < NEUTRAL_THRUST ) thrust += .10;
+  if( thrust < NEUTRAL_THRUST ) thrust += .05;
   if( thrust >= NEUTRAL_THRUST ) thrust = NEUTRAL_THRUST;
   return thrust;
 
@@ -378,38 +378,38 @@ float read_throttle()
 
 double read_kp()
 {
-  return 2.0;
-  double foo = map(analogRead(Kp_PIN), 0.0, 668.0, 0.0, 10000.0);
-
+  return 1.5;
+  double foo = map(analogRead(Kp_PIN), 0.0, 644.0, 0.0, 10000.0);
   foo = foo / 1000.0;
+  
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print("Kp:"); Serial.print(foo,2);
+    Serial.print("Kp:"); Serial.println(foo,2);
   }
   return foo;
 }
 double read_ki()
 {
-  return 0.2;
-  //double foo = read_kp() * 0.25 ;
-  double foo = map(analogRead(Ki_PIN), 0.0, 668.0, 0.0, 10000.0);
+  return 0.02;
+  double foo = map(analogRead(Ki_PIN), 0.0, 644.0, 0.0, 10000.0);
+  foo = foo / 2000.0;
   
-  //foo = foo / 2000.0;
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print(" Ki:"); Serial.print(foo,2);
+    Serial.print(" Ki:"); Serial.println(foo,2);
   }
   return foo;
 }
 double read_kd()
 {
-  return 0.75;
-  double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
+  return .75;
   
+  double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
   foo = foo / 1000.0;
+  
   if (millis() - mpu_debug_info_hz > DELAY)
   {
-    Serial.print(" Kd:"); Serial.print(foo,2); Serial.println("");
+    Serial.print(" Kd:"); Serial.println(foo,2); Serial.println("\n");
   }
   return foo;
 }
@@ -476,6 +476,8 @@ void process_pilot()
     Serial.print("\t");
     Serial.print(input_ypr[AC], 2);
     Serial.print("\t");
+    Serial.print(setpoint_ac);
+    Serial.print("\t");    
     Serial.print(output_ac, 2);
     Serial.print("\t");
     Serial.print(a, 4);
