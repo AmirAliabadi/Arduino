@@ -51,16 +51,6 @@ void init_mpu()
   }
 }
 
-void calibrate_mpu()
-{
-  init_pid();
-  Serial.print(setpoint_ac);Serial.print("\t");
-  Serial.print(setpoint_bd);Serial.print("\t");
-  Serial.println(setpoint_yw);
-  init_esc();
-  process = &process_pilot;
-}
-
 bool read_mpu()
 {
  /* Update all the values */
@@ -115,8 +105,9 @@ bool read_mpu()
   } else
     kalAngleY = kalmanY.getAngle(pitch, gyroYrate, dt); // Calculate the angle using a Kalman filter
 
-  if (abs(kalAngleY) > 90)
+  if (abs(kalAngleY) > 90) {
     gyroXrate = -gyroXrate; // Invert rate, so it fits the restriced accelerometer reading
+  }
   kalAngleX = kalmanX.getAngle(roll, gyroXrate, dt); // Calculate the angle using a Kalman filter
 #endif
 

@@ -91,6 +91,7 @@ double input_ypr[3] = {0.0, 0.0, 0.0};
 PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 2.0, .1, .75, DIRECT);
 PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 2.0, .1, .75, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 2.0, .1, .75, REVERSE);
+////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
 // MISC items
@@ -107,6 +108,7 @@ int calib_index;
 float thrust = 0.0;
 
 #define NEUTRAL_THRUST 130
+////////////////////////////////////////////////////////////////
 
 
 // ================================================================
@@ -117,19 +119,6 @@ volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin h
 void dmpDataReady()
 {
   mpuInterrupt = true;
-}
-
-// ================================================================
-// ===                      INITIAL SETUP                       ===
-// ================================================================
-void init_i2c()
-{
-  Wire.begin();
-  #if ARDUINO >= 157
-    Wire.setClock(400000UL); // Set I2C frequency to 400kHz
-  #else
-    TWBR = ((F_CPU / 400000UL) - 16) / 2; // Set I2C frequency to 400kHz
-  #endif
 }
 
 
@@ -214,6 +203,16 @@ void process_pilot()
 #endif
 }
 //////////////////////////////////////////////////////////////////////
+
+void calibrate_mpu()
+{
+  init_pid();
+  Serial.print(setpoint_ac);Serial.print("\t");
+  Serial.print(setpoint_bd);Serial.print("\t");
+  Serial.println(setpoint_yw);
+  init_esc();
+  process = &process_pilot;
+}
 
 //////////////////////////////////////////////////////////////////////
 // setup

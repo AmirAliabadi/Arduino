@@ -18,6 +18,20 @@
 const uint8_t IMUAddress = 0x68; // AD0 is logic low on the PCB
 const uint16_t I2C_TIMEOUT = 1000; // Used to check for errors in I2C communication
 
+// ================================================================
+// ===                      INITIAL SETUP                       ===
+// ================================================================
+void init_i2c()
+{
+  Wire.begin();
+  #if ARDUINO >= 157
+    Wire.setClock(400000UL); // Set I2C frequency to 400kHz
+  #else
+    TWBR = ((F_CPU / 400000UL) - 16) / 2; // Set I2C frequency to 400kHz
+  #endif
+}
+
+
 uint8_t i2cWrite(uint8_t registerAddress, uint8_t data, bool sendStop) {
   return i2cWrite(registerAddress, &data, 1, sendStop); // Returns 0 on success
 }
