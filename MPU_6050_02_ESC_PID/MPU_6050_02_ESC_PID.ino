@@ -78,7 +78,8 @@ float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 // ESC Settings
 #define ESC_ARM_DELAY 3000
 //#define MAX_SIGNAL 2000		// Simulate throttle at full
-#define MAX_THRUST 1350   // safety setting while testing.
+#define MAX_THRUST 1400   // safety setting while testing.
+#define MIN_THRUST 1130   // motor is off below this value
 #define MIN_SIGNAL 1100		// Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A 9		// ESC signal wire conected to pin 9
 #define MOTOR_PIN_B 111		// ESC signal wire conected to pin ??
@@ -103,9 +104,9 @@ double output_yw = 0.0;
 
 double input_ypr[3] = {0.0, 0.0, 0.0};
 
-PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 2.0, .1, .75, DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 2.0, .1, .75, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 2.0, .1, .75, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 4.0, .001, 1.75, DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 4.0, .001, 1.75, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 4.0, .001, 1.75, REVERSE);
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -120,7 +121,8 @@ float calib_y, calib_p, calib_r;
 float calib_yi, calib_pi, calib_ri;
 int calib_index;
 float thrust = 0.0;
-#define NEUTRAL_THRUST (1250 - 1100)
+#define NEUTRAL_THRUST 0
+//(1250 - 1100)
 ////////////////////////////////////////////////////////////////
 
 
@@ -139,10 +141,14 @@ void dmpDataReady()
 void process_pilot()
 {
   thrust = read_throttle();
+
+  double kp = read_kp();
+  double ki = read_ki();
+  double kd = read_kd();
   
-  //ac_pid.SetTunings(read_kp(), read_ki(), read_kd());
-  //yw_pid.SetTunings(read_kp(), read_ki(), read_kd());
-  //bd_pid.SetTunings(read_kp(), read_ki(), read_kd());
+  //ac_pid.SetTunings(kp, ki, kd);
+  //yw_pid.SetTunings(kp, ki, kd);
+  //bd_pid.SetTunings(kp, ki, kd);
   
   if(thrust >= NEUTRAL_THRUST) {
     yw_pid.Compute();
@@ -166,15 +172,15 @@ void process_pilot()
   //
   //////////////////////////////////////////////////////
 
-  float va = (MIN_SIGNAL + thrust) + (output_ac / 2.0);
-  float vc = (MIN_SIGNAL + thrust) - (output_ac / 2.0);
-  float vb = (MIN_SIGNAL + thrust) + (output_bd / 2.0);
-  float vd = (MIN_SIGNAL + thrust) - (output_bd / 2.0);
+  float va = (MIN_SIGNAL + thrust) + (output_ac );
+  float vc = (MIN_SIGNAL + thrust) - (output_ac );
+  float vb = (MIN_SIGNAL + thrust) + (output_bd );
+  float vd = (MIN_SIGNAL + thrust) - (output_bd );
 
-  va = va <= MIN_SIGNAL ? 0.0 : va;
-  vc = vc <= MIN_SIGNAL ? 0.0 : vc;
-  vb = vb <= MIN_SIGNAL ? 0.0 : vb;
-  vd = vd <= MIN_SIGNAL ? 0.0 : vd;
+  va = va <= MIN_THRUST ? 0.0 : va;
+  vc = vc <= MIN_THRUST ? 0.0 : vc;
+  vb = vb <= MIN_THRUST ? 0.0 : vb;
+  vd = vd <= MIN_THRUST ? 0.0 : vd;
 
   va = va > MAX_THRUST ? MAX_THRUST : va;
   vc = vc > MAX_THRUST ? MAX_THRUST : vc;
@@ -191,6 +197,8 @@ void process_pilot()
     mpu_debug_info_hz = millis();
     
 #ifdef DEBUG    
+    log_pid_tuning(kp,ki,kd);
+    
     log_data(va, vc);
     //print_mpu_readings(mode,fifoBuffer);
 #endif

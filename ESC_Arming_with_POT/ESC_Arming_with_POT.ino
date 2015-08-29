@@ -6,10 +6,12 @@ Servo esc3;
 Servo esc4;
 
 #define MAX_SIGNAL 2000      // Simulate throttle at full
-#define MIN_SIGNAL 1000     // Simulate throttle at min
-#define MOTOR_PIN1 9
+#define MIN_SIGNAL 1100     // Simulate throttle at min
+#define MOTOR_PIN_A 9
+#define MOTOR_PIN_C 6
 
-#define VELOCITY_INPUT_PIN 0
+#define THROTTLE_INPUT_PIN 0
+
 #define P_PIN 0
 #define I_PIN 1
 #define D_PID 2
@@ -22,7 +24,9 @@ void setup()
 {
   Serial.begin(115200);
   
-  esc1.attach(MOTOR_PIN1);
+  esc1.attach(MOTOR_PIN_A);
+  esc2.attach(MOTOR_PIN_C);
+  
   delay(300);
 }
 
@@ -33,9 +37,12 @@ void loop()
 
 void esc()
 {
-  float throt = map(analogRead(VELOCITY_INPUT_PIN),0,644,0,400);
+  float throt = map(analogRead(THROTTLE_INPUT_PIN),0,644,0,400);
+  
   Serial.println(MIN_SIGNAL+throt,4);
+  
   esc1.writeMicroseconds(MIN_SIGNAL+throt);  
+  esc2.writeMicroseconds(MIN_SIGNAL+throt);  
   
 }
 
