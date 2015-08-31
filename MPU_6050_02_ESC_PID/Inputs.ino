@@ -4,11 +4,9 @@
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  if( thrust < NEUTRAL_THRUST ) thrust += .05;
-  if( thrust >= NEUTRAL_THRUST ) thrust = NEUTRAL_THRUST;
-  return thrust;
+  float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
 
-  return map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 234.0);
+  return (float)( (int) (((foo * 10.0)+.5)/10.0));
 }
 
 double read_kp()

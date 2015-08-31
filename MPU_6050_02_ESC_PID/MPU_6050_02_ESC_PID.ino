@@ -177,10 +177,10 @@ void process_pilot()
   float vb = (MIN_SIGNAL + thrust) + (output_bd );
   float vd = (MIN_SIGNAL + thrust) - (output_bd );
 
-  va = va <= MIN_THRUST ? 0.0 : va;
-  vc = vc <= MIN_THRUST ? 0.0 : vc;
-  vb = vb <= MIN_THRUST ? 0.0 : vb;
-  vd = vd <= MIN_THRUST ? 0.0 : vd;
+  va = va <= MIN_THRUST ? MIN_SIGNAL : va;
+  vc = vc <= MIN_THRUST ? MIN_SIGNAL : vc;
+  vb = vb <= MIN_THRUST ? MIN_SIGNAL : vb;
+  vd = vd <= MIN_THRUST ? MIN_SIGNAL : vd;
 
   va = va > MAX_THRUST ? MAX_THRUST : va;
   vc = vc > MAX_THRUST ? MAX_THRUST : vc;
@@ -197,9 +197,10 @@ void process_pilot()
     mpu_debug_info_hz = millis();
     
 #ifdef DEBUG    
-    log_pid_tuning(kp,ki,kd);
     
+    //log_pid_tuning(kp,ki,kd);
     log_data(va, vc);
+    
     //print_mpu_readings(mode,fifoBuffer);
 #endif
 
@@ -228,8 +229,8 @@ void setup()
   
   delay(100);
   
-  init_pid();
   init_esc();
+  init_pid();  
   
   process = &process_pilot;
 

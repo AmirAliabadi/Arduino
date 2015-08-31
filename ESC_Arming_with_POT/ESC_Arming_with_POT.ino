@@ -16,6 +16,8 @@ Servo esc4;
 #define I_PIN 1
 #define D_PID 2
 
+long last ;
+
 /*
 1024 seemed to be the min value for motor to start
 */
@@ -23,11 +25,22 @@ Servo esc4;
 void setup()
 {
   Serial.begin(115200);
+
+
+  Serial.println("attaching motors pins...");
   
   esc1.attach(MOTOR_PIN_A);
   esc2.attach(MOTOR_PIN_C);
+
+  delay(1000);
+
+  Serial.println("attach motors to power...");
   
-  delay(300);
+  delay(5000);
+
+  Serial.println("motors attached");
+
+  last = millis();
 }
 
 void loop()
@@ -37,9 +50,12 @@ void loop()
 
 void esc()
 {
-  float throt = map(analogRead(THROTTLE_INPUT_PIN),0,644,0,400);
-  
-  Serial.println(MIN_SIGNAL+throt,4);
+  float throt = map(analogRead(THROTTLE_INPUT_PIN),0,644,0,600);
+
+  if( millis() - last > 200 ) {
+    last = millis();
+    Serial.println(MIN_SIGNAL+throt,4);
+  }
   
   esc1.writeMicroseconds(MIN_SIGNAL+throt);  
   esc2.writeMicroseconds(MIN_SIGNAL+throt);  
@@ -51,13 +67,13 @@ void pid()
   float p = map(analogRead(P_PIN),0,644,0,10000.0)/1000.0;
   float i = map(analogRead(I_PIN),0,644,0,10000.0)/1000.0;
   float d = map(analogRead(D_PID),0,644,0,10000.0)/1000.0;
-  
-  Serial.print((int)(p*10.0+.5)/10.0);Serial.print("\t");
-  Serial.print((int)(i*10.0+.5)/10.0);Serial.print("\t");
-  Serial.print((int)(d*10.0+.5)/10.0);Serial.println("\t");
-  
 
-  
-  delay(100);
+  if( millis() - last > 200 ) {
+    last = millis();  
+    Serial.print((int)(p*10.0+.5)/10.0);Serial.print("\t");
+    Serial.print((int)(i*10.0+.5)/10.0);Serial.print("\t");
+    Serial.print((int)(d*10.0+.5)/10.0);Serial.println("\t");
+  }
+
 }
 
