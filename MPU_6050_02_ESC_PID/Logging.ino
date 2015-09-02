@@ -32,3 +32,15 @@ void log_data(float va, float vc)
   Serial.print("\n");  
 }
 
+void log_data(float* input_values)
+{
+  Serial.print(input_values[0], 4);
+  Serial.print("\t");
+  Serial.print(input_values[1], 4);
+  Serial.print("\t");
+  Serial.print(input_values[2], 4);
+  Serial.print("\t");
+  Serial.print(input_values[3], 4);
+  Serial.println("\t");  
+}
+
