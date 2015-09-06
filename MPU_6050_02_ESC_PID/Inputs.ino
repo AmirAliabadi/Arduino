@@ -4,7 +4,7 @@ boolean readCsvToVector(float* pidVector)
   byte len;
   if (Serial.available() <= 0)
     return 0;
-    
+   
   len = Serial.available();
   
   char stream[20];

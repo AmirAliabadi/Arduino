@@ -122,6 +122,8 @@ float thrust = 0.0;
 #define NEUTRAL_THRUST 0.0
 
 float input_values[10];
+
+uint8_t buffer[20]; 
 //(1250 - 1100)
 ////////////////////////////////////////////////////////////////
 
@@ -145,10 +147,10 @@ void process_pilot()
   double kp = read_kp();
   double ki = read_ki();
   double kd = read_kd();
-  
-  //ac_pid.SetTunings(kp, ki, kd);
-  //yw_pid.SetTunings(kp, ki, kd);
-  //bd_pid.SetTunings(kp, ki, kd);
+
+  yw_pid.SetTunings(kp, ki, kd);  
+  ac_pid.SetTunings(kp, ki, kd);
+  bd_pid.SetTunings(kp, ki, kd);
 
   float va = MIN_SIGNAL;
   float vb = MIN_SIGNAL;
@@ -179,10 +181,10 @@ void process_pilot()
     float v_ac = thrust;
     float v_bd = thrust;
 
-    va = MIN_SIGNAL + (v_ac + output_ac/2.0);
-    vc = MIN_SIGNAL + (v_ac - output_ac/2.0);
-    vb = MIN_SIGNAL + (v_bd + output_bd/2.0);
-    vd = MIN_SIGNAL + (v_bd - output_bd/2.0);
+    va = MIN_SIGNAL + (v_ac + output_ac);
+    vc = MIN_SIGNAL + (v_ac - output_ac);
+    vb = MIN_SIGNAL + (v_bd + output_bd);
+    vd = MIN_SIGNAL + (v_bd - output_bd);
 
     va = va <= MIN_THRUST ? MIN_SIGNAL : va;
     vc = vc <= MIN_THRUST ? MIN_SIGNAL : vc;
@@ -207,11 +209,15 @@ void process_pilot()
 #ifdef DEBUG    
     
     //log_pid_tuning(kp,ki,kd);
-    log_data(va, vc);
-    log_data(input_values);
-    
+    //log_data(va, vc);
+    // log_graphing_data(va,vc);
+    // log_data(input_values);
+    //plot(va,vc);
+    log_data2(va, vc);
+        
     //print_mpu_readings(mode,fifoBuffer);
 #endif
+
 
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));
     
