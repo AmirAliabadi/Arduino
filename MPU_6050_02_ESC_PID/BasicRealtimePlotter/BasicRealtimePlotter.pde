@@ -19,7 +19,8 @@ Serial serialPort; // Serial port object
 // interface stuff
 ControlP5 cp5;
 
-String[] control_inputs = new String[4];
+String[] control_inputs = new String[5];
+boolean motors_on = false;
 int max_data_points = 6;
 
 // Settings for the plotter are saved in this file
@@ -38,7 +39,7 @@ String topSketchPath = "";
 
 void setup() {
   surface.setTitle("Realtime plotter");
-  size(890, 1100);
+  size(890, 650);
 
   // set line graph colors
   graphColors[0] = color(131, 255, 20);
@@ -65,6 +66,7 @@ void setup() {
   control_inputs[1] = "0.0";
   control_inputs[2] = "0.0";
   control_inputs[3] = "0.0";
+  control_inputs[4] = "0.0";  
   
   // init charts
   setChartSettings();
@@ -88,12 +90,14 @@ void setup() {
     serialPort = new Serial(this, Serial.list()[0], 115200); // Set this to your serial port obtained using the line above
     
   }
-  else
+  else {
     serialPort = null;
-
+  }
+  
   // build the gui
   int x = 170;
   int y = 60;
+  
   cp5.addTextfield("bcMaxY").setPosition(x, y).setText(getPlotterConfigString("bcMaxY")).setWidth(40).setAutoClear(false);
   cp5.addTextfield("bcMinY").setPosition(x, y=y+150).setText(getPlotterConfigString("bcMinY")).setWidth(40).setAutoClear(false);
   cp5.addTextfield("lgMaxY").setPosition(x, y=y+130).setText(getPlotterConfigString("lgMaxY")).setWidth(40).setAutoClear(false);
@@ -128,7 +132,7 @@ void setup() {
 //  cp5.addToggle("bcVisible11").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible11"))).setMode(ControlP5.SWITCH);  
 //  cp5.addToggle("bcVisible12").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible12"))).setMode(ControlP5.SWITCH);    
 
-  cp5.addTextlabel("label").setText("on/off").setPosition(x=13, y=520).setColor(0); //y+90
+  cp5.addTextlabel("label").setText("on/off").setPosition(x=13, y=300).setColor(0); //y+90
   cp5.addTextlabel("multipliers").setText("multipliers").setPosition(x=55, y).setColor(0);
   cp5.addTextfield("lgMultiplier1").setPosition(x=60, y=y+10).setText(getPlotterConfigString("lgMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("lgMultiplier2").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
@@ -143,7 +147,7 @@ void setup() {
 //  cp5.addTextfield("lgMultiplier11").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier11")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
 //  cp5.addTextfield("lgMultiplier12").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier12")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);    
   
-  cp5.addToggle("lgVisible1").setPosition(x=x-50, y=520+10).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
+  cp5.addToggle("lgVisible1").setPosition(x=x-50, y=300+10).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
   cp5.addToggle("lgVisible2").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible2"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[1]);
   cp5.addToggle("lgVisible3").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible3"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[2]);
   cp5.addToggle("lgVisible4").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible4"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[3]);
@@ -155,12 +159,14 @@ void setup() {
 //  cp5.addToggle("lgVisible10").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible10"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[9]);  
 //  cp5.addToggle("lgVisible11").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible11"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[10]);  
 //  cp5.addToggle("lgVisible12").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible12"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[11]);    
-  
-  
-  cp5.addTextfield("Thrust").setPosition(x, y=y+60).setValue(0.0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("Kp").setPosition(x+=45, y).setValue(0.0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("Ki").setPosition(x+=45, y).setValue(0.0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("Kd").setPosition(x+=45, y).setValue(0.0).setWidth(40).setAutoClear(false);  
+
+
+  cp5.addToggle("motors_onoff").setPosition(x, y=620).setValue(false).setMode(ControlP5.SWITCH);
+  cp5.addTextfield("Thrust").setPosition(x+=45, y).setValue("0.0").setWidth(40).setAutoClear(false);
+  cp5.addTextfield("Kp").setPosition(x+=45, y).setValue((getPlotterConfigString("Kp"))).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("Ki").setPosition(x+=45, y).setValue((getPlotterConfigString("Ki"))).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("Kd").setPosition(x+=45, y).setValue((getPlotterConfigString("Kd"))).setWidth(40).setAutoClear(false);  
+  cp5.addTextfield("setpoint_ac").setPosition(x+=45, y).setValue("0.0").setWidth(40).setAutoClear(false);  
   
 }
 
@@ -278,31 +284,65 @@ void controlEvent(ControlEvent theEvent) {
       value = theEvent.getStringValue();
       
       int foo = 0;
-      if( parameter == "Thrust" ) {
+      if( parameter.equals("Thrust") ) {
         control_inputs[0] = value;
-        serialPort.write(control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+"\r\n");
         foo = 1;
-      } else if ( parameter == "Kp" ) {
+      } else if ( parameter.equals("Kp") ) {
         control_inputs[1] = value;
-        serialPort.write(control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+"\r\n");
         foo = 1;       
-      } else if (parameter == "Ki" ) {
+      } else if (parameter.equals("Ki") ) {
         control_inputs[2] = value;
-        serialPort.write(control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+"\r\n");
         foo = 1;        
-      } else if (parameter == "Kd" ) {
+      } else if (parameter.equals("Kd") ) {
         control_inputs[3] = value;
-        serialPort.write(control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+"\r\n");
         foo = 1;
+      } else if (parameter.equals("setpoint_ac") ) {
+        control_inputs[4] = value;
+        foo = 1;        
       }
      
       if( foo == 1 ) {
-        print(control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+"\r\n");
+        
+        String foo1 = "";
+        if( motors_on )
+        {
+          foo1 = control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+","+control_inputs[4]+"\r\n";
+        } else {
+          foo1 = "0.0,"+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+","+control_inputs[4]+"\r\n";          
+        }
+         
+         print(foo1);
+         
+         if(serialPort != null)
+           serialPort.write(foo1);
       }
     }
     else if (theEvent.isAssignableFrom(Toggle.class) || theEvent.isAssignableFrom(Button.class))
     {
       value = theEvent.getValue()+"";
+      
+      if (parameter.equals("motors_onoff") ) {
+        
+        motors_on = (value.equals("1.0") ? true : false);
+        
+        print(motors_on); 
+        print("\r\n");
+        
+        String foo1 = "";
+        
+        if( motors_on )
+        {
+          foo1 = control_inputs[0]+","+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+","+control_inputs[4]+"\r\n";
+        } else {
+          foo1 = "0.0,"+control_inputs[1]+","+control_inputs[2]+","+control_inputs[3]+","+control_inputs[4]+"\r\n";          
+        }
+ 
+        print(foo1);   
+ 
+        if(serialPort != null)
+          serialPort.write(foo1);
+        
+      }
     }
 
     plotterConfigJSON.setString(parameter, value);

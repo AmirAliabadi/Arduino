@@ -1,7 +1,9 @@
 {
   "bcMaxY": "180",
-  "Kp": ".5",
+  "Kp": ".55",
   "lgMaxY": "60",
+  "motors_onoff": "0.0",
+  "setpoint_ac": "0.0",
   "lgMultiplier2": "1",
   "lgMultiplier3": "1",
   "lgMultiplier1": "1",
@@ -25,13 +27,13 @@
   "bcVisible7": "1.0",
   "bcVisible8": "1.0",
   "bcVisible5": "1.0",
-  "Thrust": "0",
+  "Thrust": "100.0",
   "bcVisible6": "1.0",
   "bcMultiplier1": "1",
   "lgVisible11": "1.0",
   "lgVisible10": "1.0",
   "lgVisible12": "1.0",
-  "lgVisible1": "0.0",
+  "lgVisible1": "1.0",
   "lgVisible2": "1.0",
   "lgVisible5": "1.0",
   "lgVisible6": "1.0",
@@ -52,7 +54,7 @@
   "lgVisible7": "1.0",
   "lgVisible8": "1.0",
   "lgMinY": "-60",
-  "Kd": "0.201",
+  "Kd": ".95",
   "bcMinY": "0",
-  "Ki": "0.05"
+  "Ki": ".0055"
 }
