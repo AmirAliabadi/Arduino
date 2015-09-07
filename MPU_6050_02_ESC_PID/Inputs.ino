@@ -7,8 +7,8 @@ boolean readCsvToVector(float* pidVector)
    
   len = Serial.available();
   
-  char stream[20];
-  char number[5];
+  char stream[80];
+  char number[10];
   
   // Read the message
   for (byte i = 0; i < len; ++i) {
@@ -35,7 +35,17 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  return input_values[0];
+  if(esc_ready) return input_values[0];
+  else return 0.0;
+  
+  float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
+
+  return (float)( (int) (((foo * 10.0)+.5)/10.0));
+}
+
+float read_setpoint_ac()
+{
+  return input_values[1];
   
   float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
 
@@ -44,7 +54,7 @@ float read_throttle()
 
 double read_kp()
 {
-  return input_values[1];
+  return input_values[2];
   
   double foo = map(analogRead(Kp_PIN), 0.0, 644.0, 0.0, 10000.0);
   foo = foo / 1000.0;
@@ -53,7 +63,7 @@ double read_kp()
 }
 double read_ki()
 {
-  return input_values[2];
+  return input_values[3];
   
   double foo = map(analogRead(Ki_PIN), 0.0, 644.0, 0.0, 10000.0);
   foo = foo / 2000.0;
@@ -62,7 +72,7 @@ double read_ki()
 }
 double read_kd()
 {
-  return input_values[3];
+  return input_values[4];
   
   double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
   foo = foo / 1000.0;

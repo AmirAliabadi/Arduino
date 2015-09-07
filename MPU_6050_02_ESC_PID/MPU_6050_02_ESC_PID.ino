@@ -105,8 +105,8 @@ double output_yw = 0.0;
 double input_ypr[3] = {0.0, 0.0, 0.0};
 
 PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 0.7, 0.950, 0.011, DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 2.0, 0.002, 0.7, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 0.7, 0.950, 0.011, REVERSE);
+PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, .5, 0.0055, 0.201, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, .5, 0.0055, 0.201, REVERSE);
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -121,9 +121,11 @@ boolean pid_ready = false;
 float thrust = 0.0;
 #define NEUTRAL_THRUST 0.0
 
-float input_values[10];
+// thrust, setpoint_ac, Kp, Ki, Kd, 
+float input_values[10] = {0.0,0.0,
+                          0.5,0.055,0.201,
+                          0.0,0.0,0.0,0.0,0.0};
 
-uint8_t buffer[20]; 
 //(1250 - 1100)
 ////////////////////////////////////////////////////////////////
 
@@ -137,94 +139,6 @@ void dmpDataReady()
 {
   mpuInterrupt = true;
 }
-
-//////////////////////////////////////////////////////////////////////
-// main autopilot routine
-void process_pilot()
-{
-  thrust = read_throttle();
-
-  double kp = read_kp();
-  double ki = read_ki();
-  double kd = read_kd();
-
-  yw_pid.SetTunings(kp, ki, kd);  
-  ac_pid.SetTunings(kp, ki, kd);
-  bd_pid.SetTunings(kp, ki, kd);
-
-  float va = MIN_SIGNAL;
-  float vb = MIN_SIGNAL;
-  float vc = MIN_SIGNAL;
-  float vd = MIN_SIGNAL;
-  
-  if(thrust > NEUTRAL_THRUST) {
-    yw_pid.Compute();
-    ac_pid.Compute();
-    bd_pid.Compute();
-
-    //////////////////////////////////////////////////////
-    // compute the boom velocity
-    /*
-    float v_ac = (abs(output_yw - 100) / 100) * thrust;
-    float v_bd = (   (output_yw + 100) / 100) * thrust;
-    
-    // distribute the boom velocity to each boom motor
-    float va = ((output_ac + 100) / 100) * v_ac;
-    float vb = ((output_bd + 100) / 100) * v_bd;
-    
-    float vc = (abs((output_ac - 100) / 100)) * v_ac;
-    float vd = (abs((output_bd - 100) / 100)) * v_bd;
-    */
-    //
-    //////////////////////////////////////////////////////
-    
-    float v_ac = thrust;
-    float v_bd = thrust;
-
-    va = MIN_SIGNAL + (v_ac + output_ac);
-    vc = MIN_SIGNAL + (v_ac - output_ac);
-    vb = MIN_SIGNAL + (v_bd + output_bd);
-    vd = MIN_SIGNAL + (v_bd - output_bd);
-
-    va = va <= MIN_THRUST ? MIN_SIGNAL : va;
-    vc = vc <= MIN_THRUST ? MIN_SIGNAL : vc;
-    vb = vb <= MIN_THRUST ? MIN_SIGNAL : vb;
-    vd = vd <= MIN_THRUST ? MIN_SIGNAL : vd;
-    
-    va = va > MAX_THRUST ? MAX_THRUST : va;
-    vc = vc > MAX_THRUST ? MAX_THRUST : vc;
-    vb = vb > MAX_THRUST ? MAX_THRUST : vb;
-    vd = vd > MAX_THRUST ? MAX_THRUST : vd;  
-  }
-
-  esc_a.writeMicroseconds(va);
-  esc_c.writeMicroseconds(vc);
-  //esc_b.writeMicroseconds(b);
-  //esc_d.writeMicroseconds(d);
-
-  if (millis() - mpu_debug_info_hz > DELAY)
-  {
-    mpu_debug_info_hz = millis();
-    
-#ifdef DEBUG    
-    
-    //log_pid_tuning(kp,ki,kd);
-    //log_data(va, vc);
-    // log_graphing_data(va,vc);
-    // log_data(input_values);
-    //plot(va,vc);
-    log_data2(va, vc);
-        
-    //print_mpu_readings(mode,fifoBuffer);
-#endif
-
-
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-    
-  }
-  
-}
-//////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
 // setup
@@ -247,7 +161,7 @@ void setup()
   init_esc();
   init_pid();  
   
-  process = &process_pilot;
+  process = &balance_process;
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -267,8 +181,6 @@ void loop()
   if ( read_mpu() )
   {
     process();
-
-    readCsvToVector(input_values);
   }
   else
   {
@@ -277,8 +189,14 @@ void loop()
     {
       // no sucessful mpu reads for awhile
       // something is wrong
+
+      //disarm_esc();
     }
   }
+}
+
+void serialEvent() {
+  readCsvToVector(input_values);
 }
 
 

@@ -21,7 +21,7 @@ ControlP5 cp5;
 
 String[] control_inputs = new String[5];
 boolean motors_on = false;
-int max_data_points = 6;
+int max_data_points = 7;
 
 // Settings for the plotter are saved in this file
 JSONObject plotterConfigJSON;
@@ -32,7 +32,7 @@ Graph LineGraph = new Graph(225, 350, 600, 200, color (20, 20, 200));
 float[] barChartValues = new float[max_data_points];
 float[][] lineGraphValues = new float[max_data_points][100];
 float[] lineGraphSampleNumbers = new float[100];
-color[] graphColors = new color[max_data_points];
+color[] graphColors = new color[12];
 
 // helper for saving the executing path
 String topSketchPath = "";
@@ -48,12 +48,12 @@ void setup() {
   graphColors[3] = color(62, 12, 232);
   graphColors[4] = color(13, 255, 243);
   graphColors[5] = color(200, 46, 232);
-  //graphColors[6] = color(200, 46, 232);
-  //graphColors[7] = color(200, 75, 232);
-  //graphColors[8] = color(200, 122, 232);
-  //graphColors[9] = color(200, 46, 232);
-  //graphColors[10] = color(125, 46, 232);  
-  //graphColors[11] = color(125, 122, 232);
+  graphColors[6] = color(200, 46, 232);
+  graphColors[7] = color(200, 75, 232);
+  graphColors[8] = color(200, 122, 232);
+  graphColors[9] = color(200, 46, 232);
+  graphColors[10] = color(125, 46, 232);  
+  graphColors[11] = color(125, 122, 232);
 
   // settings save file
   topSketchPath = sketchPath();
@@ -63,9 +63,9 @@ void setup() {
   cp5 = new ControlP5(this);
   
   control_inputs[0] = "0.0";
-  control_inputs[1] = "0.0";
-  control_inputs[2] = "0.0";
-  control_inputs[3] = "0.0";
+  control_inputs[1] = getPlotterConfigString("Kp");
+  control_inputs[2] = getPlotterConfigString("Ki");
+  control_inputs[3] = getPlotterConfigString("Kd");
   control_inputs[4] = "0.0";  
   
   // init charts
@@ -112,7 +112,7 @@ void setup() {
   cp5.addTextfield("bcMultiplier4").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("bcMultiplier5").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("bcMultiplier6").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-//  cp5.addTextfield("bcMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bcMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("bcMultiplier8").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier8")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("bcMultiplier9").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier9")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
 //  cp5.addTextfield("bcMultiplier10").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier10")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
@@ -125,14 +125,14 @@ void setup() {
   cp5.addToggle("bcVisible4").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible4"))).setMode(ControlP5.SWITCH);
   cp5.addToggle("bcVisible5").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible5"))).setMode(ControlP5.SWITCH);
   cp5.addToggle("bcVisible6").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible6"))).setMode(ControlP5.SWITCH);
-//  cp5.addToggle("bcVisible7").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible7"))).setMode(ControlP5.SWITCH);
+  cp5.addToggle("bcVisible7").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible7"))).setMode(ControlP5.SWITCH);
 //  cp5.addToggle("bcVisible8").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible8"))).setMode(ControlP5.SWITCH);
 //  cp5.addToggle("bcVisible9").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible9"))).setMode(ControlP5.SWITCH);
 //  cp5.addToggle("bcVisible10").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible10"))).setMode(ControlP5.SWITCH);  
 //  cp5.addToggle("bcVisible11").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible11"))).setMode(ControlP5.SWITCH);  
 //  cp5.addToggle("bcVisible12").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("bcVisible12"))).setMode(ControlP5.SWITCH);    
 
-  cp5.addTextlabel("label").setText("on/off").setPosition(x=13, y=300).setColor(0); //y+90
+  cp5.addTextlabel("label").setText("on/off").setPosition(x=13, y=320).setColor(0); //y+90
   cp5.addTextlabel("multipliers").setText("multipliers").setPosition(x=55, y).setColor(0);
   cp5.addTextfield("lgMultiplier1").setPosition(x=60, y=y+10).setText(getPlotterConfigString("lgMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("lgMultiplier2").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
@@ -140,20 +140,20 @@ void setup() {
   cp5.addTextfield("lgMultiplier4").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("lgMultiplier5").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
   cp5.addTextfield("lgMultiplier6").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-//  cp5.addTextfield("lgMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("lgMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier8").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier8")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier9").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier9")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier10").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier10")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
 //  cp5.addTextfield("lgMultiplier11").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier11")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
 //  cp5.addTextfield("lgMultiplier12").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier12")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);    
   
-  cp5.addToggle("lgVisible1").setPosition(x=x-50, y=300+10).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
+  cp5.addToggle("lgVisible1").setPosition(x=x-50, y=320+10).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
   cp5.addToggle("lgVisible2").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible2"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[1]);
   cp5.addToggle("lgVisible3").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible3"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[2]);
   cp5.addToggle("lgVisible4").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible4"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[3]);
   cp5.addToggle("lgVisible5").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible5"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[4]);
   cp5.addToggle("lgVisible6").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible6"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[5]);
-//  cp5.addToggle("lgVisible7").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible7"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[6]);
+  cp5.addToggle("lgVisible7").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible7"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[6]);
 //  cp5.addToggle("lgVisible8").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible8"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[7]);
 //  cp5.addToggle("lgVisible9").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible9"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[8]);
 //  cp5.addToggle("lgVisible10").setPosition(x, y=y+40).setValue(int(getPlotterConfigString("lgVisible10"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[9]);  
@@ -177,11 +177,19 @@ void draw() {
   /* Read serial and update values */
   if (mockupSerial || serialPort.available() > 0) { //<>//
     String myString = "";
+    
+    for(int i=0;i<inBuffer.length;i++)
+    {
+      inBuffer[i] = '\0';
+    }
+    
     if (!mockupSerial) {
       try {
         serialPort.readBytesUntil('\r', inBuffer);
+        //serialPort.clear();
       }
       catch (Exception e) {
+        print(e);
       }
       myString = new String(inBuffer);
     }
@@ -189,8 +197,15 @@ void draw() {
       myString = mockupSerialFunction();
     }
 
-    //println(myString);
+    println(myString);
 
+    String firstLetter = String.valueOf(myString.charAt(0));
+    //if(firstLetter.equals(" ")) return ;
+    if(firstLetter.equals("#")) return ;
+    if(firstLetter.equals("\r")) return ;
+    if(firstLetter.equals("\n")) return ;
+    if(myString.length() == 0) return;
+    
     // split the string at delimiter (space)
     String[] nums = split(myString, ' ');
     
@@ -224,6 +239,7 @@ void draw() {
         }
       }
       catch (Exception e) {
+        print(e);
       }
 
       // update line graph
@@ -237,6 +253,7 @@ void draw() {
         }
       }
       catch (Exception e) {
+          print(e);
       }
     }
   }
@@ -288,16 +305,16 @@ void controlEvent(ControlEvent theEvent) {
         control_inputs[0] = value;
         foo = 1;
       } else if ( parameter.equals("Kp") ) {
-        control_inputs[1] = value;
+        control_inputs[2] = value;
         foo = 1;       
       } else if (parameter.equals("Ki") ) {
-        control_inputs[2] = value;
+        control_inputs[3] = value;
         foo = 1;        
       } else if (parameter.equals("Kd") ) {
-        control_inputs[3] = value;
+        control_inputs[4] = value;
         foo = 1;
       } else if (parameter.equals("setpoint_ac") ) {
-        control_inputs[4] = value;
+        control_inputs[1] = value;
         foo = 1;        
       }
      

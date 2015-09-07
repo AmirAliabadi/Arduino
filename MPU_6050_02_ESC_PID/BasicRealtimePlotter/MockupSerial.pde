@@ -9,7 +9,7 @@ String mockupSerialFunction() {
   else if (mockupValue < -100)
     mockupDirection = 10;
   String r = "";
-  for (int i = 0; i<6; i++) {
+  for (int i = 0; i<max_data_points; i++) {
     switch (i) {
     case 0:
       r += mockupValue+" ";
@@ -29,10 +29,13 @@ String mockupSerialFunction() {
     case 5:
       r += mockupValue/32+" ";
       break;
+    case 6:
+      r += mockupValue/14+" ";
+      break;      
     }
-    if (i < 7)
+    if (i < max_data_points+1)
       r += '\r';
   }
-  delay(10);
+  delay(1);
   return r;
 }

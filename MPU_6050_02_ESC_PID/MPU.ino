@@ -6,15 +6,15 @@ void init_mpu()
 {
   if (!dmp_ready)
   {
-    Serial.println(F("Initializing MPU I2C connection..."));
+    Serial.println(F("#Initializing MPU I2C connection..."));
     mpu.initialize();
 
     // verify connection
-    Serial.println(F("Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+    Serial.println(F("#Testing device connections..."));
+    Serial.println(mpu.testConnection() ? F("#MPU6050 connection successful") : F("MPU6050 connection failed"));
 
     // load and configure the DMP
-    Serial.println(F("Initializing DMP..."));
+    Serial.println(F("#Initializing DMP..."));
     devStatus = mpu.dmpInitialize();
 
     // Supply your own gyro offsets here, scaled for min sensitivity
@@ -29,16 +29,16 @@ void init_mpu()
     if (devStatus == 0)
     {
       // turn on the DMP, now that it's ready
-      Serial.println(F("Enabling DMP..."));
+      Serial.println(F("#Enabling DMP..."));
       mpu.setDMPEnabled(true);
 
       // enable Arduino interrupt detection
-      Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+      Serial.println(F("#Enabling interrupt detection (Arduino external interrupt 0)..."));
       attachInterrupt(0, dmpDataReady, RISING);
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
-      Serial.println(F("DMP ready! Waiting for first interrupt..."));
+      Serial.println(F("#DMP ready! Waiting for first interrupt..."));
       dmpReady = true;
 
       // get expected DMP packet size for later comparison
@@ -54,7 +54,7 @@ void init_mpu()
       // 1 = initial memory load failed
       // 2 = DMP configuration updates failed
       // (if it's going to break, usually the code will be 1)
-      Serial.print(F("DMP Initialization failed (code "));
+      Serial.print(F("#DMP Initialization failed (code "));
       Serial.print(devStatus);
       Serial.println(F(")"));
     }
@@ -80,8 +80,9 @@ bool read_mpu()
     mpu.resetFIFO();
 
 #ifdef DEBUG
-    Serial.println(F("FIFO overflow!"));
+    Serial.println(F("#FIFO overflow!"));
 #endif
+
     return false;
 
   } // otherwise, check for DMP data ready interrupt (this should happen frequently)
@@ -110,9 +111,9 @@ bool read_mpu()
     ypr[AC] = (ypr[AC]) * 180.0 / M_PI ;
     ypr[BD] = (ypr[BD]) * 180.0 / M_PI ;
 
-    ypr[YW] = (float)((int)((ypr[YW] * 10.0) + 0.5))/10.0;
-    ypr[AC] = (float)((int)((ypr[AC] * 10.0) + 0.5))/10.0;
-    ypr[BD] = (float)((int)((ypr[BD] * 10.0) + 0.5))/10.0;
+    ypr[YW] = (float)((int)((ypr[YW] * 1.0) + 0.5))/1.0;
+    ypr[AC] = (float)((int)((ypr[AC] * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)((ypr[BD] * 1.0) + 0.5))/1.0;
  
     //if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
     //if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
