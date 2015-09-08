@@ -2,7 +2,7 @@
   "bcMaxY": "180",
   "Kp": ".55",
   "lgMaxY": "60",
-  "motors_onoff": "1.0",
+  "motors_onoff": "0.0",
   "setpoint_ac": "0.0",
   "lgMultiplier2": "1",
   "lgMultiplier3": "1",

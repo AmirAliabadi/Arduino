@@ -4,11 +4,10 @@ void balance_process()
 {
   if(esc_ready)
   {
-    if(abs(ypr[AC]) > 39.0) 
+    if(abs(ypr[AC]) > 45.0) 
     {
-      if(esc_ready) {
-        disarm_esc();
-      } 
+      disarm_esc();
+     
       Serial.print("#esc disarmed : ");
       log_data(0.0,0.0);              
       return;
@@ -20,7 +19,7 @@ void balance_process()
       {   
         mpu_debug_info_hz = millis();       
              
-        Serial.println("#esc not ready : ");
+        Serial.print("#esc not ready : ");
         log_data(0.0,0.0); 
       }     
 

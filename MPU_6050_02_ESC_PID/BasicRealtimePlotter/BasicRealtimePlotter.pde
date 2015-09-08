@@ -172,10 +172,11 @@ void setup() {
 
 byte[] inBuffer = new byte[100]; // holds serial message
 int i = 0; // loop variable
+
+
 void draw() {
-  
-  /* Read serial and update values */
-  if (mockupSerial || serialPort.available() > 0) { //<>//
+ /* Read serial and update values */
+  if (mockupSerial || serialPort.available() > 0) {
     String myString = "";
     
     for(int i=0;i<inBuffer.length;i++)
@@ -269,8 +270,12 @@ void draw() {
     LineGraph.GraphColor = graphColors[i];
     if (int(getPlotterConfigString("lgVisible"+(i+1))) == 1)
       LineGraph.LineGraph(lineGraphSampleNumbers, lineGraphValues[i]);
-  }
+  }     //<>//
 }
+
+void serialEvent(Serial serialPort) { 
+ 
+} 
 
 // called each time the chart settings are changed by the user 
 void setChartSettings() {
