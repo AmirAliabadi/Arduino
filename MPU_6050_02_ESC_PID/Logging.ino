@@ -53,7 +53,7 @@ void log_data2(float va, float vc)
   Serial.print(" ");
   Serial.print(input_ypr[AC], 2);
   Serial.print(" ");
-  Serial.print(setpoint_ac);
+  Serial.print(setpoint_ac, 2);
   Serial.print(" ");    
   Serial.print(output_ac, 2);
   Serial.print(" ");
@@ -61,11 +61,11 @@ void log_data2(float va, float vc)
 //  Serial.print(" ");
 //  Serial.print(vc, 2);
 //  Serial.print(" ");
-  Serial.print(ac_pid.pterm,4);
+  Serial.print(ac_pid.pterm, 4);
   Serial.print(" ");
-  Serial.print(ac_pid.iterm,4);
+  Serial.print(ac_pid.iterm, 4);
   Serial.print(" ");
-  Serial.print(ac_pid.dterm,4);
+  Serial.print(ac_pid.dterm, 4);
   Serial.print(" ");
 //  Serial.print(ac_pid.GetKp());
 //  Serial.print(" ");

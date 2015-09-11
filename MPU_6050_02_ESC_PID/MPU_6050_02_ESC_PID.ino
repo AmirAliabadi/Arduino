@@ -7,6 +7,9 @@
 #include "MPU6050_6Axis_MotionApps20.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
+#include "foo.h"
+
+
 #define DEBUG
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
