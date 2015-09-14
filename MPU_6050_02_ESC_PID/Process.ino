@@ -15,7 +15,7 @@ void balance_process()
   }
   else 
   {
-      if (millis() - mpu_debug_info_hz > DELAY)
+      if (millis() - mpu_debug_info_hz > LOG_FREQUENCY)
       {   
         mpu_debug_info_hz = millis();       
              
@@ -97,7 +97,7 @@ void balance_process()
   //esc_b.writeMicroseconds(b);
   //esc_d.writeMicroseconds(d);
 
-  if (millis() - mpu_debug_info_hz > DELAY)
+  if (millis() - mpu_debug_info_hz > LOG_FREQUENCY)
   {
     mpu_debug_info_hz = millis();
     

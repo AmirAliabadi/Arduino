@@ -1,3 +1,5 @@
+#include "Config.h"
+
 #include <Servo.h>
 #include <PID_v1.h>
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -9,9 +11,6 @@
 
 #define DEBUG
 
-#define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-#define DELAY  50 // DEBUG Logging interval
-
 //////////////////////////////////////////////////////////////////
 // function pointer to what should be happing in the loop()
 void (*process)(void);
@@ -21,15 +20,6 @@ void (*process)(void);
 ////////////////////////////////////////////////////////////////
 // MPU setup
 MPU6050 mpu;
-
-// 798	-738	1310	34	31	31
-// 952	-584	1464	34	31	31
-#define MPU6050_ACCEL_OFFSET_X 952
-#define MPU6050_ACCEL_OFFSET_Y -584
-#define MPU6050_ACCEL_OFFSET_Z 1464
-#define MPU6050_GYRO_OFFSET_X  34
-#define MPU6050_GYRO_OFFSET_Y  31
-#define MPU6050_GYRO_OFFSET_Z  31
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -50,42 +40,11 @@ float ypr[3] = {0.0f, 0.0f, 0.0f};
 float ypr_offset[3] = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 
-/*
-                A
-                |
-                |
-        D -----[Y]----- B Pitch
-                |
-                |Roll
-                C
-*/
-#define YW 0
-#define AC 2
-#define BD 1
-////////////////////////////////////////////////////////////////
+bool have_first = false;
+
 
 ////////////////////////////////////////////////////////////////
-// throttle
-#define THROTTLE_PIN 0
-
-////////////////////////////////////////////////////////////////
-// PID Tunning with a POT
-#define Kp_PIN 1
-#define Ki_PIN 2
-#define Kd_PIN 3
-
-////////////////////////////////////////////////////////////////
-// ESC Settings
-#define ESC_ARM_DELAY 3000
-//#define MAX_SIGNAL 2000		// Simulate throttle at full
-#define MAX_THRUST 1400   // safety setting while testing.
-#define MIN_THRUST 1130   // motor is off below this value
-#define MIN_SIGNAL 1100		// Minimum ESC signal to ARM less than or equal to this should turn off motor completely
-#define MOTOR_PIN_A 9		// ESC signal wire conected to pin 9
-#define MOTOR_PIN_B 111		// ESC signal wire conected to pin ??
-#define MOTOR_PIN_C 6		// ESC signal wire conected to pin 6
-#define MOTOR_PIN_D 112		// ESC signal wire conected to pin ??
-
+// ESC 
 Servo esc_a;
 Servo esc_b;
 Servo esc_c;
@@ -117,16 +76,12 @@ boolean dmp_ready = false;
 boolean esc_ready = false;
 boolean pid_ready = false;
 
-
 float thrust = 0.0;
-#define NEUTRAL_THRUST 0.0
 
 // thrust, setpoint_ac, Kp, Ki, Kd, 
 float input_values[10] = {0.0,0.0,
                           0.5,0.055,0.201,
                           0.0,0.0,0.0,0.0,0.0};
-
-//(1250 - 1100)
 ////////////////////////////////////////////////////////////////
 
 
@@ -185,7 +140,7 @@ void loop()
   else
   {
     // mpu was not read
-    if ( millis() - last_mpu_read > DELAY )
+    if ( millis() - last_mpu_read > LOG_FREQUENCY )
     {
       // no sucessful mpu reads for awhile
       // something is wrong

@@ -43,6 +43,12 @@ void log_data(float va, float vc)
 
   Serial.print("\t");
   Serial.print(ac_pid.GetKd(), 4);
+
+  Serial.print("\t");
+  Serial.print(mpu.getDLPFMode(), 4);
+
+  Serial.print("\t");
+  Serial.print(mpu.getDHPFMode(), 4);  
   
   Serial.println("");  
 }

@@ -26,7 +26,11 @@ boolean readCsvToVector(float* pidVector)
     number[j] = '\0';
     j = 0;
     pidVector[k++] = atof(number);
+
+    Serial.print(pidVector[k-1],4);
+    Serial.print("\t");
   }
+  Serial.println("");
   return 1;
 }
 
