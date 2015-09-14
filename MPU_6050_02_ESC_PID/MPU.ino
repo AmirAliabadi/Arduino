@@ -32,14 +32,26 @@ void init_mpu()
       mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
     
-      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
 //#define MPU6050_DLPF_BW_42          0x03
 //#define MPU6050_DLPF_BW_20          0x04
 //#define MPU6050_DLPF_BW_10          0x05
-//#define MPU6050_DLPF_BW_5           0x06  
+//#define MPU6050_DLPF_BW_5           0x06
+/*
+* DLPF_CFG | Bandwidth | Delay | Bandwidth | Delay | Sample Rate
+* ---------+-----------+--------+-----------+--------+-------------
+* 0         | 260Hz     | 0ms     | 256Hz   | 0.98ms  | 8kHz
+* 1         | 184Hz     | 2.0ms   | 188Hz   | 1.9ms   | 1kHz
+* 2         | 94Hz      | 3.0ms   | 98Hz    | 2.8ms   | 1kHz
+* 3         | 44Hz      | 4.9ms   | 42Hz    | 4.8ms   | 1kHz
+* 4         | 21Hz      | 8.5ms   | 20Hz    | 8.3ms   | 1kHz
+* 5         | 10Hz      | 13.8ms  | 10Hz    | 13.4ms  | 1kHz
+* 6         | 5Hz       | 19.0ms  | 5Hz     | 18.6ms  | 1kHz
+* 7         | -- Reserved -- | -- Reserved -- | Reserved  
+*/
 
 //      mpu.setDHPFMode(MPU6050_DHPF_0P63);
 //#define MPU6050_DHPF_RESET          0x00
@@ -124,9 +136,9 @@ bool read_mpu()
     //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
     //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
-    ypr[YW] = (ypr[YW]) * 180.0 / M_PI ;
-    ypr[AC] = (ypr[AC]) * 180.0 / M_PI ;
-    ypr[BD] = (ypr[BD]) * 180.0 / M_PI ;
+    ypr[YW] = ( (ypr[YW]) * 180.0 / M_PI ); // - 0.0;
+    ypr[AC] = ( (ypr[AC]) * 180.0 / M_PI ) - 2.20;
+    ypr[BD] = ( (ypr[BD]) * 180.0 / M_PI ); // - 0.0;
 
     ypr[YW] = (float)((int)((ypr[YW] * 10.0) + 0.5))/10.0;
     ypr[AC] = (float)((int)((ypr[AC] * 10.0) + 0.5))/10.0;
