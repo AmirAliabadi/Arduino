@@ -45,7 +45,8 @@ void setup()
 
 void loop()
 {
-  esc();
+  //esc();
+  pid();
 }
 
 void esc()
@@ -64,15 +65,15 @@ void esc()
 
 void pid()
 {
-  float p = map(analogRead(P_PIN),0,644,0,10000.0)/1000.0;
-  float i = map(analogRead(I_PIN),0,644,0,10000.0)/1000.0;
-  float d = map(analogRead(D_PID),0,644,0,10000.0)/1000.0;
+  float p = map(analogRead(P_PIN),0,644,0,100000.0)/20000.0;
+  float i = map(analogRead(I_PIN),0,644,0,100000.0)/50000.0;
+  float d = map(analogRead(D_PID),0,644,0,100000.0)/30000.0;
 
   if( millis() - last > 200 ) {
     last = millis();  
-    Serial.print((int)(p*10.0+.5)/10.0);Serial.print("\t");
-    Serial.print((int)(i*10.0+.5)/10.0);Serial.print("\t");
-    Serial.print((int)(d*10.0+.5)/10.0);Serial.println("\t");
+    Serial.print((int)(p*1000.0+.5)/1000.0,4);Serial.print("\t");
+    Serial.print((int)(i*1000.0+.5)/1000.0,4);Serial.print("\t");
+    Serial.print((int)(d*1000.0+.5)/1000.0,4);Serial.println("\t");
   }
 
 }

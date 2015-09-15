@@ -104,11 +104,11 @@ void balance_process()
 #ifdef DEBUG    
     
     //log_pid_tuning(kp,ki,kd);
-    log_data(va, vc);
+    //log_data(va, vc);
     // log_graphing_data(va,vc);
     //log_data(input_values);
     //plot(va,vc);
-    //log_data2(va, vc);
+    log_data2(va, vc);
         
     //print_mpu_readings(mode,fifoBuffer);
 #endif

@@ -48,7 +48,7 @@ void setup() {
   graphColors[3] = color(62, 12, 232);
   graphColors[4] = color(13, 255, 243);
   graphColors[5] = color(200, 46, 232);
-  graphColors[6] = color(200, 46, 232);
+  graphColors[6] = color(200, 46, 0);
   graphColors[7] = color(200, 75, 232);
   graphColors[8] = color(200, 122, 232);
   graphColors[9] = color(200, 46, 232);
@@ -62,11 +62,11 @@ void setup() {
   // gui
   cp5 = new ControlP5(this);
   
-  control_inputs[0] = "0.0";
-  control_inputs[1] = getPlotterConfigString("Kp");
-  control_inputs[2] = getPlotterConfigString("Ki");
-  control_inputs[3] = getPlotterConfigString("Kd");
-  control_inputs[4] = "0.0";  
+  control_inputs[0] = "0.0"; // thrust
+  control_inputs[1] = "0.0"; // setpoint
+  control_inputs[2] = getPlotterConfigString("Kp");
+  control_inputs[3] = getPlotterConfigString("Ki");
+  control_inputs[4] = getPlotterConfigString("Kd");
   
   // init charts
   setChartSettings();
@@ -106,13 +106,13 @@ void setup() {
   cp5.addTextlabel("on/off2").setText("on/off").setPosition(x=13, y=20).setColor(0);
   cp5.addTextlabel("multipliers2").setText("multipliers").setPosition(x=55, y).setColor(0);
   
-  cp5.addTextfield("bcMultiplier1").setPosition(x=60, y=30).setText(getPlotterConfigString("bcMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier2").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier3").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier3")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier4").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier5").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier6").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("bcMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-thrust").setPosition(x=60, y=30).setText(getPlotterConfigString("bcMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-input").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-setpoint").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier3")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-output").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-p-term").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-i-term").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("bc-d-term").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("bcMultiplier8").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier8")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("bcMultiplier9").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier9")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
 //  cp5.addTextfield("bcMultiplier10").setPosition(x, y=y+40).setText(getPlotterConfigString("bcMultiplier10")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
@@ -134,13 +134,13 @@ void setup() {
 
   cp5.addTextlabel("label").setText("on/off").setPosition(x=13, y=320).setColor(0); //y+90
   cp5.addTextlabel("multipliers").setText("multipliers").setPosition(x=55, y).setColor(0);
-  cp5.addTextfield("lgMultiplier1").setPosition(x=60, y=y+10).setText(getPlotterConfigString("lgMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier2").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier3").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier3")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier4").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier5").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier6").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
-  cp5.addTextfield("lgMultiplier7").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("thrust").setPosition(x=60, y=y+10).setText(getPlotterConfigString("lgMultiplier1")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("input").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier2")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("setpoint").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier3")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("output").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier4")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("p-term").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier5")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("i-term").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier6")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
+  cp5.addTextfield("d-term").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier7")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier8").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier8")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier9").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier9")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);
 //  cp5.addTextfield("lgMultiplier10").setPosition(x, y=y+40).setText(getPlotterConfigString("lgMultiplier10")).setColorCaptionLabel(0).setWidth(40).setAutoClear(false);  
@@ -163,10 +163,11 @@ void setup() {
 
   cp5.addToggle("motors_onoff").setPosition(x, y=620).setValue(false).setMode(ControlP5.SWITCH);
   cp5.addTextfield("Thrust").setPosition(x+=45, y).setValue("0.0").setWidth(40).setAutoClear(false);
+  cp5.addTextfield("setpoint_ac").setPosition(x+=45, y).setValue("0.0").setWidth(40).setAutoClear(false);
   cp5.addTextfield("Kp").setPosition(x+=45, y).setValue((getPlotterConfigString("Kp"))).setWidth(40).setAutoClear(false);
   cp5.addTextfield("Ki").setPosition(x+=45, y).setValue((getPlotterConfigString("Ki"))).setWidth(40).setAutoClear(false);
   cp5.addTextfield("Kd").setPosition(x+=45, y).setValue((getPlotterConfigString("Kd"))).setWidth(40).setAutoClear(false);  
-  cp5.addTextfield("setpoint_ac").setPosition(x+=45, y).setValue("0.0").setWidth(40).setAutoClear(false);  
+  
   
 }
 
@@ -175,10 +176,106 @@ int i = 0; // loop variable
 
 
 void draw() {
- /* Read serial and update values */
-  if (mockupSerial || serialPort.available() > 0) {
-    String myString = "";
+ ///* Read serial and update values */
+ // if (mockupSerial || serialPort.available() > 0) {
+ //   String myString = "";
     
+ //   for(int i=0;i<inBuffer.length;i++)
+ //   {
+ //     inBuffer[i] = '\0';
+ //   }
+    
+ //   if (!mockupSerial) {
+ //     try {
+ //       serialPort.readBytesUntil('\r', inBuffer);
+ //       //serialPort.clear();
+ //     }
+ //     catch (Exception e) {
+ //       print(e);
+ //     }
+ //     myString = new String(inBuffer);
+ //   }
+ //   else {
+ //     myString = mockupSerialFunction();
+ //   }
+
+ //   println(myString);
+
+ //   String firstLetter = String.valueOf(myString.charAt(0));
+ //   //if(firstLetter.equals(" ")) return ;
+ //   if(firstLetter.equals("#")) return ;
+ //   if(firstLetter.equals("\r")) return ;
+ //   if(firstLetter.equals("\n")) return ;
+ //   if(myString.length() == 0) return;
+    
+ //   // split the string at delimiter (space)
+ //   String[] nums = split(myString, ' ');
+    
+ //   // count number of bars and line graphs to hide
+ //   int numberOfInvisibleBars = 0;
+ //   for (i=0; i<max_data_points; i++) {
+ //     if (int(getPlotterConfigString("bcVisible"+(i+1))) == 0) {
+ //       numberOfInvisibleBars++;
+ //     }
+ //   }
+ //   int numberOfInvisibleLineGraphs = 0;
+ //   for (i=0; i<max_data_points; i++) {
+ //     if (int(getPlotterConfigString("lgVisible"+(i+1))) == 0) {
+ //       numberOfInvisibleLineGraphs++;
+ //     }
+ //   }
+ //   // build a new array to fit the data to show
+ //   barChartValues = new float[max_data_points-numberOfInvisibleBars];
+
+ //   // build the arrays for bar charts and line graphs
+ //   int barchartIndex = 0;
+ //   for (i=0; i<nums.length; i++) {
+
+ //     // update barchart
+ //     try {
+ //       if (int(getPlotterConfigString("bcVisible"+(i+1))) == 1) {
+ //         if (barchartIndex < barChartValues.length)
+ //           barChartValues[barchartIndex++] = float(nums[i])*float(getPlotterConfigString("bcMultiplier"+(i+1)));
+ //       }
+ //       else {
+ //       }
+ //     }
+ //     catch (Exception e) {
+ //       print(e);
+ //     }
+
+ //     // update line graph
+ //     try {
+ //       if (i<lineGraphValues.length) {
+ //         for (int k=0; k<lineGraphValues[i].length-1; k++) {
+ //           lineGraphValues[i][k] = lineGraphValues[i][k+1];
+ //         }
+
+ //         lineGraphValues[i][lineGraphValues[i].length-1] = float(nums[i])*float(getPlotterConfigString("lgMultiplier"+(i+1)));
+ //       }
+ //     }
+ //     catch (Exception e) {
+ //         print(e);
+ //     }
+ //   }
+ // }
+
+  // draw the bar chart
+  background(255); 
+  BarChart.DrawAxis();              
+  BarChart.Bar(barChartValues); // This draws a bar graph of Array4
+
+  // draw the line graphs
+  LineGraph.DrawAxis();
+  for (int i=0;i<lineGraphValues.length; i++) {
+    LineGraph.GraphColor = graphColors[i];
+    if (int(getPlotterConfigString("lgVisible"+(i+1))) == 1)
+      LineGraph.LineGraph(lineGraphSampleNumbers, lineGraphValues[i]);
+  }     //<>//
+}
+
+void serialEvent(Serial serialPort) { 
+    String myString = "";
     for(int i=0;i<inBuffer.length;i++)
     {
       inBuffer[i] = '\0';
@@ -198,14 +295,14 @@ void draw() {
       myString = mockupSerialFunction();
     }
 
-    println(myString);
-
     String firstLetter = String.valueOf(myString.charAt(0));
-    //if(firstLetter.equals(" ")) return ;
-    if(firstLetter.equals("#")) return ;
+    if(firstLetter.equals(" ")) return ;
     if(firstLetter.equals("\r")) return ;
     if(firstLetter.equals("\n")) return ;
     if(myString.length() == 0) return;
+    
+    //println(myString);
+    if(firstLetter.equals("#")) return ;    
     
     // split the string at delimiter (space)
     String[] nums = split(myString, ' ');
@@ -257,24 +354,7 @@ void draw() {
           print(e);
       }
     }
-  }
 
-  // draw the bar chart
-  background(255); 
-  BarChart.DrawAxis();              
-  BarChart.Bar(barChartValues); // This draws a bar graph of Array4
-
-  // draw the line graphs
-  LineGraph.DrawAxis();
-  for (int i=0;i<lineGraphValues.length; i++) {
-    LineGraph.GraphColor = graphColors[i];
-    if (int(getPlotterConfigString("lgVisible"+(i+1))) == 1)
-      LineGraph.LineGraph(lineGraphSampleNumbers, lineGraphValues[i]);
-  }     //<>//
-}
-
-void serialEvent(Serial serialPort) { 
- 
 } 
 
 // called each time the chart settings are changed by the user 
