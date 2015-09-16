@@ -15,9 +15,9 @@ void balance_process()
   }
   else 
   {
-      if (millis() - mpu_debug_info_hz > LOG_FREQUENCY)
+      if (millis() - last_log > LOG_FREQUENCY)
       {   
-        mpu_debug_info_hz = millis();       
+        last_log = millis();       
              
         Serial.print("#esc not ready : ");
         log_data(0.0,0.0); 
@@ -28,22 +28,15 @@ void balance_process()
   
   thrust = read_throttle();
 
-  float va = MIN_SIGNAL;
-  float vb = MIN_SIGNAL;
-  float vc = MIN_SIGNAL;
-  float vd = MIN_SIGNAL;
-
-  setpoint_ac = read_setpoint_ac();
-  //setpoint_bd = read_setpoint_bd();  
-  //setpoint_yw = read_setpoint_yw();    
-  
   if(thrust > NEUTRAL_THRUST) {
+
+    setpoint_ac = read_setpoint_ac();
+    //setpoint_bd = read_setpoint_bd();  
+    //setpoint_yw = read_setpoint_yw();  
 
     if(!pid_ready) init_pid();
 
-    double kp = read_kp();
-    double ki = read_ki();
-    double kd = read_kd();
+    kp = read_kp(); ki = read_ki(); kd = read_kd();
     
     yw_pid.SetTunings(kp, ki, kd);  
     ac_pid.SetTunings(kp, ki, kd);
@@ -69,8 +62,8 @@ void balance_process()
     //
     //////////////////////////////////////////////////////
     
-    float v_ac = thrust;
-    float v_bd = thrust;
+    v_ac = thrust;
+    v_bd = thrust;
 
     va = MIN_SIGNAL + (v_ac + output_ac);
     vc = MIN_SIGNAL + (v_ac - output_ac);
@@ -89,6 +82,11 @@ void balance_process()
   }
   else 
   {
+    va = MIN_SIGNAL;
+    vb = MIN_SIGNAL;
+    vc = MIN_SIGNAL;
+    vd = MIN_SIGNAL;    
+    
     pid_off();
   }
 
@@ -97,18 +95,18 @@ void balance_process()
   //esc_b.writeMicroseconds(b);
   //esc_d.writeMicroseconds(d);
 
-  if (millis() - mpu_debug_info_hz > LOG_FREQUENCY)
+  if (millis() - last_log > LOG_FREQUENCY)
   {
-    mpu_debug_info_hz = millis();
+    last_log = millis();
     
 #ifdef DEBUG    
     
     //log_pid_tuning(kp,ki,kd);
-    //log_data(va, vc);
+    log_data(va, vc);
     // log_graphing_data(va,vc);
     //log_data(input_values);
     //plot(va,vc);
-    log_data2(va, vc);
+    //log_data2(va, vc);
         
     //print_mpu_readings(mode,fifoBuffer);
 #endif

@@ -49,6 +49,14 @@ Servo esc_a;
 Servo esc_b;
 Servo esc_c;
 Servo esc_d;
+
+float va = MIN_SIGNAL;
+float vb = MIN_SIGNAL;
+float vc = MIN_SIGNAL;
+float vd = MIN_SIGNAL;
+
+float v_ac = 0;
+float v_bd = 0;
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -66,12 +74,17 @@ double input_ypr[3] = {0.0, 0.0, 0.0};
 PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 0.7, 0.950, 0.011, DIRECT);
 PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, .5, 0.0055, 0.201, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, .5, 0.0055, 0.201, REVERSE);
+
+double kp = 0;
+double ki = 0;
+double kd = 0;
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
 // MISC items
 long last_mpu_read;
-long mpu_debug_info_hz;
+long last_log;
+
 boolean dmp_ready = false;
 boolean esc_ready = false;
 boolean pid_ready = false;
@@ -82,6 +95,9 @@ float thrust = 0.0;
 float input_values[10] = {0.0,0.0,
                           0.5,0.055,0.201,
                           0.0,0.0,0.0,0.0,0.0};
+
+// float plotter_packet[11] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
+                          
 ////////////////////////////////////////////////////////////////
 
 
@@ -128,10 +144,10 @@ void loop()
 {
   if (!dmpReady) return;
 
-  // wait for MPU interrupt or extra packet(s) available
-  while (!mpuInterrupt && fifoCount < packetSize)
-  {
-  }
+//  // wait for MPU interrupt or extra packet(s) available
+//  while (!mpuInterrupt && fifoCount < packetSize)
+//  {
+//  }
 
   if ( read_mpu() )
   {

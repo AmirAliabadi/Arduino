@@ -32,7 +32,7 @@ void init_mpu()
       mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
     
-      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -73,7 +73,7 @@ void init_mpu()
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
 
-      mpu_debug_info_hz = last_mpu_read = millis();
+      last_log = last_mpu_read = millis();
 
       dmp_ready = true;
     }

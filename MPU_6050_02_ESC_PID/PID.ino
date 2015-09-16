@@ -61,7 +61,10 @@ void init_pid()
     setpoint_bd = 0.0 ;
     setpoint_yw = 0.0 ;
 
-    //turn the PID on
+    output_yw = 0;
+    output_ac = 0;
+    output_bd = 0;
+
     yw_pid.SetMode(AUTOMATIC);
     ac_pid.SetMode(AUTOMATIC);
     bd_pid.SetMode(AUTOMATIC);

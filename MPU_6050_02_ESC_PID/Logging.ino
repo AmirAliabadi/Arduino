@@ -37,24 +37,37 @@ void log_data(float va, float vc)
 
   Serial.print("\t");
   Serial.print(ac_pid.GetKp(), 4);
-
   Serial.print("\t");
   Serial.print(ac_pid.GetKi(), 4);
-
   Serial.print("\t");
   Serial.print(ac_pid.GetKd(), 4);
 
-  Serial.print("\t");
-  Serial.print(mpu.getDLPFMode(), 4);
+//  Serial.print("\t");
+//  Serial.print(mpu.getDLPFMode(), 4);
 
-  Serial.print("\t");
-  Serial.print(mpu.getDHPFMode(), 4);  
+//  Serial.print("\t");
+//  Serial.print(mpu.getDHPFMode(), 4);  
   
   Serial.println("");  
 }
 
 void log_data2(float va, float vc)
 {
+//  plotter_packet[0] = thrust;
+//  plotter_packet[1] = input_ypr[AC];
+//  plotter_packet[2] = setpoint_ac;  
+//  plotter_packet[3] = output_ac;  
+//  plotter_packet[4] = va;  
+//  plotter_packet[5] = vc;    
+//  plotter_packet[6] = ac_pid.pterm;  
+//  plotter_packet[7] = ac_pid.iterm;  
+//  plotter_packet[8] = ac_pid.dterm;  
+//  plotter_packet[9] = ac_pid.GetKp();  
+//  plotter_packet[10] = ac_pid.GetKi();  
+//  plotter_packet[11] = ac_pid.GetKd(); 
+//  Serial.write(plotter_packet, sizeof(plotter_packet)/sizeof(float));
+  
+
   Serial.print(thrust, 2); 
   Serial.print(" ");
   Serial.print(input_ypr[AC], 2);
@@ -80,7 +93,7 @@ void log_data2(float va, float vc)
 //  Serial.print(ac_pid.GetKd());
 //  Serial.print(" ");  
 
-  Serial.print("\r");  
+  Serial.print("\r\n");  
 }
 
 
