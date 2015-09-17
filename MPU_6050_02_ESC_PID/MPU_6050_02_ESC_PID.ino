@@ -83,7 +83,6 @@ double kd = 0;
 ////////////////////////////////////////////////////////////////
 // MISC items
 long last_mpu_read;
-long last_log;
 
 boolean dmp_ready = false;
 boolean esc_ready = false;
@@ -95,6 +94,12 @@ float thrust = 0.0;
 float input_values[10] = {0.0,0.0,
                           0.5,0.055,0.201,
                           0.0,0.0,0.0,0.0,0.0};
+
+#ifdef DEBUG 
+long log_line = 0;
+long last_log;
+#endif
+                          
 
 // float plotter_packet[11] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
                           
@@ -144,10 +149,10 @@ void loop()
 {
   if (!dmpReady) return;
 
-//  // wait for MPU interrupt or extra packet(s) available
-//  while (!mpuInterrupt && fifoCount < packetSize)
-//  {
-//  }
+  // wait for MPU interrupt or extra packet(s) available
+  while (!mpuInterrupt && fifoCount < packetSize)
+  {
+  }
 
   if ( read_mpu() )
   {

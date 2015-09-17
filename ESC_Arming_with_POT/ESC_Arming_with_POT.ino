@@ -17,6 +17,7 @@ Servo esc4;
 #define D_PID 2
 
 long last ;
+long log_line = 0;
 
 /*
 1024 seemed to be the min value for motor to start
@@ -65,12 +66,15 @@ void esc()
 
 void pid()
 {
-  float p = map(analogRead(P_PIN),0,644,0,100000.0)/20000.0;
-  float i = map(analogRead(I_PIN),0,644,0,100000.0)/50000.0;
-  float d = map(analogRead(D_PID),0,644,0,100000.0)/30000.0;
+  float p = map(analogRead(P_PIN),0,644,0.0,100000.0)/20000.0;
+  float i = map(analogRead(I_PIN),0,644,0.0,100000.0)/50000.0;
+  float d = map(analogRead(D_PID),0,644,0.0,100000.0)/30000.0;
 
-  if( millis() - last > 200 ) {
+  if( millis() - last > 10 ) {
     last = millis();  
+    Serial.print(log_line++);
+    Serial.print("\t");
+    
     Serial.print((int)(p*1000.0+.5)/1000.0,4);Serial.print("\t");
     Serial.print((int)(i*1000.0+.5)/1000.0,4);Serial.print("\t");
     Serial.print((int)(d*1000.0+.5)/1000.0,4);Serial.println("\t");

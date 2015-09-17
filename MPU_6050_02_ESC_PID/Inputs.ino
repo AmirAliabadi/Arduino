@@ -16,6 +16,8 @@ boolean readCsvToVector(float* pidVector)
   }
   
   byte i = 0, j = 0, k = 0;
+
+  Serial.print("#\t");
   while ( i < len ) {
     while (stream[i] != ',' && i < len) {
       number[j] = stream[i];

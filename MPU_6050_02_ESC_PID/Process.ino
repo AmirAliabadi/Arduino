@@ -7,6 +7,7 @@ void balance_process()
     if(abs(ypr[AC]) > 45.0) 
     {
       disarm_esc();
+      input_values[0] = 0; // throttle to zero      
      
       Serial.print("#esc disarmed : ");
       log_data(0.0,0.0);              

@@ -45,6 +45,11 @@ Kd = .125 * 6.69  = 0.83
 /// GOOD values found by trial and error ////
 /// 0.5, 0.055, 0.201
 /////////////////////////////////////////////
+
+/////////////////////////////////////////////
+These pids tunings are even better, now that I have upped the PID compute cycle
+0.7000  0.0550  0.2010
+/////////////////////////////////////////////
 */
 
 
@@ -57,7 +62,11 @@ void init_pid()
     ac_pid.SetOutputLimits(-255.0, 255.0);
     bd_pid.SetOutputLimits(-255.0, 255.0);
 
-    setpoint_ac = read_setpoint_ac() ; // 0.0
+    yw_pid.SetSampleTime(10);
+    ac_pid.SetSampleTime(10);
+    bd_pid.SetSampleTime(10);
+
+    setpoint_ac = 0.0 ; // read_setpoint_ac() ; // 0.0
     setpoint_bd = 0.0 ;
     setpoint_yw = 0.0 ;
 

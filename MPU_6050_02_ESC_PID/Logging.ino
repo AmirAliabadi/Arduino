@@ -1,3 +1,4 @@
+#ifdef DEBUG 
 
 void log_pid_tuning(double kp, double ki, double kd)
 {
@@ -12,6 +13,9 @@ void log_pid_tuning(double kp, double ki, double kd)
 
 void log_data(float va, float vc)
 {
+  Serial.print(log_line++);
+  Serial.print("\t");
+  
   Serial.print(thrust, 4);
   Serial.print("\t");
   
@@ -112,3 +116,4 @@ void log_data(float* input_values)
   Serial.println("\r\n");
 }
 
+#endif
