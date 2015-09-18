@@ -41,12 +41,18 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  if(esc_ready) return input_values[0];
-  else return 0.0;
+  float foo = MIN_THRUST;
+  if(esc_ready)
+  {
+    foo = input_values[0] > MAX_INPUT_THRUST ? MAX_INPUT_THRUST : input_values[0];
+    foo = input_values[0] < MIN_THRUST ? MIN_THRUST : input_values[0] ;
+  }
+  return foo;
   
-  float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
-
-  return (float)( (int) (((foo * 10.0)+.5)/10.0));
+  //#define MAX_INPUT_THRUST  1400    // safety setting while testing.
+  //#define MIN_THRUST        1130    // motor is off below this value
+  //float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
+  //return (float)( (int) (((foo * 10.0)+.5)/10.0));
 }
 
 float read_setpoint_ac()

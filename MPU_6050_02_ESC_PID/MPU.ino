@@ -13,6 +13,8 @@ void init_mpu()
     Serial.println(F("#Testing device connections..."));
     Serial.println(mpu.testConnection() ? F("#MPU6050 connection successful") : F("MPU6050 connection failed"));
 
+    delay(500);
+
     // load and configure the DMP
     Serial.println(F("#Initializing DMP..."));
     devStatus = mpu.dmpInitialize();
@@ -20,10 +22,6 @@ void init_mpu()
     // make sure it worked (returns 0 if so)
     if (devStatus == 0)
     {
-      // turn on the DMP, now that it's ready
-      Serial.println(F("#Enabling DMP..."));
-      mpu.setDMPEnabled(true);
-
       // Supply your own gyro offsets here, scaled for min sensitivity
       mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
       mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
@@ -31,7 +29,10 @@ void init_mpu()
       mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
       mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
-    
+
+      delay(10);
+
+///////////////////////////////////////////////////////////////////
       mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
@@ -61,6 +62,14 @@ void init_mpu()
 //#define MPU6050_DHPF_0P63           0x04
 //#define MPU6050_DHPF_HOLD           0x07          
 
+      delay(10);
+
+      // turn on the DMP, now that it's ready
+      Serial.println(F("#Enabling DMP..."));
+      mpu.setDMPEnabled(true);
+
+      delay(10);
+      
       // enable Arduino interrupt detection
       Serial.println(F("#Enabling interrupt detection (Arduino external interrupt 0)..."));
       attachInterrupt(0, dmpDataReady, RISING);
@@ -140,9 +149,9 @@ bool read_mpu()
     ypr[AC] = ( (ypr[AC]) * 180.0 / M_PI ) - 2.20;
     ypr[BD] = ( (ypr[BD]) * 180.0 / M_PI ); // - 0.0;
 
-    ypr[YW] = (float)((int)((ypr[YW] * 10.0) + 0.5))/10.0;
-    ypr[AC] = (float)((int)((ypr[AC] * 10.0) + 0.5))/10.0;
-    ypr[BD] = (float)((int)((ypr[BD] * 10.0) + 0.5))/10.0;
+    ypr[YW] = (float)((int)((ypr[YW] * 1.0) + 0.5))/1.0;
+    ypr[AC] = (float)((int)((ypr[AC] * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)((ypr[BD] * 1.0) + 0.5))/1.0;
 
     if( have_first )
     {

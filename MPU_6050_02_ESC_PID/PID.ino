@@ -49,6 +49,11 @@ Kd = .125 * 6.69  = 0.83
 /////////////////////////////////////////////
 These pids tunings are even better, now that I have upped the PID compute cycle
 0.7000  0.0550  0.2010
+
+0.6660  0.0000  0.1000 slugish but very little overshoot
+0.8000  0.0000  0.2000
+
+Integral term seems to help with getting closer to desired setpoint
 /////////////////////////////////////////////
 */
 
