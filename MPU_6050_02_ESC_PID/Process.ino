@@ -29,11 +29,18 @@ void balance_process()
   
   thrust = read_throttle();
 
-  if(thrust > NEUTRAL_THRUST) {
+  if(thrust > MIN_INPUT_THRUST) {
 
     setpoint_ac = read_setpoint_ac();
     //setpoint_bd = read_setpoint_bd();  
     //setpoint_yw = read_setpoint_yw();  
+
+    ///
+    // TODO: testing out reset of PID when setpoint changes
+    if( last_setpoint_ac != setpoint_ac ) {pid_off();}
+    //last_setpoint_bd = 0.0;
+    //last_setpoint_yw = 0.0;    
+    ///
 
     if(!pid_ready) init_pid();
 
@@ -66,27 +73,27 @@ void balance_process()
     v_ac = thrust;
     v_bd = thrust;
 
-    va = MIN_SIGNAL + (v_ac + output_ac);
-    vc = MIN_SIGNAL + (v_ac - output_ac);
-    vb = MIN_SIGNAL + (v_bd + output_bd);
-    vd = MIN_SIGNAL + (v_bd - output_bd);
+    va = MIN_ESC_SIGNAL + (v_ac + output_ac);
+    vc = MIN_ESC_SIGNAL + (v_ac - output_ac);
+    vb = MIN_ESC_SIGNAL + (v_bd + output_bd);
+    vd = MIN_ESC_SIGNAL + (v_bd - output_bd);
 
-    va = va <= MIN_THRUST ? MIN_SIGNAL : va;
-    vc = vc <= MIN_THRUST ? MIN_SIGNAL : vc;
-    vb = vb <= MIN_THRUST ? MIN_SIGNAL : vb;
-    vd = vd <= MIN_THRUST ? MIN_SIGNAL : vd;
+    va = va <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : va;
+    vc = vc <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vc;
+    vb = vb <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vb;
+    vd = vd <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vd;
     
-    va = va > MAX_THRUST ? MAX_THRUST : va;
-    vc = vc > MAX_THRUST ? MAX_THRUST : vc;
-    vb = vb > MAX_THRUST ? MAX_THRUST : vb;
-    vd = vd > MAX_THRUST ? MAX_THRUST : vd;  
+    va = va > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : va;
+    vc = vc > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vc;
+    vb = vb > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vb;
+    vd = vd > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vd;  
   }
   else 
   {
-    va = MIN_SIGNAL;
-    vb = MIN_SIGNAL;
-    vc = MIN_SIGNAL;
-    vd = MIN_SIGNAL;    
+    va = MIN_ESC_SIGNAL;
+    vb = MIN_ESC_SIGNAL;
+    vc = MIN_ESC_SIGNAL;
+    vd = MIN_ESC_SIGNAL;    
     
     pid_off();
   }

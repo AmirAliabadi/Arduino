@@ -41,13 +41,11 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  float foo = MIN_THRUST;
   if(esc_ready)
   {
-    foo = input_values[0] > MAX_INPUT_THRUST ? MAX_INPUT_THRUST : input_values[0];
-    foo = input_values[0] < MIN_THRUST ? MIN_THRUST : input_values[0] ;
+    return constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);
   }
-  return foo;
+  return MIN_INPUT_THRUST;
   
   //#define MAX_INPUT_THRUST  1400    // safety setting while testing.
   //#define MIN_THRUST        1130    // motor is off below this value

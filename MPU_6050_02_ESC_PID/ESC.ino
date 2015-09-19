@@ -17,9 +17,9 @@ void init_esc()
 
 void arm_esc()
 {
-  esc_a.writeMicroseconds(MIN_SIGNAL + read_throttle());
+  esc_a.writeMicroseconds(MIN_ESC_SIGNAL + read_throttle());
   //esc_b.writeMicroseconds(MIN_SIGNAL+ read_throttle());
-  esc_c.writeMicroseconds(MIN_SIGNAL + read_throttle());
+  esc_c.writeMicroseconds(MIN_ESC_SIGNAL + read_throttle());
   //esc_d.writeMicroseconds(MIN_SIGNAL+ read_throttle());
 
   delay(ESC_ARM_DELAY);

@@ -46,8 +46,8 @@ void setup()
 
 void loop()
 {
-  //esc();
-  pid();
+  esc();
+  //pid();
 }
 
 void esc()

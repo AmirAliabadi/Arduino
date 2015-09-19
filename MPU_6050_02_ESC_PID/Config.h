@@ -3,9 +3,10 @@
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 #define LOG_FREQUENCY  50 // ms DEBUG Logging interval
 
-#define INIT_CLEARED        0b00000000
-#define INIT_ESC_ARMED      0b00000001
-#define INIT_MOTORS_ENABLED 0b00000010
+#define INIT_CLEARED          0b00000000
+#define INIT_ESC_ARMED        0b00000001
+#define INIT_THROTTLE_ACTIVE  0b00000010
+#define INIT_MOTORS_ENABLED   0b00000100
 
 
 /////////////////////////////////////////
@@ -46,18 +47,13 @@
 ////////////////////////////////////////////////////////////////
 // ESC Settings
 #define ESC_ARM_DELAY 3000
-//#define MAX_ESC_SIGNAL  2000     // Simulate throttle at full
-#define MAX_THRUST        1500    // safety setting while testing.
-#define MAX_INPUT_THRUST  1400    // safety setting while testing.
-#define MIN_THRUST        1130    // motor is off below this value
-#define MIN_SIGNAL        1100    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
+#define MAX_ESC_SIGNAL    1500    // 
+#define MIN_ESC_SIGNAL    1100    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A       9       // ESC signal wire conected to pin 9
 #define MOTOR_PIN_B       111     // ESC signal wire conected to pin ??
 #define MOTOR_PIN_C       6       // ESC signal wire conected to pin 6
 #define MOTOR_PIN_D       112     // ESC signal wire conected to pin ??
 
-
-////////////////////////////////////////////////////////////////
-// MISC
-#define NEUTRAL_THRUST 0.0
-
+// THROTTLE SETTINGS
+#define MAX_INPUT_THRUST  300     // 
+#define MIN_INPUT_THRUST  0       // 

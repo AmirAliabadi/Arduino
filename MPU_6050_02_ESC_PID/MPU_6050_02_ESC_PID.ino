@@ -50,10 +50,10 @@ Servo esc_b;
 Servo esc_c;
 Servo esc_d;
 
-float va = MIN_SIGNAL;
-float vb = MIN_SIGNAL;
-float vc = MIN_SIGNAL;
-float vd = MIN_SIGNAL;
+float va = MIN_ESC_SIGNAL;
+float vb = MIN_ESC_SIGNAL;
+float vc = MIN_ESC_SIGNAL;
+float vd = MIN_ESC_SIGNAL;
 
 float v_ac = 0;
 float v_bd = 0;
@@ -64,6 +64,10 @@ float v_bd = 0;
 double setpoint_ac = 0.0;
 double setpoint_bd = 0.0;
 double setpoint_yw = 0.0;
+
+double last_setpoint_ac = 0.0;
+double last_setpoint_bd = 0.0;
+double last_setpoint_yw = 0.0;
 
 double output_ac = 0.0;
 double output_bd = 0.0;
