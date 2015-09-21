@@ -1,16 +1,41 @@
+void process_off()
+{
+    Serial.print("#processing is off...");
+}
+
+void wait_for_stable()
+{
+  Serial.print("#waiting fo stable readings...");
+  
+  system_check |= INIT_MPU_STABLE;
+  
+  process = &balance_process;
+}
+
 //////////////////////////////////////////////////////////////////////
 // main autopilot routine
 void balance_process()
 {
-  if(esc_ready)
+  float va = MIN_ESC_SIGNAL;
+  float vb = MIN_ESC_SIGNAL;
+  float vc = MIN_ESC_SIGNAL;
+  float vd = MIN_ESC_SIGNAL;
+  
+  float v_ac = 0;
+  float v_bd = 0;
+  
+  if( !(system_check & INIT_ESC_ARMED) )
   {
     if(abs(ypr[AC]) > 45.0) 
     {
       disarm_esc();
-      input_values[0] = 0; // throttle to zero      
+
+      user_inputs.thrust = 0;
      
       Serial.print("#esc disarmed : ");
-      log_data(0.0,0.0);              
+      log_data(0.0,0.0);     
+
+      process = &process_off;
       return;
     }
   }
@@ -26,33 +51,40 @@ void balance_process()
 
       return;
   }
-  
-  thrust = read_throttle();
 
-  if(thrust > MIN_INPUT_THRUST) {
+  if(user_inputs.thrust > MIN_INPUT_THRUST) {
 
-    setpoint_ac = read_setpoint_ac();
-    //setpoint_bd = read_setpoint_bd();  
-    //setpoint_yw = read_setpoint_yw();  
+    if( system_check & !INIT_PID_ON ) init_pid();        
 
-    ///
-    // TODO: testing out reset of PID when setpoint changes
-    if( last_setpoint_ac != setpoint_ac ) {pid_off();}
-    //last_setpoint_bd = 0.0;
-    //last_setpoint_yw = 0.0;    
-    ///
-
-    if(!pid_ready) init_pid();
-
-    kp = read_kp(); ki = read_ki(); kd = read_kd();
+    ////////////////////////////////////////////////////
+    // Reset of PID when setpoint changes
+    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
+    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset();}
+    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset();}
     
-    yw_pid.SetTunings(kp, ki, kd);  
-    ac_pid.SetTunings(kp, ki, kd);
-    bd_pid.SetTunings(kp, ki, kd);
+    user_inputs.setpoint_changed = SETPOINT_UNCHANGED;
+    //
+    ////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////
+    // adaptive PID settings
+    int i = 0;
+    if( abs(user_inputs.setpoint.ac - input_ypr[AC]) > 5 ) i = 1;
+    ac_pid.SetTunings(user_inputs.pid_ac[i].kp, user_inputs.pid_ac[i].ki, user_inputs.pid_ac[i].kd);
+
+    i = 0;
+    if( abs(user_inputs.setpoint.bd - input_ypr[BD]) > 5 ) i = 1;
+    bd_pid.SetTunings(user_inputs.pid_bd[i].kp, user_inputs.pid_bd[i].ki, user_inputs.pid_bd[i].kd);
+
+    i = 0;
+    if( abs(user_inputs.setpoint.yw - input_ypr[YW]) > 5 ) i = 1;
+    yw_pid.SetTunings(user_inputs.pid_yw[i].kp, user_inputs.pid_yw[i].ki, user_inputs.pid_yw[i].kd);      
+    //
+    /////////////////////////////////////////////////
     
-    yw_pid.Compute();
     ac_pid.Compute();
     bd_pid.Compute();
+    yw_pid.Compute();    
 
     //////////////////////////////////////////////////////
     // compute the boom velocity
@@ -69,24 +101,23 @@ void balance_process()
     */
     //
     //////////////////////////////////////////////////////
-    
-    v_ac = thrust;
-    v_bd = thrust;
 
+    /////////////////////////////
+    // compute the boom thrust //
+    v_ac = user_inputs.thrust;
+    v_bd = user_inputs.thrust;
+
+    ////////////////////////
+    // Motor Mix Alorithm //
     va = MIN_ESC_SIGNAL + (v_ac + output_ac);
     vc = MIN_ESC_SIGNAL + (v_ac - output_ac);
     vb = MIN_ESC_SIGNAL + (v_bd + output_bd);
     vd = MIN_ESC_SIGNAL + (v_bd - output_bd);
 
-    va = va <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : va;
-    vc = vc <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vc;
-    vb = vb <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vb;
-    vd = vd <= MIN_ESC_SIGNAL ? MIN_ESC_SIGNAL : vd;
-    
-    va = va > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : va;
-    vc = vc > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vc;
-    vb = vb > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vb;
-    vd = vd > MAX_ESC_SIGNAL ? MAX_ESC_SIGNAL : vd;  
+    va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+    vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+    vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+    vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
   }
   else 
   {
@@ -100,8 +131,8 @@ void balance_process()
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
-  //esc_b.writeMicroseconds(b);
-  //esc_d.writeMicroseconds(d);
+  //esc_b.writeMicroseconds(vb);
+  //esc_d.writeMicroseconds(vd);
 
   if (millis() - last_log > LOG_FREQUENCY)
   {

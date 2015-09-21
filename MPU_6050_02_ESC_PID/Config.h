@@ -4,9 +4,19 @@
 #define LOG_FREQUENCY  50 // ms DEBUG Logging interval
 
 #define INIT_CLEARED          0b00000000
-#define INIT_ESC_ARMED        0b00000001
-#define INIT_THROTTLE_ACTIVE  0b00000010
-#define INIT_MOTORS_ENABLED   0b00000100
+#define INIT_ESC_ATTACHED     0b00000001
+#define INIT_ESC_ARMED        0b00000010
+#define INIT_THROTTLE_ACTIVE  0b00000100
+#define INIT_MOTORS_ENABLED   0b00001000
+#define INIT_MPU_ARMED        0b00010000
+#define INIT_MPU_STABLE       0b00100000
+#define INIT_PID_ON           0b01000000
+
+
+#define SETPOINT_UNCHANGED    0b000
+#define SETPOINT_CHANGED_AC   0b001
+#define SETPOINT_CHANGED_BD   0b010
+#define SETPOINT_CHANGED_YW   0b100
 
 
 /////////////////////////////////////////

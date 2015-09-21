@@ -16,13 +16,13 @@ void log_data(float va, float vc)
   Serial.print(log_line++);
   Serial.print("\t");
   
-  Serial.print(thrust, 4);
+  Serial.print(user_inputs.thrust);
   Serial.print("\t");
   
   Serial.print(input_ypr[AC], 2);
   Serial.print("\t");
   
-  Serial.print(setpoint_ac, 2);
+  Serial.print(user_inputs.setpoint.ac, 2);
   Serial.print("\t");  
     
   Serial.print(output_ac, 2);
@@ -72,11 +72,11 @@ void log_data2(float va, float vc)
 //  Serial.write(plotter_packet, sizeof(plotter_packet)/sizeof(float));
   
 
-  Serial.print(thrust, 2); 
+  Serial.print(user_inputs.thrust); 
   Serial.print(" ");
   Serial.print(input_ypr[AC], 2);
   Serial.print(" ");
-  Serial.print(setpoint_ac, 2);
+  Serial.print(user_inputs.setpoint.ac, 2);
   Serial.print(" ");    
   Serial.print(output_ac, 2);
   Serial.print(" ");
@@ -103,7 +103,7 @@ void log_data2(float va, float vc)
 
 void log_data(float* input_values)
 {
-  Serial.print(input_values[0], 4);
+  Serial.print(input_values[0]);
   Serial.print("\t");
   Serial.print(input_values[1], 4);
   Serial.print("\t");

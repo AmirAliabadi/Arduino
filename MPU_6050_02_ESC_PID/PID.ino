@@ -47,11 +47,22 @@ Kd = .125 * 6.69  = 0.83
 /////////////////////////////////////////////
 
 /////////////////////////////////////////////
+// PID Sample time of 10
 These pids tunings are even better, now that I have upped the PID compute cycle
 0.7000  0.0550  0.2010
 
 0.6660  0.0000  0.1000 slugish but very little overshoot
 0.8000  0.0000  0.2000
+
+// these one seems good
+// very little over should but still not super resonsive when setpoint changes
+0.7770  0.0001  0.3000
+
+
+/////////////////////////////////////
+// bad values:
+0.9000  0.0001  0.5000 -- will hold but push it and it will oscillate like crazy
+
 
 Integral term seems to help with getting closer to desired setpoint
 /////////////////////////////////////////////
@@ -60,8 +71,8 @@ Integral term seems to help with getting closer to desired setpoint
 
 void init_pid()
 {
-  if ( !pid_ready )
-  {
+    system_check &= !INIT_PID_ON ;
+
     //turn the PID on
     yw_pid.SetOutputLimits(-255.0, 255.0);
     ac_pid.SetOutputLimits(-255.0, 255.0);
@@ -71,10 +82,6 @@ void init_pid()
     ac_pid.SetSampleTime(10);
     bd_pid.SetSampleTime(10);
 
-    setpoint_ac = 0.0 ; // read_setpoint_ac() ; // 0.0
-    setpoint_bd = 0.0 ;
-    setpoint_yw = 0.0 ;
-
     output_yw = 0;
     output_ac = 0;
     output_bd = 0;
@@ -83,8 +90,7 @@ void init_pid()
     ac_pid.SetMode(AUTOMATIC);
     bd_pid.SetMode(AUTOMATIC);
 
-    pid_ready = true;
-  }
+    system_check |= INIT_PID_ON ;
 }
 
 void pid_off()
@@ -98,5 +104,5 @@ void pid_off()
     ac_pid.SetMode(MANUAL);
     bd_pid.SetMode(MANUAL);
 
-    pid_ready = false ;
+    system_check &= !INIT_PID_ON ;
 }

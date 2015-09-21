@@ -41,52 +41,24 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  if(esc_ready)
-  {
-    return constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);
-  }
-  return MIN_INPUT_THRUST;
-  
-  //#define MAX_INPUT_THRUST  1400    // safety setting while testing.
-  //#define MIN_THRUST        1130    // motor is off below this value
-  //float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
-  //return (float)( (int) (((foo * 10.0)+.5)/10.0));
+  return user_inputs.thrust;
 }
 
 float read_setpoint_ac()
 {
-  return input_values[1];
-  
-  float foo = map(analogRead(THROTTLE_PIN), 0.0, 668.0, 0.0, 400.0);
-
-  return (float)( (int) (((foo * 10.0)+.5)/10.0));
+  return user_inputs.setpoint.ac ;
 }
 
 double read_kp()
 {
-  return input_values[2];
-  
-  double foo = map(analogRead(Kp_PIN), 0.0, 644.0, 0.0, 10000.0);
-  foo = foo / 1000.0;
-  foo = (double)( (int)((foo * 100.0)+.5) / 100.0 );
-  return foo;
+  return user_inputs.pid_ac[0].kp;    
 }
 double read_ki()
 {
-  return input_values[3];
-  
-  double foo = map(analogRead(Ki_PIN), 0.0, 644.0, 0.0, 10000.0);
-  foo = foo / 2000.0;
-  foo = (double)( (int)((foo * 100.0)+.5) / 100.0 );
-  return foo;
+  return user_inputs.pid_ac[0].ki;  
 }
 double read_kd()
 {
-  return input_values[4];
-  
-  double foo = map(analogRead(Kd_PIN), 0.0, 668.0, 0.0, 10000.0);
-  foo = foo / 1000.0;
-  foo = (double)( (int)((foo * 100.0)+.5) / 100.0 );  
-  return foo;
+  return user_inputs.pid_ac[0].kd;
 }
 ///////////////////////////////////////////////////////////////////////

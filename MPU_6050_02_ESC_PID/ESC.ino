@@ -1,18 +1,15 @@
 
 void init_esc()
 {
-  if ( !esc_ready )
-  {
     Serial.println(F("#Attaching to motor pins"));
     esc_a.attach(MOTOR_PIN_A);
     //esc_b.attach(MOTOR_PIN_B);
     esc_c.attach(MOTOR_PIN_C);
     //esc_d.attach(MOTOR_PIN_D);
 
-    arm_esc();
+    system_check |= INIT_ESC_ATTACHED;
 
-    esc_ready = true;
-  }
+    arm_esc();
 }
 
 void arm_esc()
@@ -23,16 +20,18 @@ void arm_esc()
   //esc_d.writeMicroseconds(MIN_SIGNAL+ read_throttle());
 
   delay(ESC_ARM_DELAY);
+
+  system_check |= INIT_ESC_ARMED;
 }
 
 void disarm_esc()
 {
     Serial.println(F("#Detaching motor pins"));
     esc_a.detach();
-    //esc_b.attach(MOTOR_PIN_B);
+    //esc_b.detach();
     esc_c.detach();
-    //esc_d.attach(MOTOR_PIN_D);  
+    //esc_d.detach();  
 
-    esc_ready = false;
+    system_check &= !(INIT_ESC_ATTACHED | INIT_ESC_ARMED );
 }
 

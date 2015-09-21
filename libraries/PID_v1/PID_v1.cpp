@@ -173,6 +173,12 @@ void PID::Initialize()
    else if(ITerm < outMin) ITerm = outMin;
 }
 
+void PID::Reset()
+{
+	*myOutput = 0;
+	Initialize();
+}
+
 /* SetControllerDirection(...)*************************************************
  * The PID will either be connected to a DIRECT acting process (+Output leads 
  * to +Input) or a REVERSE acting process(+Output leads to -Input.)  we need to

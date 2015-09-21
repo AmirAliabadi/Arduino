@@ -57,6 +57,8 @@ class PID
 	double iterm;
 	double dterm;
 	
+	void Reset();
+	
   private:
 	void Initialize();
 	

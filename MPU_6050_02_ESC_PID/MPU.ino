@@ -4,8 +4,8 @@
 //
 void init_mpu()
 {
-  if (!dmp_ready)
-  {
+    system_check &= !(INIT_MPU_ARMED | INIT_MPU_STABLE);
+      
     Serial.println(F("#Initializing MPU I2C connection..."));
     mpu.initialize();
 
@@ -82,9 +82,9 @@ void init_mpu()
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
 
-      last_log = last_mpu_read = millis();
+      system_check |= INIT_MPU_ARMED;
 
-      dmp_ready = true;
+      last_log = last_mpu_read = millis();          
     }
     else
     {
@@ -96,7 +96,6 @@ void init_mpu()
       Serial.print(devStatus);
       Serial.println(F(")"));
     }
-  }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -153,7 +152,7 @@ bool read_mpu()
     ypr[AC] = (float)((int)((ypr[AC] * 1.0) + 0.5))/1.0;
     ypr[BD] = (float)((int)((ypr[BD] * 1.0) + 0.5))/1.0;
 
-    if( have_first )
+    if( system_check & INIT_MPU_STABLE )
     {
       if( abs(ypr[AC] - ypr_last[AC]) > 30) 
       {
@@ -177,18 +176,12 @@ bool read_mpu()
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
 
-    have_first = true;
-
     // Update the PID input values
     input_ypr[YW] = (double)ypr[YW];
     input_ypr[AC] = (double)ypr[AC];
     input_ypr[BD] = (double)ypr[BD];
 
     return true;
-  }
-  else
-  {
-    // MPU was not ready
   }
 
   return false;
