@@ -17,7 +17,7 @@ boolean readCsvToVector(float* pidVector)
   
   byte i = 0, j = 0, k = 0;
 
-  Serial.print("#\t");
+  Serial.print("#### \t");
   while ( i < len ) {
     while (stream[i] != ',' && i < len) {
       number[j] = stream[i];
@@ -29,10 +29,10 @@ boolean readCsvToVector(float* pidVector)
     j = 0;
     pidVector[k++] = atof(number);
 
-    Serial.print(pidVector[k-1],4);
+    Serial.print(pidVector[k-1]);
     Serial.print("\t");
   }
-  Serial.println("");
+  Serial.println("####");
   return 1;
 }
 
@@ -41,12 +41,12 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 float read_throttle()
 {
-  return user_inputs.thrust;
+  return thrust;
 }
 
 float read_setpoint_ac()
 {
-  return user_inputs.setpoint.ac ;
+  return setpoint_ac ;
 }
 
 double read_kp()

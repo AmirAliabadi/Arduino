@@ -11,26 +11,26 @@ void log_pid_tuning(double kp, double ki, double kd)
   Serial.println("\t");
 }
 
-void log_data(float va, float vc)
+void log_data(int va, int vc)
 {
   Serial.print(log_line++);
   Serial.print("\t");
   
-  Serial.print(user_inputs.thrust);
+  Serial.print(thrust);
   Serial.print("\t");
   
   Serial.print(input_ypr[AC], 2);
   Serial.print("\t");
   
-  Serial.print(user_inputs.setpoint.ac, 2);
+  Serial.print(setpoint_ac, 2);
   Serial.print("\t");  
     
   Serial.print(output_ac, 2);
   Serial.print("\t");
   
-  Serial.print(va, 4);
+  Serial.print(va);
   Serial.print("\t");
-  Serial.print(vc, 4);
+  Serial.print(vc);
   Serial.print("\t");
   
   Serial.print(ac_pid.pterm, 4);
@@ -55,7 +55,7 @@ void log_data(float va, float vc)
   Serial.println("");  
 }
 
-void log_data2(float va, float vc)
+void log_data2(int va, int vc)
 {
 //  plotter_packet[0] = thrust;
 //  plotter_packet[1] = input_ypr[AC];
@@ -72,11 +72,11 @@ void log_data2(float va, float vc)
 //  Serial.write(plotter_packet, sizeof(plotter_packet)/sizeof(float));
   
 
-  Serial.print(user_inputs.thrust); 
+  Serial.print(thrust); 
   Serial.print(" ");
   Serial.print(input_ypr[AC], 2);
   Serial.print(" ");
-  Serial.print(user_inputs.setpoint.ac, 2);
+  Serial.print(setpoint_ac, 2);
   Serial.print(" ");    
   Serial.print(output_ac, 2);
   Serial.print(" ");

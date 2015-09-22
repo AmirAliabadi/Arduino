@@ -16,13 +16,13 @@ void wait_for_stable()
 // main autopilot routine
 void balance_process()
 {
-  float va = MIN_ESC_SIGNAL;
-  float vb = MIN_ESC_SIGNAL;
-  float vc = MIN_ESC_SIGNAL;
-  float vd = MIN_ESC_SIGNAL;
+  int va = MIN_ESC_SIGNAL;
+  int vb = MIN_ESC_SIGNAL;
+  int vc = MIN_ESC_SIGNAL;
+  int vd = MIN_ESC_SIGNAL;
   
-  float v_ac = 0;
-  float v_bd = 0;
+  int v_ac = 0;
+  int v_bd = 0;
   
   if( !(system_check & INIT_ESC_ARMED) )
   {
@@ -30,7 +30,7 @@ void balance_process()
     {
       disarm_esc();
 
-      user_inputs.thrust = 0;
+      thrust = 0;
      
       Serial.print("#esc disarmed : ");
       log_data(0.0,0.0);     
@@ -52,32 +52,32 @@ void balance_process()
       return;
   }
 
-  if(user_inputs.thrust > MIN_INPUT_THRUST) {
+  if(thrust > MIN_INPUT_THRUST) {
 
     if( system_check & !INIT_PID_ON ) init_pid();        
 
     ////////////////////////////////////////////////////
     // Reset of PID when setpoint changes
-    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
-    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset();}
-    if( user_inputs.setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset();}
+    if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
+    if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset();}
+    if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset();}
     
-    user_inputs.setpoint_changed = SETPOINT_UNCHANGED;
+    setpoint_changed = SETPOINT_UNCHANGED;
     //
     ////////////////////////////////////////////////////
 
     //////////////////////////////////////////////////
     // adaptive PID settings
     int i = 0;
-    if( abs(user_inputs.setpoint.ac - input_ypr[AC]) > 5 ) i = 1;
+    if( abs(setpoint_ac - input_ypr[AC]) > 5 ) i = 1;
     ac_pid.SetTunings(user_inputs.pid_ac[i].kp, user_inputs.pid_ac[i].ki, user_inputs.pid_ac[i].kd);
 
     i = 0;
-    if( abs(user_inputs.setpoint.bd - input_ypr[BD]) > 5 ) i = 1;
+    if( abs(setpoint_bd - input_ypr[BD]) > 5 ) i = 1;
     bd_pid.SetTunings(user_inputs.pid_bd[i].kp, user_inputs.pid_bd[i].ki, user_inputs.pid_bd[i].kd);
 
     i = 0;
-    if( abs(user_inputs.setpoint.yw - input_ypr[YW]) > 5 ) i = 1;
+    if( abs(setpoint_yw - input_ypr[YW]) > 5 ) i = 1;
     yw_pid.SetTunings(user_inputs.pid_yw[i].kp, user_inputs.pid_yw[i].ki, user_inputs.pid_yw[i].kd);      
     //
     /////////////////////////////////////////////////
@@ -104,8 +104,8 @@ void balance_process()
 
     /////////////////////////////
     // compute the boom thrust //
-    v_ac = user_inputs.thrust;
-    v_bd = user_inputs.thrust;
+    v_ac = thrust;
+    v_bd = thrust;
 
     ////////////////////////
     // Motor Mix Alorithm //

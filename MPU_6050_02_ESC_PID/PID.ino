@@ -74,9 +74,9 @@ void init_pid()
     system_check &= !INIT_PID_ON ;
 
     //turn the PID on
-    yw_pid.SetOutputLimits(-255.0, 255.0);
-    ac_pid.SetOutputLimits(-255.0, 255.0);
-    bd_pid.SetOutputLimits(-255.0, 255.0);
+    yw_pid.SetOutputLimits(-255, 255);
+    ac_pid.SetOutputLimits(-255, 255);
+    bd_pid.SetOutputLimits(-255, 255);
 
     yw_pid.SetSampleTime(10);
     ac_pid.SetSampleTime(10);

@@ -14,23 +14,21 @@
 
 ///////////////////////////////////
 // user inputs
-struct setpoint_values {
-    double ac ;
-    double bd ;
-    double yw ;
-};
+uint8_t setpoint_changed = SETPOINT_UNCHANGED;
+int thrust = 0;
+double setpoint_ac;
+double setpoint_bd;
+double setpoint_yw;
+double last_setpoint_ac;
+double last_setpoint_bd;
+double last_setpoint_yw;
+
 struct pid_terms {
     float kp;
     float ki;
     float kd;
 };
 struct user_input_values {
-    int thrust;
-    
-    setpoint_values setpoint;
-    setpoint_values last_setpoint;
-    uint8_t setpoint_changed;
-    
     pid_terms pid_yw[2];
     pid_terms pid_ac[2];
     pid_terms pid_bd[2];
@@ -89,9 +87,9 @@ double output_yw = 0.0;
 
 double input_ypr[3] = {0.0, 0.0, 0.0};
 
-PID yw_pid(&input_ypr[YW], &output_yw, &user_inputs.setpoint.yw, 0.7,   0.0001, 0.3,   DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ac, &user_inputs.setpoint.ac, 0.777, 0.0001, 0.333, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_bd, &user_inputs.setpoint.bd, 0.777, 0.0001, 0.333, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 0.7,   0.0001, 0.3,   DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 0.777, 0.0001, 0.333, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 0.777, 0.0001, 0.333, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
@@ -101,7 +99,7 @@ long last_mpu_read;
 
 uint16_t system_check = INIT_CLEARED;
 
-float input_values[5] = { 0,0,0,0,0 };
+float input_values[5] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 #ifdef DEBUG 
 long log_line = 0;
@@ -134,13 +132,13 @@ void setup()
   pinMode(LED_PIN, OUTPUT);
 
   user_inputs.pid_yw[0].kp = 0.5;
-  user_inputs.pid_yw[0].ki = 0.0;
+  user_inputs.pid_yw[0].ki = 0.1;
   user_inputs.pid_yw[0].kd = 0.2;
   user_inputs.pid_ac[0].kp = 0.66;
-  user_inputs.pid_ac[0].ki = 0.001;
+  user_inputs.pid_ac[0].ki = 0.1;
   user_inputs.pid_ac[0].kd = 0.1;
   user_inputs.pid_bd[0].kp = 0.66;
-  user_inputs.pid_bd[0].ki = 0.001;
+  user_inputs.pid_bd[0].ki = 0.1;
   user_inputs.pid_bd[0].kd = 0.1;
 
   user_inputs.pid_yw[1].kp = 0.6;
@@ -153,16 +151,16 @@ void setup()
   user_inputs.pid_bd[1].ki = 0.0;
   user_inputs.pid_bd[1].kd = 0.2;    
 
-  input_values[0] = 0;
-  input_values[1] = 0;
+  input_values[0] = 0.0;
+  input_values[1] = 0.0;
   input_values[2] = user_inputs.pid_ac[0].kp;
   input_values[3] = user_inputs.pid_ac[0].ki;
   input_values[4] = user_inputs.pid_ac[0].kd;
 
-  init_i2c();  
   init_esc();
+  init_pid();
+  init_i2c();  
   init_mpu();  
-  init_pid();    
 
   process = &wait_for_stable;
 
@@ -186,7 +184,7 @@ void loop()
 
   if ( read_mpu() )
   {
-    if( user_inputs.thrust > 0 ) 
+    if( thrust > 0 ) 
     { 
         process() ;
     }
@@ -231,13 +229,13 @@ void loop()
 void serialEvent() {
   readCsvToVector(input_values);
 
-  user_inputs.thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+  thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
 
-  if( user_inputs.last_setpoint.ac != input_values[1] ) 
+  if( setpoint_ac != input_values[1] ) 
   {  
-    user_inputs.setpoint_changed |= SETPOINT_CHANGED_AC;
-    user_inputs.last_setpoint.ac = user_inputs.setpoint.ac; 
-    user_inputs.setpoint.ac = input_values[1];
+    setpoint_changed |= SETPOINT_CHANGED_AC;
+    last_setpoint_ac = setpoint_ac; 
+    setpoint_ac = input_values[1];
   }
   /*
   if( user_inputs.last_setpoint.bd != input_values[1] ) 
