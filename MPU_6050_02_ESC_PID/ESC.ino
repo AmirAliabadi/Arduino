@@ -32,6 +32,6 @@ void disarm_esc()
     esc_c.detach();
     //esc_d.detach();  
 
-    system_check &= !(INIT_ESC_ATTACHED | INIT_ESC_ARMED );
+    system_check &= ~(INIT_ESC_ATTACHED | INIT_ESC_ARMED );
 }
 

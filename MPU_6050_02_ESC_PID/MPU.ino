@@ -4,7 +4,7 @@
 //
 void init_mpu()
 {
-    system_check &= !(INIT_MPU_ARMED | INIT_MPU_STABLE);
+    system_check &= ~(INIT_MPU_ARMED | INIT_MPU_STABLE);
       
     Serial.println(F("#Initializing MPU I2C connection..."));
     mpu.initialize();

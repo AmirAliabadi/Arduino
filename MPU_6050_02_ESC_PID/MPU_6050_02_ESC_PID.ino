@@ -103,8 +103,9 @@ float input_values[5] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 #ifdef DEBUG 
 long log_line = 0;
-long last_log;
+long last_log = 0;
 #endif
+long last_blink = 0;
                          
 ////////////////////////////////////////////////////////////////
 
@@ -135,21 +136,21 @@ void setup()
   user_inputs.pid_yw[0].ki = 0.1;
   user_inputs.pid_yw[0].kd = 0.2;
   user_inputs.pid_ac[0].kp = 0.66;
-  user_inputs.pid_ac[0].ki = 0.1;
+  user_inputs.pid_ac[0].ki = 0.4;
   user_inputs.pid_ac[0].kd = 0.1;
   user_inputs.pid_bd[0].kp = 0.66;
-  user_inputs.pid_bd[0].ki = 0.1;
+  user_inputs.pid_bd[0].ki = 0.4;
   user_inputs.pid_bd[0].kd = 0.1;
 
   user_inputs.pid_yw[1].kp = 0.6;
   user_inputs.pid_yw[1].ki = 0.0;
   user_inputs.pid_yw[1].kd = 0.3;  
-  user_inputs.pid_ac[1].kp = 0.8;
+  user_inputs.pid_ac[1].kp = 0.888;
   user_inputs.pid_ac[1].ki = 0.0;
-  user_inputs.pid_ac[1].kd = 0.2;  
-  user_inputs.pid_bd[1].kp = 0.8;
+  user_inputs.pid_ac[1].kd = 0.222;  
+  user_inputs.pid_bd[1].kp = 0.888;
   user_inputs.pid_bd[1].ki = 0.0;
-  user_inputs.pid_bd[1].kd = 0.2;    
+  user_inputs.pid_bd[1].kd = 0.222;    
 
   input_values[0] = 0.0;
   input_values[1] = 0.0;
@@ -168,12 +169,18 @@ void setup()
 //////////////////////////////////////////////////////////////////////
 
 
-int b = 0;
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 void loop()
 {
+  
+  if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (thrust == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY/2) : BLINK_FREQUENCY/16) )
+  {
+    last_blink = millis();
+    
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));  
+  }
   
   if (!dmpReady) return;
 
@@ -184,34 +191,11 @@ void loop()
 
   if ( read_mpu() )
   {
-    if( thrust > 0 ) 
-    { 
-        process() ;
-    }
-    else {
-      if (millis() - last_log > LOG_FREQUENCY)
-      {
-        last_log = millis();
-        Serial.print(ypr[0],4);
-        Serial.print("\t");
-        Serial.print(ypr[1],4);    
-        Serial.print("\t");
-        Serial.print(ypr[2],4);    
-        Serial.print("\t");
-        Serial.println();
+    process() ;
     
-        if( abs(ypr[2] - ypr_last[2]) > 30 )
-        {
-          b = 1;
-        }
-    
-        if( b == 1 )
-        {
-          Serial.println("big change !!!");      
-        }
-      }
-    }
-    
+//    if( log_line > 1000) {
+//      thrust = 140;
+//    }
   }
   else
   {

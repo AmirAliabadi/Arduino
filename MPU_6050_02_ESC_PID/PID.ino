@@ -71,38 +71,38 @@ Integral term seems to help with getting closer to desired setpoint
 
 void init_pid()
 {
-    system_check &= !INIT_PID_ON ;
+  Serial.println("#initializing pid...");
+  
+  //turn the PID on
+  yw_pid.SetOutputLimits(-255, 255);
+  ac_pid.SetOutputLimits(-255, 255);
+  bd_pid.SetOutputLimits(-255, 255);
 
-    //turn the PID on
-    yw_pid.SetOutputLimits(-255, 255);
-    ac_pid.SetOutputLimits(-255, 255);
-    bd_pid.SetOutputLimits(-255, 255);
+  yw_pid.SetSampleTime(10);
+  ac_pid.SetSampleTime(10);
+  bd_pid.SetSampleTime(10);
 
-    yw_pid.SetSampleTime(10);
-    ac_pid.SetSampleTime(10);
-    bd_pid.SetSampleTime(10);
+  output_yw = 0;
+  output_ac = 0;
+  output_bd = 0;
 
-    output_yw = 0;
-    output_ac = 0;
-    output_bd = 0;
+  yw_pid.SetMode(AUTOMATIC);
+  ac_pid.SetMode(AUTOMATIC);
+  bd_pid.SetMode(AUTOMATIC);
 
-    yw_pid.SetMode(AUTOMATIC);
-    ac_pid.SetMode(AUTOMATIC);
-    bd_pid.SetMode(AUTOMATIC);
-
-    system_check |= INIT_PID_ON ;
+  system_check |= INIT_PID_ON ;
 }
 
 void pid_off()
 {
-    output_ac = 0.0;
-    output_bd = 0.0;
-    output_yw = 0.0;
-  
-    //turn the PID on
-    yw_pid.SetMode(MANUAL);
-    ac_pid.SetMode(MANUAL);
-    bd_pid.SetMode(MANUAL);
+  output_ac = 0.0;
+  output_bd = 0.0;
+  output_yw = 0.0;
 
-    system_check &= !INIT_PID_ON ;
+  //turn the PID on
+  yw_pid.SetMode(MANUAL);
+  ac_pid.SetMode(MANUAL);
+  bd_pid.SetMode(MANUAL);
+
+  system_check &= ~INIT_PID_ON ;
 }

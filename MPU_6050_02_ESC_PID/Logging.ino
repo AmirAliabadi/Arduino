@@ -1,16 +1,4 @@
 #ifdef DEBUG 
-
-void log_pid_tuning(double kp, double ki, double kd)
-{
-  Serial.print("pid_tuning: ");
-  Serial.print(kp,4);
-  Serial.print("\t");
-  Serial.print(ki,4);
-  Serial.print("\t");
-  Serial.print(kd,4);
-  Serial.println("\t");
-}
-
 void log_data(int va, int vc)
 {
   Serial.print(log_line++);

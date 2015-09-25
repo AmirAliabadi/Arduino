@@ -2,6 +2,7 @@
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 #define LOG_FREQUENCY  50 // ms DEBUG Logging interval
+#define BLINK_FREQUENCY 1000
 
 #define INIT_CLEARED          0b00000000
 #define INIT_ESC_ATTACHED     0b00000001
