@@ -144,13 +144,9 @@ bool read_mpu()
     //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
     //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
-    ypr[YW] = ( (ypr[YW]) * 180.0 / M_PI ); // - 0.0;
-    ypr[AC] = ( (ypr[AC]) * 180.0 / M_PI ) - 2.20;
-    ypr[BD] = ( (ypr[BD]) * 180.0 / M_PI ); // - 0.0;
-
-    ypr[YW] = (float)((int)((ypr[YW] * 1.0) + 0.5))/1.0;
-    ypr[AC] = (float)((int)((ypr[AC] * 1.0) + 0.5))/1.0;
-    ypr[BD] = (float)((int)((ypr[BD] * 1.0) + 0.5))/1.0;
+    ypr[YW] = (float)((int)(( (((ypr[YW]) * 180.0 / M_PI) - yw_zero ) * 1.0) + 0.5))/1.0; // - 0.0;
+    ypr[AC] = (float)((int)(( (((ypr[AC]) * 180.0 / M_PI) - 2.20    ) * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)(( (((ypr[BD]) * 180.0 / M_PI)           ) * 1.0) + 0.5))/1.0; // - 0.0;
 
     if( system_check & INIT_MPU_STABLE )
     {

@@ -51,14 +51,14 @@ float read_setpoint_ac()
 
 double read_kp()
 {
-  return user_inputs.pid_ac[0].kp;    
+  return pid_ac_kp[0];    
 }
 double read_ki()
 {
-  return user_inputs.pid_ac[0].ki;  
+  return pid_ac_ki[0];  
 }
 double read_kd()
 {
-  return user_inputs.pid_ac[0].kd;
+  return pid_ac_kd[0];
 }
 ///////////////////////////////////////////////////////////////////////

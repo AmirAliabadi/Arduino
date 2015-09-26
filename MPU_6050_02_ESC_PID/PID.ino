@@ -82,9 +82,9 @@ void init_pid()
   ac_pid.SetSampleTime(10);
   bd_pid.SetSampleTime(10);
 
-  output_yw = 0;
-  output_ac = 0;
-  output_bd = 0;
+  output_ypr[YW] = 0;
+  output_ypr[AC] = 0;
+  output_ypr[BD] = 0;
 
   yw_pid.SetMode(AUTOMATIC);
   ac_pid.SetMode(AUTOMATIC);
@@ -95,9 +95,9 @@ void init_pid()
 
 void pid_off()
 {
-  output_ac = 0.0;
-  output_bd = 0.0;
-  output_yw = 0.0;
+  output_ypr[AC] = 0.0;
+  output_ypr[BD] = 0.0;
+  output_ypr[YW] = 0.0;
 
   //turn the PID on
   yw_pid.SetMode(MANUAL);

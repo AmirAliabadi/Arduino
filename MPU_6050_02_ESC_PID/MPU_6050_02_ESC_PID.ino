@@ -14,7 +14,10 @@
 
 ///////////////////////////////////
 // user inputs
+float input_values[5] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
+
 int thrust = 0;
 double setpoint_ac;
 double setpoint_bd;
@@ -22,19 +25,15 @@ double setpoint_yw;
 double last_setpoint_ac;
 double last_setpoint_bd;
 double last_setpoint_yw;
-
-struct pid_terms {
-    float kp;
-    float ki;
-    float kd;
-};
-struct user_input_values {
-    pid_terms pid_yw[2];
-    pid_terms pid_ac[2];
-    pid_terms pid_bd[2];
-};
-
-user_input_values user_inputs ;
+float pid_ac_kp[2];
+float pid_ac_ki[2];
+float pid_ac_kd[2];
+float pid_bd_kp[2];
+float pid_bd_ki[2];
+float pid_bd_kd[2];
+float pid_yw_kp[2];
+float pid_yw_ki[2];
+float pid_yw_kd[2];
 //
 //////////////////////////////////////////////////////////////////
 
@@ -63,9 +62,10 @@ VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor mea
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
 float euler[3];         			// [psi, theta, phi]    Euler angle container
-float ypr[3] = {0.0f, 0.0f, 0.0f};
+float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
-//bool have_first = false;
+
+float yw_zero = 0.0;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -81,15 +81,12 @@ Servo esc_d;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-double output_ac = 0.0;
-double output_bd = 0.0;
-double output_yw = 0.0;
-
+double output_ypr[3] = {0.0, 0.0, 0.0};
 double input_ypr[3] = {0.0, 0.0, 0.0};
 
-PID yw_pid(&input_ypr[YW], &output_yw, &setpoint_yw, 0.7,   0.0001, 0.3,   DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ac, &setpoint_ac, 0.777, 0.0001, 0.333, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 0.777, 0.0001, 0.333, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint_yw, 0.7,   0.0001, 0.3,   DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint_ac, 0.777, 0.0001, 0.333, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint_bd, 0.777, 0.0001, 0.333, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
@@ -98,8 +95,6 @@ PID bd_pid(&input_ypr[BD], &output_bd, &setpoint_bd, 0.777, 0.0001, 0.333, REVER
 long last_mpu_read;
 
 uint16_t system_check = INIT_CLEARED;
-
-float input_values[5] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 #ifdef DEBUG 
 long log_line = 0;
@@ -132,32 +127,14 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  user_inputs.pid_yw[0].kp = 0.5;
-  user_inputs.pid_yw[0].ki = 0.1;
-  user_inputs.pid_yw[0].kd = 0.2;
-  user_inputs.pid_ac[0].kp = 0.66;
-  user_inputs.pid_ac[0].ki = 0.4;
-  user_inputs.pid_ac[0].kd = 0.1;
-  user_inputs.pid_bd[0].kp = 0.66;
-  user_inputs.pid_bd[0].ki = 0.4;
-  user_inputs.pid_bd[0].kd = 0.1;
+  pid_yw_kp[0] = 0.5;   pid_yw_ki[0] = 0.1;  pid_yw_kd[0] = 0.2;
+  pid_ac_kp[0] = 0.66;  pid_ac_ki[0] = 0.4;  pid_ac_kd[0] = 0.1;
+  pid_bd_kp[0] = 0.66;  pid_bd_ki[0] = 0.4;  pid_bd_kd[0] = 0.1;
 
-  user_inputs.pid_yw[1].kp = 0.6;
-  user_inputs.pid_yw[1].ki = 0.0;
-  user_inputs.pid_yw[1].kd = 0.3;  
-  user_inputs.pid_ac[1].kp = 0.888;
-  user_inputs.pid_ac[1].ki = 0.0;
-  user_inputs.pid_ac[1].kd = 0.222;  
-  user_inputs.pid_bd[1].kp = 0.888;
-  user_inputs.pid_bd[1].ki = 0.0;
-  user_inputs.pid_bd[1].kd = 0.222;    
-
-  input_values[0] = 0.0;
-  input_values[1] = 0.0;
-  input_values[2] = user_inputs.pid_ac[0].kp;
-  input_values[3] = user_inputs.pid_ac[0].ki;
-  input_values[4] = user_inputs.pid_ac[0].kd;
-
+  pid_yw_kp[1] = 0.6;   pid_yw_ki[1] = 0.0;  pid_yw_kd[1] = 0.3;  
+  pid_ac_kp[1] = 0.888; pid_ac_ki[1] = 0.0;  pid_ac_kd[1] = 0.222;  
+  pid_bd_kp[1] = 0.888; pid_bd_ki[1] = 0.0;  pid_bd_kd[1] = 0.222;  
+    
   init_esc();
   init_pid();
   init_i2c();  
@@ -173,8 +150,7 @@ void setup()
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 void loop()
-{
-  
+{ 
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (thrust == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY/2) : BLINK_FREQUENCY/16) )
   {
     last_blink = millis();
@@ -192,10 +168,6 @@ void loop()
   if ( read_mpu() )
   {
     process() ;
-    
-//    if( log_line > 1000) {
-//      thrust = 140;
-//    }
   }
   else
   {
@@ -211,6 +183,7 @@ void loop()
 }
 
 void serialEvent() {
+  
   readCsvToVector(input_values);
 
   thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
@@ -236,9 +209,9 @@ void serialEvent() {
   }
   */
   
-  user_inputs.pid_ac[0].kp = input_values[2];
-  user_inputs.pid_ac[0].ki = input_values[3];
-  user_inputs.pid_ac[0].kd = input_values[4];
+  pid_ac_kp[0] = input_values[2];
+  pid_ac_ki[0] = input_values[3];
+  pid_ac_kd[0] = input_values[4];
   
 }
 
