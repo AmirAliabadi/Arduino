@@ -1,11 +1,22 @@
 void process_off()
 {
-    Serial.println("#processing is off...");
+  if (millis() - last_log > LOG_FREQUENCY)
+  {
+    last_log = millis();
+  
+    #ifdef DEBUG    
+      Serial.print("#processing is off: ");    
+      log_data(0, 0);
+      //print_mpu_readings(mode,fifoBuffer);
+    #endif    
+  }
 }
 
 void wait_for_stable()
 {
-  if(millis() % 500 == 0) {
+  if (millis() - last_log > 2000)
+  {
+    last_log = millis();
     process = &check_if_stable;  
   }
 }
@@ -19,7 +30,10 @@ void check_if_stable()
 
   if(last_yw == ypr[YW]) {
     system_check |= INIT_MPU_STABLE;
-    yw_zero = last_yw;
+    yw_offset = ypr[YW];
+
+    ypr[YW] = 0;
+    ypr_last[YW] = 0;
     process = &balance_process;
   } else {
     last_yw = ypr[YW];
@@ -50,7 +64,7 @@ void balance_process()
       thrust = 0;
      
       Serial.print("#esc disarmed : ");
-      log_data(0.0,0.0);     
+      log_data(0,0);     
 
       process = &process_off;
       return;
@@ -85,17 +99,19 @@ void balance_process()
 
     //////////////////////////////////////////////////
     // adaptive PID settings
+    /*
     int i = 0;
-    if( abs(setpoint_ac - input_ypr[AC]) > 5 ) i = 1;
-    ac_pid.SetTunings(pid_ac_kp[i], pid_ac_ki[i], pid_ac_kd[i]);
+    if( abs(setpoint[AC] - input_ypr[AC]) > 5 ) i = 1;
+    ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint_bd - input_ypr[BD]) > 5 ) i = 1;
-    bd_pid.SetTunings(pid_bd_kp[i], pid_bd_ki[i], pid_bd_kd[i]);
+    if( abs(setpoint[BD] - input_ypr[BD]) > 5 ) i = 1;
+    bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint_yw - input_ypr[YW]) > 5 ) i = 1;
+    if( abs(setpoint[YW] - input_ypr[YW]) > 5 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
+    */
     //
     /////////////////////////////////////////////////
 

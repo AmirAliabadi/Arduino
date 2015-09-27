@@ -7,19 +7,21 @@ void log_data(int va, int vc)
   Serial.print(thrust);
   Serial.print("\t");
 
-  Serial.print(setpoint_ac, 2);
-  Serial.print("\t");  
+  for(int i=0;i <3; i++ ) {
+    Serial.print(setpoint[i], 1);
+    Serial.print("\t");  
+  }
 
   for(int i=0;i <3; i++ ) {
-    Serial.print(input_ypr[i], 2);
+    Serial.print(input_ypr[i], 1);
     Serial.print("\t");
   }
   
   for(int i=0;i <3; i++ ) {
-    Serial.print(output_ypr[i], 2);
+    Serial.print(output_ypr[i], 1);
     Serial.print("\t");  
   }
-    
+
   Serial.print(va);
   Serial.print("\t");
   Serial.print(vc);
@@ -30,8 +32,8 @@ void log_data(int va, int vc)
   Serial.print(ac_pid.iterm, 4);
   Serial.print("\t");
   Serial.print(ac_pid.dterm, 4);
-
   Serial.print("\t");
+  
   Serial.print(ac_pid.GetKp(), 4);
   Serial.print("\t");
   Serial.print(ac_pid.GetKi(), 4);

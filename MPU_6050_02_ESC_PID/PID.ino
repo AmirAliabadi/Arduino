@@ -74,9 +74,9 @@ void init_pid()
   Serial.println("#initializing pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-255, 255);
-  ac_pid.SetOutputLimits(-255, 255);
-  bd_pid.SetOutputLimits(-255, 255);
+  yw_pid.SetOutputLimits(-100, 100);
+  ac_pid.SetOutputLimits(-100, 100);
+  bd_pid.SetOutputLimits(-100, 100);
 
   yw_pid.SetSampleTime(10);
   ac_pid.SetSampleTime(10);
@@ -85,6 +85,10 @@ void init_pid()
   output_ypr[YW] = 0;
   output_ypr[AC] = 0;
   output_ypr[BD] = 0;
+
+  ac_pid.SetTunings(pid_xx_kp[1], pid_xx_ki[1], pid_xx_kd[1]);
+  bd_pid.SetTunings(pid_xx_kp[1], pid_xx_ki[1], pid_xx_kd[1]);
+  yw_pid.SetTunings(pid_yw_kp[1], pid_yw_ki[1], pid_yw_kd[1]);    
 
   yw_pid.SetMode(AUTOMATIC);
   ac_pid.SetMode(AUTOMATIC);

@@ -17,7 +17,6 @@ boolean readCsvToVector(float* pidVector)
   
   byte i = 0, j = 0, k = 0;
 
-  Serial.print("#### \t");
   while ( i < len ) {
     while (stream[i] != ',' && i < len) {
       number[j] = stream[i];
@@ -29,36 +28,33 @@ boolean readCsvToVector(float* pidVector)
     j = 0;
     pidVector[k++] = atof(number);
 
-    Serial.print(pidVector[k-1]);
-    Serial.print("\t");
   }
-  Serial.println("####");
+
   return 1;
 }
 
 //////////////////////////////////////////////////////////////////////
 // POT Inputs
 //////////////////////////////////////////////////////////////////////
-float read_throttle()
+void read_throttle()
 {
-  return thrust;
+  thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
 }
 
-float read_setpoint_ac()
+void read_setpoint(int type)
 {
-  return setpoint_ac ;
+  if( setpoint[type] != input_values[1] ) 
+  {  
+    setpoint_changed |= SETPOINT_CHANGED_AC;
+    last_setpoint[type] = setpoint[type]; 
+    setpoint[type] = input_values[1];
+  }
 }
 
-double read_kp()
+void read_pid_tunings(int type)
 {
-  return pid_ac_kp[0];    
-}
-double read_ki()
-{
-  return pid_ac_ki[0];  
-}
-double read_kd()
-{
-  return pid_ac_kd[0];
+  pid_xx_kp[type] = input_values[2];
+  pid_xx_ki[type] = input_values[3];
+  pid_xx_kd[type] = input_values[4];
 }
 ///////////////////////////////////////////////////////////////////////

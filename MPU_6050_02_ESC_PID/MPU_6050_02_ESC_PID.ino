@@ -11,26 +11,19 @@
 
 #define DEBUG
 
-
 ///////////////////////////////////
 // user inputs
-float input_values[5] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+float input_values[8] = { 0.0, 0.0, 0.6, 0.4, 0.1, 0.888, 0.0, 0.222 };
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
 int thrust = 0;
-double setpoint_ac;
-double setpoint_bd;
-double setpoint_yw;
-double last_setpoint_ac;
-double last_setpoint_bd;
-double last_setpoint_yw;
-float pid_ac_kp[2];
-float pid_ac_ki[2];
-float pid_ac_kd[2];
-float pid_bd_kp[2];
-float pid_bd_ki[2];
-float pid_bd_kd[2];
+double setpoint[3] = {0,0,0};
+double last_setpoint[3] = {0,0,0};
+float pid_xx_kp[2];
+float pid_xx_ki[2];
+float pid_xx_kd[2];
+
 float pid_yw_kp[2];
 float pid_yw_ki[2];
 float pid_yw_kd[2];
@@ -62,10 +55,10 @@ VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor mea
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
 float euler[3];         			// [psi, theta, phi]    Euler angle container
+
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
-
-float yw_zero = 0.0;
+float yw_offset = 0.0;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -81,12 +74,12 @@ Servo esc_d;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-double output_ypr[3] = {0.0, 0.0, 0.0};
 double input_ypr[3] = {0.0, 0.0, 0.0};
+double output_ypr[3] = {0.0, 0.0, 0.0};
 
-PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint_yw, 0.7,   0.0001, 0.3,   DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint_ac, 0.777, 0.0001, 0.333, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint_bd, 0.777, 0.0001, 0.333, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0.7,   0.0001, 0.3,   DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0.777, 0.0001, 0.333, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0.777, 0.0001, 0.333, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
@@ -127,13 +120,11 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  pid_yw_kp[0] = 0.5;   pid_yw_ki[0] = 0.1;  pid_yw_kd[0] = 0.2;
-  pid_ac_kp[0] = 0.66;  pid_ac_ki[0] = 0.4;  pid_ac_kd[0] = 0.1;
-  pid_bd_kp[0] = 0.66;  pid_bd_ki[0] = 0.4;  pid_bd_kd[0] = 0.1;
+  pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
+  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.2;
 
-  pid_yw_kp[1] = 0.6;   pid_yw_ki[1] = 0.0;  pid_yw_kd[1] = 0.3;  
-  pid_ac_kp[1] = 0.888; pid_ac_ki[1] = 0.0;  pid_ac_kd[1] = 0.222;  
-  pid_bd_kp[1] = 0.888; pid_bd_ki[1] = 0.0;  pid_bd_kd[1] = 0.222;  
+  pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
+  pid_xx_kp[1] = 0.8; pid_xx_ki[1] = 0.1; pid_xx_kd[1] = 0.3;  
     
   init_esc();
   init_pid();
@@ -141,7 +132,6 @@ void setup()
   init_mpu();  
 
   process = &wait_for_stable;
-
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -165,53 +155,16 @@ void loop()
   {
   }
 
-  if ( read_mpu() )
-  {
-    process() ;
-  }
-  else
-  {
-    // mpu was not read
-    if ( millis() - last_mpu_read > LOG_FREQUENCY )
-    {
-      // no sucessful mpu reads for awhile
-      // something is wrong
+  read_throttle();
+  read_setpoint(AC);
+  read_pid_tunings(0);
+  // read_pid_tunings(1);
+  read_mpu();
+  process();
 
-      //disarm_esc();
-    }
-  }
 }
 
 void serialEvent() {
-  
   readCsvToVector(input_values);
-
-  thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
-
-  if( setpoint_ac != input_values[1] ) 
-  {  
-    setpoint_changed |= SETPOINT_CHANGED_AC;
-    last_setpoint_ac = setpoint_ac; 
-    setpoint_ac = input_values[1];
-  }
-  /*
-  if( user_inputs.last_setpoint.bd != input_values[1] ) 
-  {  
-    user_inputs.setpoint_changed |= SETPOINT_CHANGED_BD;
-    user_inputs.last_setpoint.bd = user_inputs.setpoint.bd; 
-    user_inputs.setpoint.bd = xxx_input_values[1];    
-  }
-  if( user_inputs.last_setpoint.yw != input_values[1] ) 
-  {  
-    user_inputs.setpoint_changed |= SETPOINT_CHANGED_YW;
-    user_inputs.last_setpoint.yw = user_inputs.setpoint.yw; 
-    user_inputs.setpoint.yw = xxx_input_values[1];    
-  }
-  */
-  
-  pid_ac_kp[0] = input_values[2];
-  pid_ac_ki[0] = input_values[3];
-  pid_ac_kd[0] = input_values[4];
-  
 }
 

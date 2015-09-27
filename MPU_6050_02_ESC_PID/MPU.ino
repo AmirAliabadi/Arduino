@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////
 // init_mpu
 //
@@ -101,7 +100,7 @@ void init_mpu()
 ////////////////////////////////////////////////////////////////
 // read_mpu
 //
-bool read_mpu()
+void read_mpu()
 {
   // reset interrupt flag and get INT_STATUS byte
   mpuInterrupt = false;
@@ -119,8 +118,6 @@ bool read_mpu()
 #ifdef DEBUG
     Serial.println(F("#FIFO overflow!"));
 #endif
-
-    return false;
 
   } // otherwise, check for DMP data ready interrupt (this should happen frequently)
   else if (mpuIntStatus & 0x02)
@@ -144,15 +141,19 @@ bool read_mpu()
     //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
     //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
-    ypr[YW] = (float)((int)(( (((ypr[YW]) * 180.0 / M_PI) - yw_zero ) * 1.0) + 0.5))/1.0; // - 0.0;
-    ypr[AC] = (float)((int)(( (((ypr[AC]) * 180.0 / M_PI) - 2.20    ) * 1.0) + 0.5))/1.0;
-    ypr[BD] = (float)((int)(( (((ypr[BD]) * 180.0 / M_PI)           ) * 1.0) + 0.5))/1.0; // - 0.0;
+    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0; // - 0.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 2.20      ) * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 2.20      ) * 1.0) + 0.5))/1.0; // - 0.0;
+
+    //ypr[YW] = (ypr[YW] * 180.0 / M_PI) - yw_offset  ;
+    //ypr[AC] = (ypr[AC] * 180.0 / M_PI) - 2.20       ;
+    //ypr[BD] = (ypr[BD] * 180.0 / M_PI) - 2.20       ;
 
     if( system_check & INIT_MPU_STABLE )
     {
       if( abs(ypr[AC] - ypr_last[AC]) > 30) 
       {
-        Serial.print(F("#*****   whoa! big change .... *****"));
+        Serial.print(F("#* big change *"));
         Serial.print("\t");
         Serial.print(ypr_last[AC]);
         Serial.print("\t");
@@ -166,6 +167,7 @@ bool read_mpu()
       if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
       if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
       if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];
+     
     }
     
     ypr_last[YW] = ypr[YW];
@@ -176,10 +178,5 @@ bool read_mpu()
     input_ypr[YW] = (double)ypr[YW];
     input_ypr[AC] = (double)ypr[AC];
     input_ypr[BD] = (double)ypr[BD];
-
-    return true;
   }
-
-  return false;
 }
-
