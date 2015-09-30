@@ -6,7 +6,6 @@ void process_off()
     last_log = millis();
     Serial.print(F("#processing is off: "));    
     log_data();
-      //print_mpu_readings(mode,fifoBuffer);
   }
   #endif    
 }
@@ -58,9 +57,10 @@ void balance_process()
       disarm_esc();
 
       thrust = 0;
-     
+#ifdef DEBUG       
       Serial.print(F("#esc disarmed : "));
       log_data();     
+#endif      
 
       process = &process_off;
       return;
@@ -68,6 +68,8 @@ void balance_process()
   }
   else 
   {
+
+#ifdef DEBUG         
       if (millis() - last_log > LOG_FREQUENCY)
       {   
         last_log = millis();       
@@ -75,6 +77,7 @@ void balance_process()
         Serial.print(F("#esc not ready : "));
         log_data(); 
       }     
+#endif      
 
       return;
   }

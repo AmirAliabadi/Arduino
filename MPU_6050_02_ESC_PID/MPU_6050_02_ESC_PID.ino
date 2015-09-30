@@ -59,7 +59,7 @@ float euler[3];         			// [psi, theta, phi]    Euler angle container
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
-float yw_offset = 0.0;
+float yw_offset   = 0.0;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -159,8 +159,15 @@ void loop()
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt) // && fifoCount < packetSize)
   {
+//    read_battery_voltage();
+//    read_throttle();
+//    read_setpoint(AC);
+//    read_pid_tunings(0);
+//    // read_pid_tunings(1);
+//    process();
   }
 
+  read_battery_voltage();
   read_throttle();
   read_setpoint(AC);
   read_pid_tunings(0);
