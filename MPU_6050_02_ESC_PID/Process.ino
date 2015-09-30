@@ -1,15 +1,14 @@
 void process_off()
 {
+  #ifdef DEBUG      
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-  
-    #ifdef DEBUG    
-      Serial.print("#processing is off: ");    
-      log_data(0, 0);
+    Serial.print(F("#processing is off: "));    
+    log_data();
       //print_mpu_readings(mode,fifoBuffer);
-    #endif    
   }
+  #endif    
 }
 
 void wait_for_stable()
@@ -24,9 +23,11 @@ void wait_for_stable()
 void check_if_stable()
 {
   static float last_yw = -333.0;
-  
-  Serial.print("#waiting for stable readings...");
+
+#ifdef DEBUG    
+  Serial.print(F("#waiting for stable readings..."));
   Serial.println(abs(ypr[YW] - last_yw),2);
+#endif
 
   if(last_yw == ypr[YW]) {
     system_check |= INIT_MPU_STABLE;
@@ -45,11 +46,6 @@ void check_if_stable()
 // main autopilot routine
 void balance_process()
 {
-  int va = MIN_ESC_SIGNAL;
-  int vb = MIN_ESC_SIGNAL;
-  int vc = MIN_ESC_SIGNAL;
-  int vd = MIN_ESC_SIGNAL;
-  
   int v_ac = 0;
   int v_bd = 0;
 
@@ -63,8 +59,8 @@ void balance_process()
 
       thrust = 0;
      
-      Serial.print("#esc disarmed : ");
-      log_data(0,0);     
+      Serial.print(F("#esc disarmed : "));
+      log_data();     
 
       process = &process_off;
       return;
@@ -76,8 +72,8 @@ void balance_process()
       {   
         last_log = millis();       
              
-        Serial.print("#esc not ready : ");
-        log_data(0.0,0.0); 
+        Serial.print(F("#esc not ready : "));
+        log_data(); 
       }     
 
       return;
@@ -99,19 +95,17 @@ void balance_process()
 
     //////////////////////////////////////////////////
     // adaptive PID settings
-    /*
     int i = 0;
-    if( abs(setpoint[AC] - input_ypr[AC]) > 5 ) i = 1;
+    if( abs(setpoint[AC] - input_ypr[AC]) > 15 ) i = 1;
     ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[BD] - input_ypr[BD]) > 5 ) i = 1;
+    if( abs(setpoint[BD] - input_ypr[BD]) > 15 ) i = 1;
     bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[YW] - input_ypr[YW]) > 5 ) i = 1;
+    if( abs(setpoint[YW] - input_ypr[YW]) > 15 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
-    */
     //
     /////////////////////////////////////////////////
 
@@ -165,15 +159,14 @@ void balance_process()
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
-  //esc_b.writeMicroseconds(vb);
-  //esc_d.writeMicroseconds(vd);
+  esc_b.writeMicroseconds(vb);
+  esc_d.writeMicroseconds(vd);
 
+#ifdef DEBUG   
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    
-#ifdef DEBUG    
-    log_data(va, vc);
+    log_data();
     //print_mpu_readings(mode,fifoBuffer);
 #endif    
   }

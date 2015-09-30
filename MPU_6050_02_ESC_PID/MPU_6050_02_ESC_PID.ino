@@ -13,11 +13,12 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[8] = { 0.0, 0.0, 0.6, 0.4, 0.1, 0.888, 0.0, 0.222 };
+float input_values[9] = { 0.0, 0.0, 0.6, 0.1, 0.2, 0.8, 0.0, 0.3, 12.6 };
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
 int thrust = 0;
+float voltage = 12.6;
 double setpoint[3] = {0,0,0};
 double last_setpoint[3] = {0,0,0};
 float pid_xx_kp[2];
@@ -69,6 +70,11 @@ Servo esc_a;
 Servo esc_b;
 Servo esc_c;
 Servo esc_d;
+
+int va = MIN_ESC_SIGNAL;
+int vb = MIN_ESC_SIGNAL;
+int vc = MIN_ESC_SIGNAL;
+int vd = MIN_ESC_SIGNAL;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -77,16 +83,14 @@ Servo esc_d;
 double input_ypr[3] = {0.0, 0.0, 0.0};
 double output_ypr[3] = {0.0, 0.0, 0.0};
 
-PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0.7,   0.0001, 0.3,   DIRECT);
-PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0.777, 0.0001, 0.333, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0.777, 0.0001, 0.333, REVERSE);
+PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
+PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
+PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
 // MISC items
-long last_mpu_read;
-
 uint16_t system_check = INIT_CLEARED;
 
 #ifdef DEBUG 
@@ -120,11 +124,13 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
+  // conservative
   pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
-  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.2;
+  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.1; pid_xx_kd[0] = 0.2;
 
+  // aggressive
   pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
-  pid_xx_kp[1] = 0.8; pid_xx_ki[1] = 0.1; pid_xx_kd[1] = 0.3;  
+  pid_xx_kp[1] = 0.8; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.3;  
     
   init_esc();
   init_pid();
@@ -151,7 +157,7 @@ void loop()
   if (!dmpReady) return;
 
   // wait for MPU interrupt or extra packet(s) available
-  while (!mpuInterrupt && fifoCount < packetSize)
+  while (!mpuInterrupt) // && fifoCount < packetSize)
   {
   }
 

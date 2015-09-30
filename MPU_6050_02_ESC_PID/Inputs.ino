@@ -51,6 +51,10 @@ void read_setpoint(int type)
   }
 }
 
+void read_battery_voltage() {
+  voltage = input_values[8];
+}
+
 void read_pid_tunings(int type)
 {
   pid_xx_kp[type] = input_values[2];

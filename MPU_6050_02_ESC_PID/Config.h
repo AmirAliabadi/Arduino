@@ -61,9 +61,9 @@
 #define MAX_ESC_SIGNAL    1500    // 
 #define MIN_ESC_SIGNAL    1100    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A       9       // ESC signal wire conected to pin 9
-#define MOTOR_PIN_B       111     // ESC signal wire conected to pin ??
+#define MOTOR_PIN_B       5       // ESC signal wire conected to pin ??
 #define MOTOR_PIN_C       6       // ESC signal wire conected to pin 6
-#define MOTOR_PIN_D       112     // ESC signal wire conected to pin ??
+#define MOTOR_PIN_D       3       // ESC signal wire conected to pin ??
 
 // THROTTLE SETTINGS
 #define MAX_INPUT_THRUST  300     // 
