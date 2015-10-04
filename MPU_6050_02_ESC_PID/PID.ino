@@ -59,6 +59,10 @@ These pids tunings are even better, now that I have upped the PID compute cycle
 0.7770  0.0001  0.3000
 
 
+ * This one seems to work pretty good.
+ * 0.980 0.390 0.490
+
+
 /////////////////////////////////////
 // bad values:
 0.9000  0.0001  0.5000 -- will hold but push it and it will oscillate like crazy

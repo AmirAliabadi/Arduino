@@ -49,6 +49,7 @@ uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
 uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
+
 // orientation/motion vars
 Quaternion q;           			// [w, x, y, z]         quaternion container
 VectorInt16 aa;         			// [x, y, z]            accel sensor measurements
@@ -56,6 +57,9 @@ VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor mea
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
 float euler[3];         			// [psi, theta, phi]    Euler angle container
+int32_t gyro1[3];
+//int16_t gyro2[3];
+int16_t ax, ay, az, gx, gy, gz;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
@@ -126,11 +130,11 @@ void setup()
 
   // conservative
   pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
-  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.1; pid_xx_kd[0] = 0.2;
+  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.222;
 
   // aggressive
   pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
-  pid_xx_kp[1] = 0.8; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.3;  
+  pid_xx_kp[1] = 0.888; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.333;  
     
   init_esc();
   init_pid();
@@ -160,9 +164,13 @@ void loop()
   while (!mpuInterrupt) // && fifoCount < packetSize)
   {
 //    read_battery_voltage();
+//  if(mpuInterrupt) break;
 //    read_throttle();
+//  if(mpuInterrupt) break;
 //    read_setpoint(AC);
+//  if(mpuInterrupt) break;
 //    read_pid_tunings(0);
+//  if(mpuInterrupt) break;
 //    // read_pid_tunings(1);
 //    process();
   }

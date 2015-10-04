@@ -99,15 +99,15 @@ void balance_process()
     //////////////////////////////////////////////////
     // adaptive PID settings
     int i = 0;
-    if( abs(setpoint[AC] - input_ypr[AC]) > 15 ) i = 1;
+    if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
     ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[BD] - input_ypr[BD]) > 15 ) i = 1;
+    if( abs(setpoint[BD] - input_ypr[BD]) > 10 ) i = 1;
     bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[YW] - input_ypr[YW]) > 15 ) i = 1;
+    if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
     //
     /////////////////////////////////////////////////
@@ -152,10 +152,7 @@ void balance_process()
   }
   else 
   {
-    va = MIN_ESC_SIGNAL;
-    vb = MIN_ESC_SIGNAL;
-    vc = MIN_ESC_SIGNAL;
-    vd = MIN_ESC_SIGNAL;    
+    va = vb = vc = vd = MIN_ESC_SIGNAL;
     
     pid_off();
   }

@@ -1,3 +1,4 @@
+
 #include <Servo.h> 
 
 Servo esc1; 
@@ -46,8 +47,8 @@ void setup()
 
 void loop()
 {
-  esc();
-  //pid();
+  //esc();
+  pid();
 }
 
 void esc()
@@ -75,9 +76,9 @@ void pid()
     Serial.print(log_line++);
     Serial.print("\t");
     
-    Serial.print((int)(p*1000.0+.5)/1000.0,4);Serial.print("\t");
-    Serial.print((int)(i*1000.0+.5)/1000.0,4);Serial.print("\t");
-    Serial.print((int)(d*1000.0+.5)/1000.0,4);Serial.println("\t");
+    Serial.print((int)(p*100.0+.5)/100.0,4);Serial.print("\t");
+    Serial.print((int)(i*100.0+.5)/100.0,4);Serial.print("\t");
+    Serial.print((int)(d*100.0+.5)/100.0,4);Serial.println("\t");
   }
 
 }
