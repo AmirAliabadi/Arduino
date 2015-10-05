@@ -178,6 +178,8 @@ void loop()
   read_battery_voltage();
   read_throttle();
   read_setpoint(AC);
+  //read_setpoint(BD);
+  //read_setpoint(YW);
   read_pid_tunings(0);
   // read_pid_tunings(1);
   read_mpu();

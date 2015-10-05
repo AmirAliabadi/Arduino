@@ -57,7 +57,6 @@ void read_battery_voltage() {
 
 void read_pid_tunings(int type)
 {
-  /*
   float p = map(analogRead(Kp_PIN),0,644,0.0,100000.0)/20000.0;
   float i = map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
   float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/30000.0;
@@ -68,7 +67,7 @@ void read_pid_tunings(int type)
 
   input_values[2] = p;
   input_values[3] = i;
-  input_values[4] = d; */
+  input_values[4] = d;
   
   pid_xx_kp[type] = input_values[2];
   pid_xx_ki[type] = input_values[3];

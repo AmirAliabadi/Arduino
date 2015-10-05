@@ -67,6 +67,8 @@ These pids tunings are even better, now that I have upped the PID compute cycle
 // bad values:
 0.9000  0.0001  0.5000 -- will hold but push it and it will oscillate like crazy
 
+1.5, .02, .25 -- this was good, but batteries might have been a little low so need to double check
+
 
 Integral term seems to help with getting closer to desired setpoint
 /////////////////////////////////////////////
