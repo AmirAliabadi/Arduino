@@ -7,12 +7,12 @@ void log_data()
   Serial.print(thrust);
   Serial.print(F("\t"));
 
-  for(int i=2;i <3; i++ ) {
+  for(int i=0;i <3; i++ ) {
     Serial.print(setpoint[i], 1);
     Serial.print(F("\t"));  
   }
 
-  for(int i=2;i <3; i++ ) {
+  for(int i=0;i <3; i++ ) {
     Serial.print(input_ypr[i], 1);
     Serial.print(F("\t"));
   }
@@ -30,20 +30,20 @@ void log_data()
 //    Serial.print(F("\t"));
 //  }
 
-  Serial.print(ax);
-  Serial.print(F("\t"));
+//  Serial.print(ax);
+//  Serial.print(F("\t"));
 //  Serial.print(ay);
 //  Serial.print(F("\t"));
 //  Serial.print(az);
 //  Serial.print(F("\t"));
-  Serial.print(gx);
-  Serial.print(F("\t"));
+//  Serial.print(gx);
+//  Serial.print(F("\t"));
 //  Serial.print(gy);
 //  Serial.print(F("\t"));
 //  Serial.print(gz);
 //  Serial.print(F("\t")); 
 
-  for(int i=2;i <3; i++ ) {
+  for(int i=0;i <3; i++ ) {
     Serial.print(output_ypr[i], 1);
     Serial.print(F("\t"));  
   }

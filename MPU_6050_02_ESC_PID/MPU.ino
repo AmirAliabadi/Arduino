@@ -137,10 +137,9 @@ void read_mpu()
     mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
     mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
-    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-
-    int32_t g[3];
-    mpu.dmpGetGyro(gyro1, fifoBuffer);
+    //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    //int32_t g[3];
+    //mpu.dmpGetGyro(gyro1, fifoBuffer);
     //mpu.dmpGetGyro(gyro2, fifoBuffer);
     //mpu.dmpGetEuler(euler, &q);
 

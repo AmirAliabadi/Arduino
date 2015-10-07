@@ -61,6 +61,9 @@ These pids tunings are even better, now that I have upped the PID compute cycle
 
  * This one seems to work pretty good.
  * 0.980 0.390 0.490
+ * 
+ * this is what I'm going to start with:
+ * .8 .4 .3
 
 
 /////////////////////////////////////
@@ -116,3 +119,33 @@ void pid_off()
 
   system_check &= ~INIT_PID_ON ;
 }
+
+void update_pid_settings()
+{
+    ////////////////////////////////////////////////////
+    // Reset of PID when setpoint changes
+    if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
+    if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset();}
+    if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset();}
+    
+    setpoint_changed = SETPOINT_UNCHANGED;
+    //
+    ////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////
+    // adaptive PID settings
+    int i = 0;
+    if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
+    ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
+
+    i = 0;
+    if( abs(setpoint[BD] - input_ypr[BD]) > 10 ) i = 1;
+    bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
+
+    i = 0;
+    if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
+    yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
+    //
+    /////////////////////////////////////////////////  
+}
+

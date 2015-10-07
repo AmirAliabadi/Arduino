@@ -13,7 +13,10 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[9] = { 0.0, 0.0, 0.6, 0.1, 0.2, 0.8, 0.0, 0.3, 12.6 };
+float input_values[9] = { 0.0, 0.0, 
+                        0.6, 0.4, 0.2, 
+                        0.8, 0.0, 0.3, 
+                        12.6 };
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
@@ -128,13 +131,13 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  // conservative
-  pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
-  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.222;
-
-  // aggressive
-  pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
-  pid_xx_kp[1] = 0.888; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.333;  
+//  // conservative
+//  pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
+//  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.222;
+//
+//  // aggressive
+//  pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
+//  pid_xx_kp[1] = 0.888; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.333;  
     
   init_esc();
   init_pid();
@@ -181,7 +184,7 @@ void loop()
   //read_setpoint(BD);
   //read_setpoint(YW);
   read_pid_tunings(0);
-  // read_pid_tunings(1);
+  read_pid_tunings(1);
   read_mpu();
   process();
 
