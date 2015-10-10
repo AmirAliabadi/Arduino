@@ -38,7 +38,14 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
-  thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+  if( system_check & INIT_ESC_ARMED ) 
+  {
+    thrust = constrain(input_values[0], MIN_INPUT_THRUST, 300);  // todo: determine max when arming
+  }
+  else
+  {
+    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming    
+  }
 }
 
 void read_setpoint(int type)

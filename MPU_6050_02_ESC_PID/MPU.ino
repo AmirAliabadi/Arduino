@@ -133,9 +133,9 @@ void read_mpu()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-    mpu.dmpGetAccel(&aa, fifoBuffer);
-    mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-    mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
+    //mpu.dmpGetAccel(&aa, fifoBuffer);
+    //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+    //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
     //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     //int32_t g[3];
@@ -154,8 +154,8 @@ void read_mpu()
     // }
 
     ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0; // - 0.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 2.20      ) * 1.0) + 0.5))/1.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 0.0       ) * 1.0) + 0.5))/1.0; // - 0.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 1.0       ) * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 1.0       ) * 1.0) + 0.5))/1.0; // - 0.0;
 
     //ypr[YW] = (ypr[YW] * 180.0 / M_PI) - yw_offset  ;
     //ypr[AC] = (ypr[AC] * 180.0 / M_PI) - 2.20       ;

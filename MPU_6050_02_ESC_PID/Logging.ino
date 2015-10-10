@@ -1,21 +1,28 @@
 #ifdef DEBUG 
 void log_data()
 {
+  // line thrust  setpoint_yw setpoint_roll setpoint_pitch  input_yy  input_roll  input_pitch output_yw output_roll output_pitch  va  vc  vb  vd  ac_pid.pterm  ac_pid.iterm  ac_pid.dterm  kp  ki  kd
+  
   Serial.print(log_line++);
   Serial.print(F("\t"));
   
   Serial.print(thrust);
   Serial.print(F("\t"));
 
-  for(int i=0;i <3; i++ ) {
-    Serial.print(setpoint[i], 1);
-    Serial.print(F("\t"));  
-  }
+  Serial.print(setpoint[YW], 1);
+  Serial.print(F("\t"));  
+  Serial.print(setpoint[AC], 1);
+  Serial.print(F("\t"));  
+  Serial.print(setpoint[BD], 1);
+  Serial.print(F("\tyw:"));  
 
-  for(int i=0;i <3; i++ ) {
-    Serial.print(input_ypr[i], 1);
-    Serial.print(F("\t"));
-  }
+  Serial.print(input_ypr[YW], 1);
+  Serial.print(F("\tac:"));
+  Serial.print(input_ypr[AC], 1);
+  Serial.print(F("\tbd:"));
+  Serial.print(input_ypr[BD], 1);
+  Serial.print(F("\t"));
+
 /*
     Serial.print((aaReal.x));
     Serial.print(F("\t"));
@@ -43,24 +50,27 @@ void log_data()
 //  Serial.print(gz);
 //  Serial.print(F("\t")); 
 
-  for(int i=0;i <3; i++ ) {
-    Serial.print(output_ypr[i], 1);
-    Serial.print(F("\t"));  
-  }
+  Serial.print(output_ypr[YW], 1);
+  Serial.print(F("\t"));  
+  Serial.print(output_ypr[AC], 1);
+  Serial.print(F("\t"));  
+  Serial.print(output_ypr[BD], 1);
+  Serial.print(F("\t"));  
 
-/*
   Serial.print(va);
   Serial.print(F("\t"));
   Serial.print(vc);
   Serial.print(F("\t"));
-*/  
+  Serial.print(vb);
+  Serial.print(F("\t"));
+  Serial.print(vd);
+  Serial.print(F("\t"));
   
   Serial.print(ac_pid.pterm, 1);
   Serial.print(F("\t"));
   Serial.print(ac_pid.iterm, 1);
   Serial.print(F("\t"));
   Serial.print(ac_pid.dterm, 1);
-  Serial.print(F("\t"));
   Serial.print(F("\t"));
 
   Serial.print(ac_pid.GetKp()*10, 3);

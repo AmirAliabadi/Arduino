@@ -138,8 +138,14 @@ void setup()
 //  // aggressive
 //  pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
 //  pid_xx_kp[1] = 0.888; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.333;  
-    
+
+  input_values[0] = 800.0;
+  read_throttle();
   init_esc();
+  input_values[0] = 0.0;
+  read_throttle();
+  log_data();
+  
   init_pid();
   init_i2c();  
   init_mpu();  

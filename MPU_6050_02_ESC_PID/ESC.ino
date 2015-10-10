@@ -14,6 +14,7 @@ void init_esc()
 
 void arm_esc()
 {
+log_data();  
   esc_a.writeMicroseconds(MIN_ESC_SIGNAL + thrust); 
   esc_b.writeMicroseconds(MIN_ESC_SIGNAL + thrust);
   esc_c.writeMicroseconds(MIN_ESC_SIGNAL + thrust); 

@@ -10,6 +10,8 @@ Servo esc4;
 #define MIN_SIGNAL 1100     // Simulate throttle at min
 #define MOTOR_PIN_A 9
 #define MOTOR_PIN_C 6
+#define MOTOR_PIN_B 5
+#define MOTOR_PIN_D 3
 
 #define THROTTLE_INPUT_PIN 0
 
@@ -33,6 +35,8 @@ void setup()
   
   esc1.attach(MOTOR_PIN_A);
   esc2.attach(MOTOR_PIN_C);
+  esc3.attach(MOTOR_PIN_B);
+  esc4.attach(MOTOR_PIN_D);  
 
   delay(1000);
 
@@ -47,8 +51,8 @@ void setup()
 
 void loop()
 {
-  //esc();
-  pid();
+  esc();
+  //pid();
 }
 
 void esc()
@@ -62,6 +66,8 @@ void esc()
   
   esc1.writeMicroseconds(MIN_SIGNAL+throt);  
   esc2.writeMicroseconds(MIN_SIGNAL+throt);  
+  esc3.writeMicroseconds(MIN_SIGNAL+throt);  
+  esc4.writeMicroseconds(MIN_SIGNAL+throt);  
   
 }
 
