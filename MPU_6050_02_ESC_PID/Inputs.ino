@@ -40,7 +40,7 @@ void read_throttle()
 {
   if( system_check & INIT_ESC_ARMED ) 
   {
-    thrust = constrain(input_values[0], MIN_INPUT_THRUST, 300);  // todo: determine max when arming
+    thrust = constrain(input_values[0], MIN_INPUT_THRUST, 400);  // todo: determine max when arming
   }
   else
   {
