@@ -14,8 +14,8 @@
 ///////////////////////////////////
 // user inputs
 float input_values[9] = { 0.0, 0.0, 
-                        0.6, 0.4, 0.2, 
-                        0.8, 0.0, 0.3, 
+                        1.7, 0.0, 0.4, 
+                        0.888, 0.1, 0.333, 
                         12.6 };
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;

@@ -83,7 +83,7 @@ void init_pid()
   Serial.println("#initializing pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-100, 100);
+  yw_pid.SetOutputLimits(-200, 200);
   ac_pid.SetOutputLimits(-100, 100);
   bd_pid.SetOutputLimits(-100, 100);
 
@@ -95,9 +95,9 @@ void init_pid()
   output_ypr[AC] = 0;
   output_ypr[BD] = 0;
 
-  ac_pid.SetTunings(pid_xx_kp[1], pid_xx_ki[1], pid_xx_kd[1]);
-  bd_pid.SetTunings(pid_xx_kp[1], pid_xx_ki[1], pid_xx_kd[1]);
-  yw_pid.SetTunings(pid_yw_kp[1], pid_yw_ki[1], pid_yw_kd[1]);    
+  ac_pid.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
+  bd_pid.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
+  yw_pid.SetTunings(pid_yw_kp[0], pid_yw_ki[0], pid_yw_kd[0]);    
 
   yw_pid.SetMode(AUTOMATIC);
   ac_pid.SetMode(AUTOMATIC);
@@ -122,6 +122,7 @@ void pid_off()
 
 void update_pid_settings()
 {
+/*
     ////////////////////////////////////////////////////
     // Reset of PID when setpoint changes
     if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
@@ -131,9 +132,10 @@ void update_pid_settings()
     setpoint_changed = SETPOINT_UNCHANGED;
     //
     ////////////////////////////////////////////////////
-
+*/
     //////////////////////////////////////////////////
     // adaptive PID settings
+    /*
     int i = 0;
     if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
     ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
@@ -145,7 +147,8 @@ void update_pid_settings()
     i = 0;
     if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
+    */
     //
-    /////////////////////////////////////////////////  
+    /////////////////////////////////////////////////
 }
 

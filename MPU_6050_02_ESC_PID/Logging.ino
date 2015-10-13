@@ -8,6 +8,8 @@ void log_data()
   
   Serial.print(thrust);
   Serial.print(F("\t"));
+/*
+  Serial.print(F("setpoint: "));
 
   Serial.print(setpoint[YW], 1);
   Serial.print(F("\t"));  
@@ -15,11 +17,12 @@ void log_data()
   Serial.print(F("\t"));  
   Serial.print(setpoint[BD], 1);
   Serial.print(F("\tyw:"));  
+*/
 
   Serial.print(input_ypr[YW], 1);
-  Serial.print(F("\tac:"));
+  Serial.print(F("\t"));
   Serial.print(input_ypr[AC], 1);
-  Serial.print(F("\tbd:"));
+  Serial.print(F("\tb"));
   Serial.print(input_ypr[BD], 1);
   Serial.print(F("\t"));
 
@@ -57,13 +60,13 @@ void log_data()
   Serial.print(output_ypr[BD], 1);
   Serial.print(F("\t"));  
 
-  Serial.print(va);
+  Serial.print(va/100.0);
   Serial.print(F("\t"));
-  Serial.print(vc);
+  Serial.print(vc/100.0);
   Serial.print(F("\t"));
-  Serial.print(vb);
+  Serial.print(vb/100.0);
   Serial.print(F("\t"));
-  Serial.print(vd);
+  Serial.print(vd/100.0);
   Serial.print(F("\t"));
   
   Serial.print(ac_pid.pterm, 1);
@@ -73,11 +76,25 @@ void log_data()
   Serial.print(ac_pid.dterm, 1);
   Serial.print(F("\t"));
 
+  Serial.print(bd_pid.pterm, 1);
+  Serial.print(F("\t"));
+  Serial.print(bd_pid.iterm, 1);
+  Serial.print(F("\t"));
+  Serial.print(bd_pid.dterm, 1);
+  Serial.print(F("\t"));
+
   Serial.print(ac_pid.GetKp()*10, 3);
   Serial.print(F("\t"));
   Serial.print(ac_pid.GetKi()*10, 3);
   Serial.print(F("\t"));
   Serial.print(ac_pid.GetKd()*10, 3);
+  Serial.print(F("\t"));
+  
+  Serial.print(bd_pid.GetKp()*10, 3);
+  Serial.print(F("\t"));
+  Serial.print(bd_pid.GetKi()*10, 3);
+  Serial.print(F("\t"));
+  Serial.print(bd_pid.GetKd()*10, 3);
 
 //  Serial.print("\t");
 //  Serial.print(mpu.getDLPFMode(), 4);

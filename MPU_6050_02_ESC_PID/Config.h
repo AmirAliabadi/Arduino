@@ -61,7 +61,7 @@
 ////////////////////////////////////////////////////////////////
 // ESC Settings
 #define ESC_ARM_DELAY 3000
-#define MAX_ESC_SIGNAL    1500    // This is the max output that will be sent to ESC.  Limitiing for safetly reasons during debug.  Should be 2000 ideally.
+#define MAX_ESC_SIGNAL    1600    // This is the max output that will be sent to ESC.  Limitiing for safetly reasons during debug.  Should be 2000 ideally.
 #define MIN_ESC_SIGNAL    1100    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A       9       // ESC signal wire conected to pin 9
 #define MOTOR_PIN_B       5       // ESC signal wire conected to pin ??
@@ -69,5 +69,5 @@
 #define MOTOR_PIN_D       3       // ESC signal wire conected to pin ??
 
 // THROTTLE SETTINGS
-#define MAX_INPUT_THRUST  900     // 
+#define MAX_INPUT_THRUST  400     // 
 #define MIN_INPUT_THRUST  0       // 

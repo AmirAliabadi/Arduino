@@ -110,8 +110,8 @@ void balance_process()
     // Motor Mix Alorithm       //
     //////////////////////////////
     // compute the boom thrust //
-    v_ac = thrust - output_ypr[YW];
-    v_bd = thrust + output_ypr[YW];
+    v_ac = thrust ;//- output_ypr[YW];
+    v_bd = thrust ;//+ output_ypr[YW];
 
     // compute motor speeds
     va = MIN_ESC_SIGNAL + (v_ac + output_ypr[AC]);
