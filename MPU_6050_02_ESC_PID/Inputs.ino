@@ -40,7 +40,7 @@ void read_throttle()
 {
   if( system_check & INIT_ESC_ARMED ) 
   {
-    thrust = constrain(input_values[0], MIN_INPUT_THRUST, 350);  // todo: determine max when arming
+    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
   }
   else
   {
@@ -82,8 +82,8 @@ void read_pid_tunings(int type)
   pid_xx_ki[type] = input_values[3+(type*3)];
   pid_xx_kd[type] = input_values[4+(type*3)];
 
-  pid_yw_kp[type] = 6.0; //pid_xx_kp[type];
-  pid_yw_ki[type] = 2.0; //pid_xx_ki[type];
-  pid_yw_kd[type] = .01; //pid_xx_kd[type];
+  pid_yw_kp[type] = 1.0; //pid_xx_kp[type];
+  pid_yw_ki[type] = 0.0; //pid_xx_ki[type];
+  pid_yw_kd[type] = 0.5; //pid_xx_kd[type];
 }
 ///////////////////////////////////////////////////////////////////////

@@ -69,5 +69,5 @@
 #define MOTOR_PIN_D       3       // ESC signal wire conected to pin ??
 
 // THROTTLE SETTINGS
-#define MAX_INPUT_THRUST  500     // 
+#define MAX_INPUT_THRUST  800     // 
 #define MIN_INPUT_THRUST  0       // 

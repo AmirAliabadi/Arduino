@@ -57,7 +57,7 @@ void loop()
 
 void esc()
 {
-  float throt = map(analogRead(THROTTLE_INPUT_PIN),0,644,0,600);
+  float throt = map(analogRead(THROTTLE_INPUT_PIN),0,644,0,900);
 
   if( millis() - last > 200 ) {
     last = millis();

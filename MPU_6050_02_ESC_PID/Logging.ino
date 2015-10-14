@@ -22,7 +22,7 @@ void log_data()
   Serial.print(input_ypr[YW], 1);
   Serial.print(F("\t"));
   Serial.print(input_ypr[AC], 1);
-  Serial.print(F("\tb"));
+  Serial.print(F("\t"));
   Serial.print(input_ypr[BD], 1);
   Serial.print(F("\t"));
 
