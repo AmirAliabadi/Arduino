@@ -13,10 +13,26 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[9] = { 0.0, 0.0, 
-                        3.0, 0.0, 0.4, 
-                        0.888, 0.1, 0.333, 
+float input_values[12] = { 0.0, 
+                          0.0, 
+                        4.6, 0.0, 1.8,  // Conservative P/I/D
+                        5.2, 0.0, 2.4,  // AGGRESSIVE P/I/D
+                        15.0, 0.0, 2.4, // YAW P/I/D 
                         12.6 };
+
+#define INPUT_THRUST          input_values[0]
+#define INPUT_SETPOINT_PITCH  input_values[1]
+#define INPUT_CON_PID_P       input_values[2]
+#define INPUT_CON_PID_I       input_values[3]
+#define INPUT_CON_PID_D       input_values[4]
+#define INPUT_AGG_PID_P       input_values[5]
+#define INPUT_AGG_PID_I       input_values[6]
+#define INPUT_AGG_PID_D       input_values[7]
+#define INPUT_YAW_PID_P       input_values[8]
+#define INPUT_YAW_PID_I       input_values[9]
+#define INPUT_YAW_PID_D       input_values[10]
+#define INPUT_VOLTAGE_LEVEL   input_values[11]
+
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 

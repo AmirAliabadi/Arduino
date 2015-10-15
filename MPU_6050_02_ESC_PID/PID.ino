@@ -74,6 +74,16 @@ These pids tunings are even better, now that I have upped the PID compute cycle
 
 
 Integral term seems to help with getting closer to desired setpoint
+
+with the full quad!
+* the weight of the quad is a factor (duh!)
+* pid values that seem to work ok:
+*** 4.2 / 0.0 / 1.8 
+* have not introduced the I term yet
+* working on the YAW pid values, these will be different than the pitch/roll values
+
+* also saw 1.3/0/4.7 but this was with a big YAW PID setup
+
 /////////////////////////////////////////////
 */
 
@@ -135,19 +145,17 @@ void update_pid_settings()
 */
     //////////////////////////////////////////////////
     // adaptive PID settings
-    /*
     int i = 0;
-    if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
+    //if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
     ac_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[BD] - input_ypr[BD]) > 10 ) i = 1;
+    //if( abs(setpoint[BD] - input_ypr[BD]) > 10 ) i = 1;
     bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
+    //if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
-    */
     //
     /////////////////////////////////////////////////
 }

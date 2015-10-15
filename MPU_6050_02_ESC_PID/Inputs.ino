@@ -38,6 +38,8 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
+  input_values[0] = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
+
   if( system_check & INIT_ESC_ARMED ) 
   {
     thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
@@ -59,31 +61,30 @@ void read_setpoint(int type)
 }
 
 void read_battery_voltage() {
-  voltage = input_values[8];
+  voltage = INPUT_VOLTAGE_LEVEL;
 }
 
 void read_pid_tunings(int type)
 {
-  /*
-  float p = map(analogRead(Kp_PIN),0,644,0.0,100000.0)/20000.0;
-  float i = map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
-  float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/30000.0;
+  
+  float p = map(analogRead(Kp_PIN),0,644,0.0,100000.0)/2000.0;
+  float i = 0.0; // map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
+  float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/3000.0;
 
   p = ((int)(p*100.0+.5))/100.0;
   i = ((int)(i*100.0+.5))/100.0;
   d = ((int)(d*100.0+.5))/100.0;
 
-  input_values[2] = p;
-  input_values[3] = i;
-  input_values[4] = d;
-  */
+  input_values[2+(type*3)] = p;
+  input_values[3+(type*3)] = i;
+  input_values[4+(type*3)] = d;  
   
   pid_xx_kp[type] = input_values[2+(type*3)];
   pid_xx_ki[type] = input_values[3+(type*3)];
   pid_xx_kd[type] = input_values[4+(type*3)];
 
-  pid_yw_kp[type] = 1.0; //pid_xx_kp[type];
+  pid_yw_kp[type] = 7.5; //pid_xx_kp[type]; // 15.0 workd but might have been too much
   pid_yw_ki[type] = 0.0; //pid_xx_ki[type];
-  pid_yw_kd[type] = 0.5; //pid_xx_kd[type];
+  pid_yw_kd[type] = 2.4; //pid_xx_kd[type]; // 3.7 with the 15.0
 }
 ///////////////////////////////////////////////////////////////////////
