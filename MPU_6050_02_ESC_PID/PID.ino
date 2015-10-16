@@ -154,7 +154,7 @@ void update_pid_settings()
     bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    //if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
+    if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
     //
     /////////////////////////////////////////////////

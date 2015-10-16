@@ -15,9 +15,9 @@
 // user inputs
 float input_values[12] = { 0.0, 
                           0.0, 
-                        4.6, 0.0, 1.8,  // Conservative P/I/D
-                        5.2, 0.0, 2.4,  // AGGRESSIVE P/I/D
-                        15.0, 0.0, 2.4, // YAW P/I/D 
+                        2.5, 0.1, 0.75,  // Conservative P/I/D
+                        2.5, 0.1, 0.75,  // AGGRESSIVE P/I/D
+                        2.5, 0.0, 1.0, // YAW P/I/D 
                         12.6 };
 
 #define INPUT_THRUST          input_values[0]
