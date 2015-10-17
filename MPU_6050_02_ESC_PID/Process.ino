@@ -34,7 +34,7 @@ void check_if_stable()
 
     ypr[YW] = 0;
     ypr_last[YW] = 0;
-    process = &balance_process;
+    process = &attitude_process;
   } else {
     last_yw = ypr[YW];
     process = &wait_for_stable;
@@ -43,20 +43,18 @@ void check_if_stable()
 
 //////////////////////////////////////////////////////////////////////
 // main autopilot routine
-void balance_process()
+void attitude_process()
 {
   int v_ac = 0;
   int v_bd = 0;
 
   if( system_check & INIT_ESC_ARMED > 0 )
   {
-    if(abs(ypr[AC]) > 45.0) 
+    if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
-      // thrust = 40;
-      
       disarm_esc();
-
       thrust = 0;
+      
 #ifdef DEBUG       
       Serial.print(F("#esc disarmed : "));
       log_data();     
@@ -106,10 +104,10 @@ void balance_process()
     //
     //////////////////////////////////////////////////////
 
-    ////////////////////////////////
+    //////////////////////////////
     // Motor Mix Alorithm       //
     //////////////////////////////
-    // compute the boom thrust //
+    // compute the boom thrust  //
     v_ac = thrust - output_ypr[YW];
     v_bd = thrust + output_ypr[YW];
 
@@ -118,11 +116,6 @@ void balance_process()
     vc = MIN_ESC_SIGNAL + (v_ac - output_ypr[AC]);
     vb = MIN_ESC_SIGNAL + (v_bd + output_ypr[BD]);
     vd = MIN_ESC_SIGNAL + (v_bd - output_ypr[BD]);
-
-    va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-    vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-    vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-    vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
     //
     ////////////////////////////////
   }
@@ -132,6 +125,11 @@ void balance_process()
     
     pid_off();
   }
+
+  va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);

@@ -1,10 +1,9 @@
 
 void init_esc()
 {
-//    disarm_esc();
-//    delay(10000); 
-  
-    Serial.println(F("#Attaching to motor pins"));
+    disarm_esc();
+
+    Serial.println(F("#Attach motor pins"));
     esc_a.attach(MOTOR_PIN_A);
     esc_c.attach(MOTOR_PIN_C);
     esc_b.attach(MOTOR_PIN_B);
@@ -29,7 +28,7 @@ void arm_esc()
 
 void disarm_esc()
 {
-    Serial.println(F("#Detaching motor pins"));
+    Serial.println(F("#Detach motor pins"));
 
     esc_a.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_c.writeMicroseconds(MIN_ESC_SIGNAL); 
@@ -41,6 +40,8 @@ void disarm_esc()
     esc_c.detach();
     esc_b.detach();
     esc_d.detach();  
+        
+    delay(3000); 
 
     system_check &= ~(INIT_ESC_ATTACHED | INIT_ESC_ARMED );
 }

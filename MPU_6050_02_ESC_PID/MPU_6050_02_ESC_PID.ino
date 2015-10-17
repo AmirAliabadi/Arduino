@@ -13,25 +13,25 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[12] = { 0.0, 
-                          0.0, 
+float input_values[12] = { 0.0, // thrust
                         2.5, 0.1, 0.75,  // Conservative P/I/D
                         2.5, 0.1, 0.75,  // AGGRESSIVE P/I/D
                         2.5, 0.0, 1.0, // YAW P/I/D 
-                        12.6 };
+                        12.6,
+                        0.0 }; // battery voltage level
 
 #define INPUT_THRUST          input_values[0]
-#define INPUT_SETPOINT_PITCH  input_values[1]
-#define INPUT_CON_PID_P       input_values[2]
-#define INPUT_CON_PID_I       input_values[3]
-#define INPUT_CON_PID_D       input_values[4]
-#define INPUT_AGG_PID_P       input_values[5]
-#define INPUT_AGG_PID_I       input_values[6]
-#define INPUT_AGG_PID_D       input_values[7]
-#define INPUT_YAW_PID_P       input_values[8]
-#define INPUT_YAW_PID_I       input_values[9]
-#define INPUT_YAW_PID_D       input_values[10]
-#define INPUT_VOLTAGE_LEVEL   input_values[11]
+#define INPUT_CON_PID_P       input_values[1]
+#define INPUT_CON_PID_I       input_values[2]
+#define INPUT_CON_PID_D       input_values[3]
+#define INPUT_AGG_PID_P       input_values[4]
+#define INPUT_AGG_PID_I       input_values[5]
+#define INPUT_AGG_PID_D       input_values[6]
+#define INPUT_YAW_PID_P       input_values[7]
+#define INPUT_YAW_PID_I       input_values[8]
+#define INPUT_YAW_PID_D       input_values[9]
+#define INPUT_VOLTAGE_LEVEL   input_values[10]
+#define INPUT_SETPOINT_PITCH  input_values[11]
 
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
@@ -147,28 +147,10 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-//  // conservative
-//  pid_yw_kp[0] = 0.5; pid_yw_ki[0] = 0.1; pid_yw_kd[0] = 0.2;
-//  pid_xx_kp[0] = 0.6; pid_xx_ki[0] = 0.4; pid_xx_kd[0] = 0.222;
-//
-//  // aggressive
-//  pid_yw_kp[1] = 0.6; pid_yw_ki[1] = 0.0; pid_yw_kd[1] = 0.2;  
-//  pid_xx_kp[1] = 0.888; pid_xx_ki[1] = 0.0; pid_xx_kd[1] = 0.333;  
-
-//  input_values[0] = 800.0;
-//  read_throttle();
-//  Serial.println(F("attach power to motor"));
-//  delay(3000);
-
-  input_values[0] = 0.0;
-  read_throttle();
-    
-  init_esc();
-  log_data();
-  
-  init_pid();
   init_i2c();  
   init_mpu();  
+  init_esc();  
+  init_pid();
 
   process = &wait_for_stable;
 }
@@ -204,19 +186,19 @@ void loop()
 //    process();
   }
 
-  read_battery_voltage();
+  read_mpu();
   read_throttle();
-  read_setpoint(AC);
+  //read_setpoint(AC);
   //read_setpoint(BD);
   //read_setpoint(YW);
+  read_battery_voltage();
   read_pid_tunings(0);
   read_pid_tunings(1);
-  read_mpu();
   process();
 
 }
 
 void serialEvent() {
-  readCsvToVector(input_values);
+  readCsvToVector();
 }
 

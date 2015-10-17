@@ -157,24 +157,25 @@ void read_mpu()
     ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 2.0       ) * 1.0) + 0.5))/1.0;
     ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 3.0       ) * 1.0) + 0.5))/1.0; // - 0.0;
 
-    //ypr[YW] = (ypr[YW] * 180.0 / M_PI) - yw_offset  ;
-    //ypr[AC] = (ypr[AC] * 180.0 / M_PI) - 2.20       ;
-    //ypr[BD] = (ypr[BD] * 180.0 / M_PI) - 2.20       ;
-
     if( system_check & INIT_MPU_STABLE )
     {
-      if( abs(ypr[AC] - ypr_last[AC]) > 30) 
+      if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
       {
-        Serial.print(F("#* big change *"));
+        Serial.print(F("#* bg chng *"));
         Serial.print("\t");
         Serial.print(ypr_last[AC]);
         Serial.print("\t");
         Serial.println(ypr[AC]);
-        
-        //mpu.resetDMP();
-        
-        //return false; 
       }
+
+      if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
+      {
+        Serial.print(F("#*bg chng"));
+        Serial.print("\t");
+        Serial.print(ypr_last[BD]);
+        Serial.print("\t");
+        Serial.println(ypr[BD]);
+      }      
 
       if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
       if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];

@@ -1,9 +1,9 @@
 
-boolean readCsvToVector(float* pidVector) 
+void readCsvToVector() 
 {
   byte len;
   if (Serial.available() <= 0)
-    return 0;
+    return ;
    
   len = Serial.available();
   
@@ -17,7 +17,7 @@ boolean readCsvToVector(float* pidVector)
   
   byte i = 0, j = 0, k = 0;
 
-  while ( i < len ) {
+  while ( i < len && k < 12 ) {
     while (stream[i] != ',' && i < len) {
       number[j] = stream[i];
       ++i;
@@ -26,11 +26,9 @@ boolean readCsvToVector(float* pidVector)
     ++i;
     number[j] = '\0';
     j = 0;
-    pidVector[k++] = atof(number);
-
+    
+    input_values[k++] = atof(number);
   }
-
-  return 1;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -38,7 +36,7 @@ boolean readCsvToVector(float* pidVector)
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
-  input_values[0] = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
+  //input_values[0] = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
 
   if( system_check & INIT_ESC_ARMED ) 
   {
@@ -60,24 +58,24 @@ void read_setpoint(int type)
   }
 }
 
-void read_battery_voltage() {
+void read_battery_voltage() 
+{
   voltage = INPUT_VOLTAGE_LEVEL;
 }
 
 void read_pid_tunings(int type)
 {
-  
-  float p = map(analogRead(Kp_PIN),0,644,0.0,100000.0)/2000.0;
-  float i = 0.0; // map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
-  float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/3000.0;
+  //float p = map(analogRead(Kp_PIN),0,644,0.0,100000.0)/2000.0;
+  //float i = 0.0; // map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
+  //float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/3000.0;
 
-  p = ((int)(p*100.0+.5))/100.0;
-  i = ((int)(i*100.0+.5))/100.0;
-  d = ((int)(d*100.0+.5))/100.0;
+  //p = ((int)(p*100.0+.5))/100.0;
+  //i = ((int)(i*100.0+.5))/100.0;
+  //d = ((int)(d*100.0+.5))/100.0;
 
-  input_values[2+(type*3)] = p;
-  input_values[3+(type*3)] = i;
-  input_values[4+(type*3)] = d;  
+  //input_values[2+(type*3)] = p;
+  //input_values[3+(type*3)] = i;
+  //input_values[4+(type*3)] = d;  
   
   pid_xx_kp[type] = input_values[2+(type*3)];
   pid_xx_ki[type] = input_values[3+(type*3)];
