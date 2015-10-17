@@ -10,14 +10,14 @@ Servo esc4;
 #define MIN_SIGNAL 1100     // Simulate throttle at min
 #define MOTOR_PIN_A 9
 #define MOTOR_PIN_C 6
-#define MOTOR_PIN_B 5
+#define MOTOR_PIN_B 10
 #define MOTOR_PIN_D 3
 
 #define THROTTLE_INPUT_PIN 0
 
-#define P_PIN 0
-#define I_PIN 1
-#define D_PID 2
+#define P_PIN 1
+#define I_PIN 2
+#define D_PID 3
 
 long last ;
 long log_line = 0;
