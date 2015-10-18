@@ -32,7 +32,7 @@ void init_mpu()
       delay(10);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_98);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -153,9 +153,9 @@ void read_mpu()
     //   gyro1[i]   = (float)(g[3-i-1])/131.0/360.0;
     // }
 
-    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0; // - 0.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 2.0       ) * 1.0) + 0.5))/1.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 3.0       ) * 1.0) + 0.5))/1.0; // - 0.0;
+    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0; // - 0.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 0.0       ) * 10.0) + 0.5))/10.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 0.0       ) * 10.0) + 0.5))/10.0; // - 0.0;
 
     if( system_check & INIT_MPU_STABLE )
     {

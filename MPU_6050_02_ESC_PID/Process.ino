@@ -24,7 +24,7 @@ void check_if_stable()
   static float last_yw = -333.0;
 
 #ifdef DEBUG    
-  Serial.print(F("#waiting for stable readings..."));
+  Serial.print(F("#waiting 4 SR "));
   Serial.println(abs(ypr[YW] - last_yw),2);
 #endif
 
@@ -41,6 +41,17 @@ void check_if_stable()
   }
 }
 
+void arm_esc_process()
+{
+    read_throttle();
+    init_esc();
+      
+    if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) 
+    {
+      process = &wait_for_stable;    
+    }
+}
+
 //////////////////////////////////////////////////////////////////////
 // main autopilot routine
 void attitude_process()
@@ -48,15 +59,14 @@ void attitude_process()
   int v_ac = 0;
   int v_bd = 0;
 
-  if( system_check & INIT_ESC_ARMED > 0 )
+  if( system_check & INIT_ESC_ARMED )
   {
     if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
       disarm_esc();
-      thrust = 0;
       
 #ifdef DEBUG       
-      Serial.print(F("#esc disarmed : "));
+      Serial.print(F("#esc off: "));
       log_data();     
 #endif      
 

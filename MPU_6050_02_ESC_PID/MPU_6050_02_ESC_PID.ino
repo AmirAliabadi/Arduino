@@ -149,10 +149,10 @@ void setup()
 
   init_i2c();  
   init_mpu();  
-  init_esc();  
-  init_pid();
+  init_pid();  
+  // init_esc();  
 
-  process = &wait_for_stable;
+  process = &arm_esc_process;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -174,19 +174,19 @@ void loop()
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt) // && fifoCount < packetSize)
   {
-//    read_battery_voltage();
-//  if(mpuInterrupt) break;
-//    read_throttle();
-//  if(mpuInterrupt) break;
-//    read_setpoint(AC);
-//  if(mpuInterrupt) break;
-//    read_pid_tunings(0);
-//  if(mpuInterrupt) break;
-//    // read_pid_tunings(1);
-//    process();
+    read_throttle();        if(mpuInterrupt) break;
+    //read_setpoint(AC);      if(mpuInterrupt) break;
+    //read_setpoint(BD);      if(mpuInterrupt) break;
+    //read_setpoint(YW);      if(mpuInterrupt) break;    
+    read_pid_tunings(0);    if(mpuInterrupt) break;
+    read_pid_tunings(1);    if(mpuInterrupt) break;
+    read_battery_voltage(); if(mpuInterrupt) break;    
+    
+    process();
   }
 
   read_mpu();
+  
   read_throttle();
   //read_setpoint(AC);
   //read_setpoint(BD);
@@ -194,6 +194,7 @@ void loop()
   read_battery_voltage();
   read_pid_tunings(0);
   read_pid_tunings(1);
+  
   process();
 
 }

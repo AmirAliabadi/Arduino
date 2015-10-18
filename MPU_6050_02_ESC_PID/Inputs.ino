@@ -44,7 +44,12 @@ void read_throttle()
   }
   else
   {
-    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming    
+    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming 
+
+    if( thrust == 0.0 )
+    {
+      system_check |= INIT_THROTTLE_ZEROED ;
+    }
   }
 }
 
