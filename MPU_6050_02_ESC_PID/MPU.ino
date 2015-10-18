@@ -22,12 +22,12 @@ void init_mpu()
     if (devStatus == 0)
     {
       // Supply your own gyro offsets here, scaled for min sensitivity
-      mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
-      mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
-      mpu.setZAccelOffset(MPU6050_ACCEL_OFFSET_Z);
-      mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
-      mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
-      mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
+      //mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
+      //mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
+      //mpu.setZAccelOffset(MPU6050_ACCEL_OFFSET_Z);
+      //mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
+      //mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
+      //mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
       delay(10);
 

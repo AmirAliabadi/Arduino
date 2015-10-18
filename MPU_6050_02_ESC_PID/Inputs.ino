@@ -77,9 +77,9 @@ void read_pid_tunings(int type)
   //input_values[3+(type*3)] = i;
   //input_values[4+(type*3)] = d;  
   
-  pid_xx_kp[type] = input_values[2+(type*3)];
-  pid_xx_ki[type] = input_values[3+(type*3)];
-  pid_xx_kd[type] = input_values[4+(type*3)];
+  pid_xx_kp[type] = input_values[1+(type*3)];
+  pid_xx_ki[type] = input_values[2+(type*3)];
+  pid_xx_kd[type] = input_values[3+(type*3)];
 
   pid_yw_kp[type] = 2.5; //pid_xx_kp[type]; // 15.0 workd but might have been too much
   pid_yw_ki[type] = 0.0; //pid_xx_ki[type];
