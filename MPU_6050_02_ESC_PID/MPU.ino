@@ -154,8 +154,8 @@ void read_mpu()
     // }
 
     ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0; // - 0.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 0.0       ) * 10.0) + 0.5))/10.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 0.0       ) * 10.0) + 0.5))/10.0; // - 0.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 0.5       ) * 10.0) + 0.5))/10.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 2.7       ) * 10.0) + 0.5))/10.0; // - 0.0;
 
     if( system_check & INIT_MPU_STABLE )
     {
