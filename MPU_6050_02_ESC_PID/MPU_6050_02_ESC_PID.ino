@@ -38,8 +38,8 @@ uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
 int thrust = 0;
 float voltage = 12.6;
-double setpoint[3] = {0,0,0};
-double last_setpoint[3] = {0,0,0};
+float setpoint[3] = {0,0,0};
+float last_setpoint[3] = {0,0,0};
 float pid_xx_kp[2];
 float pid_xx_ki[2];
 float pid_xx_kd[2];
@@ -103,8 +103,8 @@ int vd = MIN_ESC_SIGNAL;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-double input_ypr[3] = {0.0, 0.0, 0.0};
-double output_ypr[3] = {0.0, 0.0, 0.0};
+float input_ypr[3] = {0.0, 0.0, 0.0};
+float output_ypr[3] = {0.0, 0.0, 0.0};
 
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
