@@ -158,6 +158,41 @@ float ch1Last, ch2Last, ch4Last, velocityLast;
  *
  */
 
+long last_log = 0;
+
+ float input_values[12] {0,0,0,0,0,0,0,0,0,0,0};
+
+ void serialEvent() {
+  byte len;
+  if (Serial.available() <= 0)
+    return ;
+   
+  len = Serial.available();
+  
+  char stream[80];
+  char number[10];
+  
+  // Read the message
+  for (byte i = 0; i < len; ++i) {
+    stream[i] = Serial.read();
+  }
+  
+  byte i = 0, j = 0, k = 0;
+
+  while ( i < len && k < 12 ) {
+    while (stream[i] != ',' && i < len) {
+      number[j] = stream[i];
+      ++i;
+      ++j;
+    }
+    ++i;
+    number[j] = '\0';
+    j = 0;
+    
+    input_values[k++] = atof(number);
+  }
+}
+
 void setup(){
   #ifdef DEBUG                        // Device tests go here
     Serial.begin(115200);                 // Serial only necessary if in DEBUG mode
@@ -289,7 +324,7 @@ void calculateVelocities(){
 
   //ch3 = floor(ch3/RC_ROUNDING_BASE)*RC_ROUNDING_BASE;
   //velocity = map(ch3, RC_LOW_CH3, RC_HIGH_CH3, ESC_MIN, ESC_MAX);
-  velocity = map(analogRead(0),0,688,ESC_MIN, ESC_MAX);
+  velocity = map(analogRead(0), 0, 688,ESC_MIN, ESC_MAX);
   
   releaseLock();
 
@@ -315,23 +350,28 @@ void calculateVelocities(){
   
   }
 
-  Serial.print(velocity);
-  Serial.print(F("\t"));
-  Serial.print(bal_ac);
-  Serial.print(F("\t"));
-  Serial.print(bal_bd);
-  
-  Serial.print(F("\t"));
-  Serial.print(va);
-  Serial.print(F("\t"));
-  Serial.print(vc);
-  Serial.print(F("\t"));
-  Serial.print(vb);
-  Serial.print(F("\t"));
-  Serial.print(vd); 
-  
-  Serial.println(F(""));
-  
+  if (millis() - last_log > 50)
+  {
+    last_log = millis();
+    
+    Serial.print(velocity);
+    Serial.print(F("\t"));
+    Serial.print(bal_ac);
+    Serial.print(F("\t"));
+    Serial.print(bal_bd);
+    
+    Serial.print(F("\t"));
+    Serial.print(va);
+    Serial.print(F("\t"));
+    Serial.print(vc);
+    Serial.print(F("\t"));
+    Serial.print(vb);
+    Serial.print(F("\t"));
+    Serial.print(vd); 
+    
+    Serial.println(F(""));
+ 
+  }    
 }
 
 inline void updateMotors(){
