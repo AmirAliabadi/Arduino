@@ -11,12 +11,12 @@
 #include <PinChangeIntConfig.h>
 
 #define DEBUG
-#define MPU6050_ACCEL_OFFSET_X 952
-#define MPU6050_ACCEL_OFFSET_Y -584
-#define MPU6050_ACCEL_OFFSET_Z 1464
-#define MPU6050_GYRO_OFFSET_X  34
-#define MPU6050_GYRO_OFFSET_Y  31
-#define MPU6050_GYRO_OFFSET_Z  31
+#define MPU6050_ACCEL_OFFSET_X 722
+#define MPU6050_ACCEL_OFFSET_Y -654
+#define MPU6050_ACCEL_OFFSET_Z 1305
+#define MPU6050_GYRO_OFFSET_X  48
+#define MPU6050_GYRO_OFFSET_Y  -16
+#define MPU6050_GYRO_OFFSET_Z  -32
 
 
 /*  Arduino Pin configuration
@@ -201,6 +201,9 @@ void setup() {
  *
  */
 
+ boolean is_stable = 0;
+ float last_yaw = 333;
+
 void loop() {
 
   while (!mpuInterrupt) { // && fifoCount < packetSize){
@@ -212,10 +215,28 @@ void loop() {
   }
 
   getYPR();
-  computePID();
-  calculateVelocities();
-  updateMotors();
 
+  if( is_stable ) {
+    computePID();
+    calculateVelocities();
+    updateMotors();
+  } else {
+    if (millis() - last_log > 2000)
+    {
+      Serial.print(yrp[0]); Serial.print(F("\t"));
+      Serial.println(last_yaw);
+      last_log = millis();
+      if( yrp[0] == last_yaw )
+      {
+        is_stable = 1;
+        yaw_offset = yrp[0];
+      } 
+      else 
+      {
+        last_yaw = yrp[0];
+      }
+    }
+  }
 }
 
 /*  computePID function
@@ -249,17 +270,9 @@ void computePID() {
   ch2Last = 0;
   ch4Last = 0;
 
-  yrp[0] = (yrp[0] - yaw_offset  ) * 180 / M_PI;
-  yrp[1] = (yrp[1] - pitch_offset) * 180 / M_PI;
-  yrp[2] = (yrp[2] - roll_offset ) * 180 / M_PI;
-
-  if (abs(yrp[0] - yrpLast[0]) > 30) yrp[0] = yrpLast[0];
-  if (abs(yrp[1] - yrpLast[1]) > 30) yrp[1] = yrpLast[1];
-  if (abs(yrp[2] - yrpLast[2]) > 30) yrp[2] = yrpLast[2];
-
-  yrpLast[0] = yrp[0];
-  yrpLast[1] = yrp[1];
-  yrpLast[2] = yrp[2];
+////
+//
+////
 
   pitchReg.Compute();
   rollReg.Compute();
@@ -297,6 +310,26 @@ void getYPR() {
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(yrp, &q, &gravity);
+
+    /////
+    //
+    yrp[0] = yrp[0] * 180 / M_PI;
+    yrp[1] = yrp[1] * 180 / M_PI;
+    yrp[2] = yrp[2] * 180 / M_PI;
+    
+    yrp[0] = (float)((int)(( (yrp[0] - yaw_offset) * 10.0) +.5))/10.0;
+    yrp[1] = (float)((int)((yrp[1] * 10.0) +.5))/10.0;
+    yrp[2] = (float)((int)((yrp[2] * 10.0) +.5))/10.0;    
+    
+    if (abs(yrp[0] - yrpLast[0]) > 30) yrp[0] = yrpLast[0];
+    if (abs(yrp[1] - yrpLast[1]) > 30) yrp[1] = yrpLast[1];
+    if (abs(yrp[2] - yrpLast[2]) > 30) yrp[2] = yrpLast[2];
+    
+    yrpLast[0] = yrp[0];
+    yrpLast[1] = yrp[1];
+    yrpLast[2] = yrp[2];
+    //
+    //////    
 
   }
 
