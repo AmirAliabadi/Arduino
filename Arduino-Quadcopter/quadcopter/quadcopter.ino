@@ -11,12 +11,16 @@
 #include <PinChangeIntConfig.h>
 
 #define DEBUG
-#define MPU6050_ACCEL_OFFSET_X 722
-#define MPU6050_ACCEL_OFFSET_Y -654
-#define MPU6050_ACCEL_OFFSET_Z 1305
-#define MPU6050_GYRO_OFFSET_X  48
-#define MPU6050_GYRO_OFFSET_Y  -16
-#define MPU6050_GYRO_OFFSET_Z  -32
+#define MPU6050_ACCEL_OFFSET_X -6640
+#define MPU6050_ACCEL_OFFSET_Y -1344
+#define MPU6050_ACCEL_OFFSET_Z 832
+#define MPU6050_GYRO_OFFSET_X  38
+#define MPU6050_GYRO_OFFSET_Y  -52
+#define MPU6050_GYRO_OFFSET_Z  -16
+
+// board1 :   722  -654   1305  48    -16   -32
+// board2 : -6640  -1344  832   38    -52   16
+
 
 
 /*  Arduino Pin configuration
@@ -65,17 +69,17 @@
  *
  */
 
-#define PITCH_P_VAL 0.5
+#define PITCH_P_VAL .01
 #define PITCH_I_VAL 0
-#define PITCH_D_VAL 1
+#define PITCH_D_VAL .001
 
-#define ROLL_P_VAL 2
-#define ROLL_I_VAL 5
-#define ROLL_D_VAL 1
+#define ROLL_P_VAL .01
+#define ROLL_I_VAL 0 //5
+#define ROLL_D_VAL .001
 
-#define YAW_P_VAL 2
-#define YAW_I_VAL 5
-#define YAW_D_VAL 1
+#define YAW_P_VAL 0
+#define YAW_I_VAL 0 //5
+#define YAW_D_VAL 0
 
 
 /* Flight parameters
@@ -173,6 +177,13 @@ long last_log = 0;
 float yaw_offset, pitch_offset, roll_offset;
 
 void setup() {
+    a.detach();
+    c.detach();
+    b.detach();
+    d.detach();
+
+    delay(10);
+  
 #ifdef DEBUG                        // Device tests go here
   Serial.begin(115200);                 // Serial only necessary if in DEBUG mode
   Serial.flush();
@@ -385,17 +396,17 @@ void calculateVelocities() {
     Serial.print(velocity);  Serial.print(F("\t"));
 
     Serial.print(yrp[0]);    Serial.print(F("\t"));
-    //Serial.print(yrp[1]);    Serial.print(F("\t"));
+    Serial.print(yrp[1]);    Serial.print(F("\t"));
     Serial.print(yrp[2]);    Serial.print(F("\t"));
 
     //    Serial.print(bal_axes);  Serial.print(F("\t"));
     Serial.print(bal_ac);    Serial.print(F("\t"));
-    //    Serial.print(bal_bd);    Serial.print(F("\t"));
+    Serial.print(bal_bd);    Serial.print(F("\t"));
 
     Serial.print(va);       Serial.print(F("\t"));
     Serial.print(vc);       Serial.print(F("\t"));
-    //    Serial.print(vb);       Serial.print(F("\t"));
-    //    Serial.print(vd);
+    Serial.print(vb);       Serial.print(F("\t"));
+    Serial.print(vd);
 
     Serial.println(F(""));
 
