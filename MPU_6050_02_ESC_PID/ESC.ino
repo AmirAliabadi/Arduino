@@ -5,7 +5,7 @@ void init_esc()
 
     if( system_check & INIT_THROTTLE_ZEROED )
     {
-      Serial.println(F("#Attach motor pins"));
+      Serial.println(F("#Attaching motor pins"));
       esc_a.attach(MOTOR_PIN_A);
       esc_c.attach(MOTOR_PIN_C);
       esc_b.attach(MOTOR_PIN_B);
@@ -28,7 +28,7 @@ void arm_esc()
   esc_b.writeMicroseconds(MIN_ESC_SIGNAL + thrust);
   esc_d.writeMicroseconds(MIN_ESC_SIGNAL + thrust);
 
-  // delay(ESC_ARM_DELAY);
+  delay(ESC_ARM_DELAY);
 
   system_check |= INIT_ESC_ARMED;
 }

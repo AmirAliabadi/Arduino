@@ -22,14 +22,12 @@ void init_mpu()
     if (devStatus == 0)
     {
       // Supply your own gyro offsets here, scaled for min sensitivity
-      //mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
-      //mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
-      //mpu.setZAccelOffset(MPU6050_ACCEL_OFFSET_Z);
-      //mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
-      //mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
-      //mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
-
-      delay(10);
+      mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
+      mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
+      mpu.setZAccelOffset(MPU6050_ACCEL_OFFSET_Z);
+      mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
+      mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
+      mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
       mpu.setDLPFMode(MPU6050_DLPF_BW_98);
@@ -53,21 +51,9 @@ void init_mpu()
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
 
-//      mpu.setDHPFMode(MPU6050_DHPF_0P63);
-//#define MPU6050_DHPF_RESET          0x00
-//#define MPU6050_DHPF_5              0x01
-//#define MPU6050_DHPF_2P5            0x02
-//#define MPU6050_DHPF_1P25           0x03
-//#define MPU6050_DHPF_0P63           0x04
-//#define MPU6050_DHPF_HOLD           0x07          
-
-      delay(10);
-
       // turn on the DMP, now that it's ready
       Serial.println(F("#Enabling DMP..."));
       mpu.setDMPEnabled(true);
-
-      delay(10);
       
       // enable Arduino interrupt detection
       Serial.println(F("#Enabling interrupt detection (Arduino external interrupt 0)..."));
@@ -132,17 +118,16 @@ void read_mpu()
 
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
-    mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+    mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
+    //mpu.dmpGetEuler(euler, &q);
     //mpu.dmpGetAccel(&aa, fifoBuffer);
     //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
     //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
 
     //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-    //int32_t g[3];
-    //mpu.dmpGetGyro(gyro1, fifoBuffer);
-    //mpu.dmpGetGyro(gyro2, fifoBuffer);
-    //mpu.dmpGetEuler(euler, &q);
-
+    
+    mpu.dmpGetGyro(gyro); // this is in degrees/s ??
+    
     /*
      *     mpu.dmpGetGyro(g, fifoBuffer);
      */
@@ -153,9 +138,10 @@ void read_mpu()
     //   gyro1[i]   = (float)(g[3-i-1])/131.0/360.0;
     // }
 
-    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0; // - 0.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI) - 0.5       ) * 10.0) + 0.5))/10.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI) - 2.7       ) * 10.0) + 0.5))/10.0; // - 0.0;
+    // convert radians to degrees
+    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 10.0) + 0.5))/10.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 10.0) + 0.5))/10.0;
 
     if( system_check & INIT_MPU_STABLE )
     {
@@ -186,10 +172,5 @@ void read_mpu()
     ypr_last[YW] = ypr[YW];
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
-
-    // Update the PID input values
-    input_ypr[YW] = (double)ypr[YW];
-    input_ypr[AC] = (double)ypr[AC];
-    input_ypr[BD] = (double)ypr[BD];
   }
 }

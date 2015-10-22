@@ -93,25 +93,45 @@ void init_pid()
   Serial.println("#initializing pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-200, 200);
+  yw_pid.SetOutputLimits(-100, 100);
   ac_pid.SetOutputLimits(-100, 100);
   bd_pid.SetOutputLimits(-100, 100);
+
+  yw_rate.SetOutputLimits(-100, 100);
+  ac_rate.SetOutputLimits(-100, 100);
+  bd_rate.SetOutputLimits(-100, 100);
 
   yw_pid.SetSampleTime(10);
   ac_pid.SetSampleTime(10);
   bd_pid.SetSampleTime(10);
 
+  yw_rate.SetSampleTime(10);
+  ac_rate.SetSampleTime(10);
+  bd_rate.SetSampleTime(10);
+
   output_ypr[YW] = 0;
   output_ypr[AC] = 0;
   output_ypr[BD] = 0;
+
+  output_rate[YW] = 0;
+  output_rate[AC] = 0;
+  output_rate[BD] = 0;
 
   ac_pid.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
   bd_pid.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
   yw_pid.SetTunings(pid_yw_kp[0], pid_yw_ki[0], pid_yw_kd[0]);    
 
+  ac_rate.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
+  bd_rate.SetTunings(pid_xx_kp[0], pid_xx_ki[0], pid_xx_kd[0]);
+  yw_rate.SetTunings(pid_yw_kp[0], pid_yw_ki[0], pid_yw_kd[0]);    
+
   yw_pid.SetMode(AUTOMATIC);
   ac_pid.SetMode(AUTOMATIC);
   bd_pid.SetMode(AUTOMATIC);
+
+  yw_rate.SetMode(AUTOMATIC);
+  ac_rate.SetMode(AUTOMATIC);
+  bd_rate.SetMode(AUTOMATIC);
 
   system_check |= INIT_PID_ON ;
 }
@@ -122,17 +142,25 @@ void pid_off()
   output_ypr[BD] = 0.0;
   output_ypr[YW] = 0.0;
 
-  //turn the PID on
+  output_rate[YW] = 0;
+  output_rate[AC] = 0;
+  output_rate[BD] = 0;
+
+
+  //turn the PID off
   yw_pid.SetMode(MANUAL);
   ac_pid.SetMode(MANUAL);
   bd_pid.SetMode(MANUAL);
+
+  yw_rate.SetMode(MANUAL);
+  ac_rate.SetMode(MANUAL);
+  bd_rate.SetMode(MANUAL);
 
   system_check &= ~INIT_PID_ON ;
 }
 
 void update_pid_settings()
 {
-/*
     ////////////////////////////////////////////////////
     // Reset of PID when setpoint changes
     if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset();}
@@ -141,9 +169,9 @@ void update_pid_settings()
     
     setpoint_changed = SETPOINT_UNCHANGED;
     //
-    ////////////////////////////////////////////////////
-*/
-    //////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////
     // adaptive PID settings
     int i = 0;
     //if( abs(setpoint[AC] - input_ypr[AC]) > 10 ) i = 1;
@@ -154,9 +182,9 @@ void update_pid_settings()
     bd_pid.SetTunings(pid_xx_kp[i], pid_xx_ki[i], pid_xx_kd[i]);
 
     i = 0;
-    if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
+    //if( abs(setpoint[YW] - input_ypr[YW]) > 10 ) i = 1;
     yw_pid.SetTunings(pid_yw_kp[i], pid_yw_ki[i], pid_yw_kd[i]);      
     //
-    /////////////////////////////////////////////////
+    //////////////////////////////////////////////////
 }
 

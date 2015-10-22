@@ -95,6 +95,11 @@ void attitude_process()
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
     update_pid_settings();
+
+    // Update the Stable PID input values
+    input_ypr[YW] = ypr[YW];
+    input_ypr[AC] = ypr[AC];
+    input_ypr[BD] = ypr[BD];
     
     ac_pid.Compute(); bd_pid.Compute(); yw_pid.Compute();    
 
@@ -152,9 +157,8 @@ void attitude_process()
   {
     last_log = millis();
     log_data();
-    //print_mpu_readings(mode,fifoBuffer);
-#endif    
   }
+#endif    
   
 }
 //////////////////////////////////////////////////////////////////////

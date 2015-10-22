@@ -13,12 +13,14 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[12] = { 0.0, // thrust
+float input_values[14] = { 0.0, // thrust
                         2.5, 0.1, 0.75,  // Conservative P/I/D
                         2.5, 0.1, 0.75,  // AGGRESSIVE P/I/D
                         2.5, 0.0, 1.0, // YAW P/I/D 
-                        12.6,
-                        0.0 }; // battery voltage level
+                        12.6, // battery voltage level
+                        0.0,
+                        0.0,
+                        0.0}; 
 
 #define INPUT_THRUST          input_values[0]
 #define INPUT_CON_PID_P       input_values[1]
@@ -31,8 +33,9 @@ float input_values[12] = { 0.0, // thrust
 #define INPUT_YAW_PID_I       input_values[8]
 #define INPUT_YAW_PID_D       input_values[9]
 #define INPUT_VOLTAGE_LEVEL   input_values[10]
-#define INPUT_SETPOINT_PITCH  input_values[11]
-
+#define INPUT_SETPOINT_YAW    input_values[11]
+#define INPUT_SETPOINT_PITCH  input_values[12]
+#define INPUT_SETPOINT_ROLL   input_values[13]
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
@@ -75,10 +78,11 @@ VectorInt16 aa;         			// [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
-float euler[3];         			// [psi, theta, phi]    Euler angle container
-int32_t gyro1[3];
+//float euler[3];         		// [psi, theta, phi]    Euler angle container
+//int32_t gyro1[3];
 //int16_t gyro2[3];
-int16_t ax, ay, az, gx, gy, gz;
+int16_t gyro[3];
+//int16_t ax, ay, az, gx, gy, gz;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
@@ -103,12 +107,18 @@ int vd = MIN_ESC_SIGNAL;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-float input_ypr[3] = {0.0, 0.0, 0.0};
-float output_ypr[3] = {0.0, 0.0, 0.0};
+float input_ypr[3]  = {0.0f, 0.0f, 0.0f};
+float input_gyro[3] = {0.0f, 0.0f, 0.0f};
+float output_ypr[3] = {0.0f, 0.0f, 0.0f};
+float output_rate[3] = {0.0f, 0.0f, 0.0f};
 
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
+
+PID yw_rate(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT);
+PID ac_rate(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, REVERSE);
+PID bd_rate(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
