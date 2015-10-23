@@ -85,7 +85,7 @@ VectorFloat gravity;    			// [x, y, z]            gravity vector
 //float euler[3];         		// [psi, theta, phi]    Euler angle container
 //int32_t gyro1[3];
 //int16_t gyro2[3];
-int16_t gyro[3];
+VectorInt16 gyro;
 //int16_t ax, ay, az, gx, gy, gz;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};

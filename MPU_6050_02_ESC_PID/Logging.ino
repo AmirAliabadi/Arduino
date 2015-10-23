@@ -26,6 +26,13 @@ void log_data()
   Serial.print(input_ypr[BD], 1);
   Serial.print(F("\t"));
 
+  Serial.print(input_gyro[YW], 1);
+  Serial.print(F("\t"));
+  Serial.print(input_gyro[AC], 1);
+  Serial.print(F("\t"));
+  Serial.print(input_gyro[BD], 1);
+  Serial.print(F("\t"));  
+
 /*
     Serial.print((aaReal.x));
     Serial.print(F("\t"));

@@ -33,13 +33,14 @@
 #define MPU6050_GYRO_OFFSET_Z  -30
 
 /*
-                A
-                |Pitch +
-        Roll -  |
-        D -----[Y]----- B Roll +
+ *             (x)
+                A Pitch +
                 |
-                |Pitch -
-                C
+        Roll -  |
+     (y)D -----[Y]----- B Roll +
+                |(z)
+                |
+                C Pitch -
 */
 #define YW 0
 #define YAW 0

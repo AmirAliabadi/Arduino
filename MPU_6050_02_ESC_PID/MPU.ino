@@ -126,7 +126,7 @@ void read_mpu()
 
     //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     
-    mpu.dmpGetGyro(gyro); // this is in degrees/s ??
+    mpu.dmpGetGyro(&gyro, fifoBuffer); // this is in degrees/s ??
     
     /*
      *     mpu.dmpGetGyro(g, fifoBuffer);
