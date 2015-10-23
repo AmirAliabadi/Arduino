@@ -40,13 +40,13 @@ void read_throttle()
 
   if( system_check & INIT_ESC_ARMED ) 
   {
-    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
+    INPUT_THRUST = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
   }
   else
   {
-    thrust = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming 
+    INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming 
 
-    if( thrust == 0.0 )
+    if( INPUT_THRUST == 0.0 )
     {
       system_check |= INIT_THROTTLE_ZEROED ;
     }
@@ -65,7 +65,7 @@ void read_setpoint(int type)
 
 void read_battery_voltage() 
 {
-  voltage = INPUT_VOLTAGE_LEVEL;
+  INPUT_VOLTAGE_LEVEL = 12.6;
 }
 
 void read_pid_tunings(int type)
@@ -81,7 +81,8 @@ void read_pid_tunings(int type)
   //input_values[2+(type*3)] = p;
   //input_values[3+(type*3)] = i;
   //input_values[4+(type*3)] = d;  
-  
+
+  /*
   pid_xx_kp[type] = input_values[1+(type*3)];
   pid_xx_ki[type] = input_values[2+(type*3)];
   pid_xx_kd[type] = input_values[3+(type*3)];
@@ -89,5 +90,6 @@ void read_pid_tunings(int type)
   pid_yw_kp[type] = 2.5; //pid_xx_kp[type]; // 15.0 workd but might have been too much
   pid_yw_ki[type] = 0.0; //pid_xx_ki[type];
   pid_yw_kd[type] = 0.75; //pid_xx_kd[type]; // 3.7 with the 15.0
+  */
 }
 ///////////////////////////////////////////////////////////////////////

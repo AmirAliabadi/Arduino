@@ -90,7 +90,7 @@ void attitude_process()
       return;
   }
 
-  if(thrust > MIN_INPUT_THRUST) {
+  if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
@@ -100,8 +100,10 @@ void attitude_process()
     input_ypr[YW] = ypr[YW];
     input_ypr[AC] = ypr[AC];
     input_ypr[BD] = ypr[BD];
-    
-    ac_pid.Compute(); bd_pid.Compute(); yw_pid.Compute();    
+
+    yw_pid.Compute();
+    ac_pid.Compute(); bd_pid.Compute(); 
+    ac_rat.Compute(); bd_rat.Compute();   
 
     //////////////////////////////////////////////////////
     // compute the boom velocity
@@ -123,8 +125,8 @@ void attitude_process()
     // Motor Mix Alorithm       //
     //////////////////////////////
     // compute the boom thrust  //
-    v_ac = thrust - output_ypr[YW];
-    v_bd = thrust + output_ypr[YW];
+    v_ac = INPUT_THRUST - output_ypr[YW];
+    v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
     va = MIN_ESC_SIGNAL + (v_ac + output_ypr[AC]);

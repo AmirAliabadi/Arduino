@@ -6,7 +6,7 @@ void log_data()
   Serial.print(log_line++);
   Serial.print(F("\t"));
   
-  Serial.print(thrust);
+  Serial.print(INPUT_THRUST);
   Serial.print(F("\t"));
 /*
   Serial.print(F("setpoint: "));
@@ -55,9 +55,15 @@ void log_data()
 
   Serial.print(output_ypr[YW], 1);
   Serial.print(F("\t"));  
+  
   Serial.print(output_ypr[AC], 1);
   Serial.print(F("\t"));  
   Serial.print(output_ypr[BD], 1);
+  Serial.print(F("\t")); 
+
+  Serial.print(output_rate[AC], 1);
+  Serial.print(F("\t"));  
+  Serial.print(output_rate[BD], 1);
   Serial.print(F("\t"));  
 
   Serial.print(va/100.0);
@@ -68,7 +74,8 @@ void log_data()
   Serial.print(F("\t"));
   Serial.print(vd/100.0);
   Serial.print(F("\t"));
-  
+
+  /*
   Serial.print(ac_pid.pterm, 1);
   Serial.print(F("\t"));
   Serial.print(ac_pid.iterm, 1);
@@ -95,6 +102,7 @@ void log_data()
   Serial.print(bd_pid.GetKi()*10, 3);
   Serial.print(F("\t"));
   Serial.print(bd_pid.GetKd()*10, 3);
+  */
 
 //  Serial.print("\t");
 //  Serial.print(mpu.getDLPFMode(), 4);

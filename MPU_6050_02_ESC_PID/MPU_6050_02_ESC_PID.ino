@@ -14,21 +14,22 @@
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0.0, // thrust
-                        2.5, 0.1, 0.75,  // Conservative P/I/D
-                        2.5, 0.1, 0.75,  // AGGRESSIVE P/I/D
-                        2.5, 0.0, 1.0, // YAW P/I/D 
-                        12.6, // battery voltage level
-                        0.0,
-                        0.0,
-                        0.0}; 
+                           2, 0, 0,  // Stable P/I/D
+                           3, 0, 0,  // Rate P/I/D
+                           1, 0, 0,  // YAW P/I/D
+                           12.6,     // battery voltage level
+                           0.0,
+                           0.0,
+                           0.0
+                         };
 
 #define INPUT_THRUST          input_values[0]
-#define INPUT_CON_PID_P       input_values[1]
-#define INPUT_CON_PID_I       input_values[2]
-#define INPUT_CON_PID_D       input_values[3]
-#define INPUT_AGG_PID_P       input_values[4]
-#define INPUT_AGG_PID_I       input_values[5]
-#define INPUT_AGG_PID_D       input_values[6]
+#define INPUT_STB_PID_P       input_values[1]
+#define INPUT_STB_PID_I       input_values[2]
+#define INPUT_STB_PID_D       input_values[3]
+#define INPUT_RAT_PID_P       input_values[4]
+#define INPUT_RAT_PID_I       input_values[5]
+#define INPUT_RAT_PID_D       input_values[6]
 #define INPUT_YAW_PID_P       input_values[7]
 #define INPUT_YAW_PID_I       input_values[8]
 #define INPUT_YAW_PID_D       input_values[9]
@@ -39,17 +40,20 @@ float input_values[14] = { 0.0, // thrust
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
+
+float setpoint[3] = {0, 0, 0};
+float last_setpoint[3] = {0, 0, 0};
+
+/*
 int thrust = 0;
 float voltage = 12.6;
-float setpoint[3] = {0,0,0};
-float last_setpoint[3] = {0,0,0};
 float pid_xx_kp[2];
 float pid_xx_ki[2];
 float pid_xx_kd[2];
 
 float pid_yw_kp[2];
 float pid_yw_ki[2];
-float pid_yw_kd[2];
+float pid_yw_kd[2]; */
 //
 //////////////////////////////////////////////////////////////////
 
@@ -92,7 +96,7 @@ float yw_offset   = 0.0;
 
 
 ////////////////////////////////////////////////////////////////
-// ESC 
+// ESC
 Servo esc_a;
 Servo esc_b;
 Servo esc_c;
@@ -113,12 +117,11 @@ float output_ypr[3] = {0.0f, 0.0f, 0.0f};
 float output_rate[3] = {0.0f, 0.0f, 0.0f};
 
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
+
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
-
-PID yw_rate(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT);
-PID ac_rate(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, REVERSE);
-PID bd_rate(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, REVERSE);
+PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, REVERSE);
+PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, REVERSE);
 //
 ////////////////////////////////////////////////////////////////
 
@@ -126,12 +129,12 @@ PID bd_rate(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, REVERSE
 // MISC items
 uint16_t system_check = INIT_CLEARED;
 
-#ifdef DEBUG 
+#ifdef DEBUG
 long log_line = 0;
 long last_log = 0;
 #endif
 long last_blink = 0;
-                         
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -157,10 +160,10 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  init_i2c();  
-  init_mpu();  
-  init_pid();  
-  // init_esc();  
+  init_i2c();
+  init_mpu();
+  init_pid();
+  // init_esc();
 
   process = &arm_esc_process;
 }
@@ -171,32 +174,32 @@ void setup()
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 void loop()
-{ 
-  if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (thrust == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY/2) : BLINK_FREQUENCY/16) )
+{
+  if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
   {
     last_blink = millis();
-    
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));  
+
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
   }
-  
+
   if (!dmpReady) return;
 
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt) // && fifoCount < packetSize)
   {
-    read_throttle();        if(mpuInterrupt) break;
+    read_throttle();        if (mpuInterrupt) break;
     //read_setpoint(AC);      if(mpuInterrupt) break;
     //read_setpoint(BD);      if(mpuInterrupt) break;
-    //read_setpoint(YW);      if(mpuInterrupt) break;    
-    read_pid_tunings(0);    if(mpuInterrupt) break;
-    read_pid_tunings(1);    if(mpuInterrupt) break;
-    read_battery_voltage(); if(mpuInterrupt) break;    
-    
+    //read_setpoint(YW);      if(mpuInterrupt) break;
+    read_pid_tunings(0);    if (mpuInterrupt) break;
+    read_pid_tunings(1);    if (mpuInterrupt) break;
+    read_battery_voltage(); if (mpuInterrupt) break;
+
     process();
   }
 
   read_mpu();
-  
+
   read_throttle();
   //read_setpoint(AC);
   //read_setpoint(BD);
@@ -204,7 +207,7 @@ void loop()
   read_battery_voltage();
   read_pid_tunings(0);
   read_pid_tunings(1);
-  
+
   process();
 
 }

@@ -23,10 +23,10 @@ void init_esc()
 
 void arm_esc()
 {
-  esc_a.writeMicroseconds(MIN_ESC_SIGNAL + thrust); 
-  esc_c.writeMicroseconds(MIN_ESC_SIGNAL + thrust); 
-  esc_b.writeMicroseconds(MIN_ESC_SIGNAL + thrust);
-  esc_d.writeMicroseconds(MIN_ESC_SIGNAL + thrust);
+  esc_a.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST); 
+  esc_c.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST); 
+  esc_b.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST);
+  esc_d.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST);
 
   delay(ESC_ARM_DELAY);
 
