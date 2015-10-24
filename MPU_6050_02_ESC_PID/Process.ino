@@ -133,10 +133,10 @@ void attitude_process()
     v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
-    va = MIN_ESC_SIGNAL + (v_ac + output_ypr[AC]);
-    vc = MIN_ESC_SIGNAL + (v_ac - output_ypr[AC]);
-    vb = MIN_ESC_SIGNAL + (v_bd + output_ypr[BD]);
-    vd = MIN_ESC_SIGNAL + (v_bd - output_ypr[BD]);
+    va = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]);
+    vc = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]);
+    vb = MIN_ESC_SIGNAL + (v_bd + output_rate[BD]);
+    vd = MIN_ESC_SIGNAL + (v_bd - output_rate[BD]);
     //
     ////////////////////////////////
   }

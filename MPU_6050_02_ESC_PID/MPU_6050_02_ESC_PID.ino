@@ -14,8 +14,8 @@
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0.0, // thrust
-                           3, 0, 0,  // Stable P/I/D
-                           .5, 0, 0,  // Rate P/I/D
+                           4, 0, 0,  // Stable P/I/D
+                           .75, 0, 0,  // Rate P/I/D
                            2, 0, 0,  // YAW P/I/D
                            12.6,     // battery voltage level
                            0.0,
@@ -120,8 +120,8 @@ PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
-PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, REVERSE);
-PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, REVERSE);
+PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
+PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
 //
 ////////////////////////////////////////////////////////////////
 

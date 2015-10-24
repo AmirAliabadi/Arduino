@@ -20,9 +20,7 @@
 #define SETPOINT_CHANGED_BD   0b010
 #define SETPOINT_CHANGED_YW   0b100
 
-
-//#define MPU_1
-#define MPU_3
+#define MPU_2
 
 #ifdef MPU_1
 #define MPU6050_ACCEL_OFFSET_X 699
@@ -34,12 +32,12 @@
 #endif
 
 #ifdef MPU_2
-#define MPU6050_ACCEL_OFFSET_X 46
-#define MPU6050_ACCEL_OFFSET_Y 365
-#define MPU6050_ACCEL_OFFSET_Z 1393
-#define MPU6050_GYRO_OFFSET_X  163
-#define MPU6050_GYRO_OFFSET_Y  143
-#define MPU6050_GYRO_OFFSET_Z  -19
+#define MPU6050_ACCEL_OFFSET_X -6542
+#define MPU6050_ACCEL_OFFSET_Y -1314
+#define MPU6050_ACCEL_OFFSET_Z 840
+#define MPU6050_GYRO_OFFSET_X  39
+#define MPU6050_GYRO_OFFSET_Y  -49
+#define MPU6050_GYRO_OFFSET_Z  15
 #endif
 
 #ifdef MPU_3
@@ -58,6 +56,8 @@
 
 // mpu2
 // -6640  -1344  832   38    -52   16
+// -6542  -1314  840   39    -49   15
+// -6545  -1318  834   45    -48   14
 
 // mpu3
 // 46 365 1393  163 143 -19
