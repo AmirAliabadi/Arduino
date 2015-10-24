@@ -14,9 +14,9 @@
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0.0, // thrust
-                           2, 0, 0,  // Stable P/I/D
-                           3, 0, 0,  // Rate P/I/D
-                           1, 0, 0,  // YAW P/I/D
+                           3, 0, 0,  // Stable P/I/D
+                           .5, 0, 0,  // Rate P/I/D
+                           2, 0, 0,  // YAW P/I/D
                            12.6,     // battery voltage level
                            0.0,
                            0.0,
