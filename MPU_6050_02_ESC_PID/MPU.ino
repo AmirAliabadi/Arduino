@@ -120,11 +120,16 @@ void read_mpu()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
     mpu.dmpGetGyro(&gyro, fifoBuffer); // this is in degrees/s ??
+
+    if( abs(gyro.x) < 2 ) gyro.x = 0;
+    if( abs(gyro.y) < 2 ) gyro.y = 0;
+    if( abs(gyro.z) < 2 ) gyro.z = 0;
+    
     
     // convert radians to degrees
-    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 10.0) + 0.5))/10.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 10.0) + 0.5))/10.0;
+    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0;
+    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 1.0) + 0.5))/1.0;
+    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 1.0) + 0.5))/1.0;
 
     if( system_check & INIT_MPU_STABLE )
     {
