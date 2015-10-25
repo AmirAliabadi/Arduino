@@ -119,25 +119,8 @@ void read_mpu()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
-    //mpu.dmpGetEuler(euler, &q);
-    //mpu.dmpGetAccel(&aa, fifoBuffer);
-    //mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-    //mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-
-    //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-    
     mpu.dmpGetGyro(&gyro, fifoBuffer); // this is in degrees/s ??
     
-    /*
-     *     mpu.dmpGetGyro(g, fifoBuffer);
-     */
-    //0=gyroX, 1=gyroY, 2=gyroZ
-    //swapped to match Yaw,Pitch,Roll
-    //Scaled from deg/s to get tr/s
-    // for (int i=0;i<3;i++){
-    //   gyro1[i]   = (float)(g[3-i-1])/131.0/360.0;
-    // }
-
     // convert radians to degrees
     ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 10.0) + 0.5))/10.0;
     ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 10.0) + 0.5))/10.0;

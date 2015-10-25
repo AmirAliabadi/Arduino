@@ -14,8 +14,8 @@
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0.0, // thrust
-                           4, 0, 0,  // Stable P/I/D
-                           .75, 0, 0,  // Rate P/I/D
+                           4.5, 0,   0,  // Stable P/I/D
+                           .1,  0, .04,  // Rate P/I/D
                            2, 0, 0,  // YAW P/I/D
                            12.6,     // battery voltage level
                            0.0,
@@ -82,11 +82,7 @@ VectorInt16 aa;         			// [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
-//float euler[3];         		// [psi, theta, phi]    Euler angle container
-//int32_t gyro1[3];
-//int16_t gyro2[3];
 VectorInt16 gyro;
-//int16_t ax, ay, az, gx, gy, gz;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
