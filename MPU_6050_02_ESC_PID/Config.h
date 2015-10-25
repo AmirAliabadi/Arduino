@@ -20,7 +20,7 @@
 #define SETPOINT_CHANGED_BD   0b010
 #define SETPOINT_CHANGED_YW   0b100
 
-#define MPU_2
+#define MPU_3
 
 #ifdef MPU_1
 #define MPU6050_ACCEL_OFFSET_X 699
@@ -41,11 +41,11 @@
 #endif
 
 #ifdef MPU_3
-#define MPU6050_ACCEL_OFFSET_X 41
-#define MPU6050_ACCEL_OFFSET_Y 377
-#define MPU6050_ACCEL_OFFSET_Z 1398
-#define MPU6050_GYRO_OFFSET_X  162
-#define MPU6050_GYRO_OFFSET_Y  142
+#define MPU6050_ACCEL_OFFSET_X -62
+#define MPU6050_ACCEL_OFFSET_Y 366
+#define MPU6050_ACCEL_OFFSET_Z 1416
+#define MPU6050_GYRO_OFFSET_X  161
+#define MPU6050_GYRO_OFFSET_Y  145
 #define MPU6050_GYRO_OFFSET_Z  -19
 #endif
 
@@ -64,7 +64,13 @@
 // 47 364 1394  162 143 -20
 // 40 376 1398  162 142 -19
 // 41 377 1398  162 142 -19
+/*
+Sensor readings with offsets:  -3  -7  16380 0 0 1
+Your offsets: -64 373 1417  161 145 -19
 
+Sensor readings with offsets:  2 -1  16388 0 1 1
+Your offsets: -62 366 1416  161 145 -19
+*/
 
 
 /*
