@@ -93,7 +93,7 @@ void init_pid()
   Serial.println("#initializing pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-100, 100);
+  yw_pid.SetOutputLimits(-45, 45);
   
   ac_pid.SetOutputLimits(-45, 45);
   bd_pid.SetOutputLimits(-45, 45);
@@ -115,7 +115,7 @@ void init_pid()
   output_rate[AC] = 0;
   output_rate[BD] = 0;
 
-  yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I); 
+  yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D); 
 
   ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
   bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
@@ -173,7 +173,6 @@ void update_pid_settings()
     bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
 
     yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
-      
     //
     //////////////////////////////////////////////////
 }
