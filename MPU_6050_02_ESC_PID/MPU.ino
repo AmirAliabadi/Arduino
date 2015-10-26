@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_98);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -121,10 +121,9 @@ void read_mpu()
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
     mpu.dmpGetGyro(&gyro, fifoBuffer); // this is in degrees/s ??
 
-    if( abs(gyro.x) < 2 ) gyro.x = 0;
-    if( abs(gyro.y) < 2 ) gyro.y = 0;
-    if( abs(gyro.z) < 2 ) gyro.z = 0;
-    
+    //gyro.x = gyro.x * 180.0 / M_PI;
+    //gyro.y = gyro.y * 180.0 / M_PI;
+    //gyro.z = gyro.z * 180.0 / M_PI;
     
     // convert radians to degrees
     ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0;

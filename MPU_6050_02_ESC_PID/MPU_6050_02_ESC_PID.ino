@@ -7,21 +7,21 @@
 #endif
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
+//#include "MPU6050_9Axis_MotionApps41.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
 #define DEBUG
 
 ///////////////////////////////////
 // user inputs
-float input_values[14] = { 0.0, // thrust
-                           1, 0,   0,  // Stable P/I/D
-                           0,  0, 0,  // Rate P/I/D
+float input_values[14] = { 0,        // thrust
+                           4.5, 0, 0,  // Stable P/I/D
+                           1, 0, 0,  // Rate P/I/D
                            0, 0, 0,  // YAW P/I/D
                            12.6,     // battery voltage level
                            0.0,
                            0.0,
-                           0.0
-                         };
+                           0.0 };
 
 #define INPUT_THRUST          input_values[0]
 #define INPUT_STB_PID_P       input_values[1]
@@ -107,15 +107,16 @@ int vd = MIN_ESC_SIGNAL;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-float input_ypr[3]  = {0.0f, 0.0f, 0.0f};
-float input_gyro[3] = {0.0f, 0.0f, 0.0f};
-float output_ypr[3] = {0.0f, 0.0f, 0.0f};
-float output_rate[3] = {0.0f, 0.0f, 0.0f};
+float input_ypr[3]    = {0.0f, 0.0f, 0.0f};
+float output_ypr[3]   = {0.0f, 0.0f, 0.0f};
+float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
+float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
+
 PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
 PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
 //

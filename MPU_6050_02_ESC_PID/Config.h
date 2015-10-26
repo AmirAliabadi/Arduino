@@ -74,11 +74,11 @@ Your offsets: -62 366 1416  161 145 -19
 
 
 /*
- *             (x)
+ *             (y)
                 A Pitch +
                 |
         Roll -  |
-     (y)D -----[Y]----- B Roll +
+     (x)D -----[Y]----- B Roll +
                 |(z)
                 |
                 C Pitch -
