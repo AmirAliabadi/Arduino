@@ -93,12 +93,12 @@ void init_pid()
   Serial.println("#initializing pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-45, 45);
+  yw_pid.SetOutputLimits(-250, 250);
   
-  ac_pid.SetOutputLimits(-45, 45);
-  bd_pid.SetOutputLimits(-45, 45);
-  ac_rat.SetOutputLimits(-200, 200);
-  bd_rat.SetOutputLimits(-200, 200);
+  ac_pid.SetOutputLimits(-250, 250);
+  bd_pid.SetOutputLimits(-250, 250);
+  ac_rat.SetOutputLimits(-500, 500);
+  bd_rat.SetOutputLimits(-500, 500);
 
   yw_pid.SetSampleTime(10);
   
