@@ -84,6 +84,9 @@ with the full quad!
 
 * also saw 1.3/0/4.7 but this was with a big YAW PID setup
 
+// stable + rate pid
+// -45 - 45 and -200 to 200 / p=1.2 , i=.44
+
 /////////////////////////////////////////////
 */
 
@@ -94,40 +97,43 @@ void init_pid()
   
   //turn the PID on
   yw_pid.SetOutputLimits(-250, 250);
+
+  ac_pid.SetOutputLimits(-150, 150);
+  bd_pid.SetOutputLimits(-150, 150);
   
-  ac_pid.SetOutputLimits(-250, 250);
-  bd_pid.SetOutputLimits(-250, 250);
-  ac_rat.SetOutputLimits(-500, 500);
-  bd_rat.SetOutputLimits(-500, 500);
+  //ac_pid.SetOutputLimits(-45, 45);
+  //bd_pid.SetOutputLimits(-45, 45);
+  //ac_rat.SetOutputLimits(-300, 300);
+  //bd_rat.SetOutputLimits(-300, 300);
 
   yw_pid.SetSampleTime(10);
   
-  ac_pid.SetSampleTime(10);
-  bd_pid.SetSampleTime(10);
-  ac_rat.SetSampleTime(10);
-  bd_rat.SetSampleTime(10);
+  ac_pid.SetSampleTime(30);
+  bd_pid.SetSampleTime(30);
+//  ac_rat.SetSampleTime(10);
+//  bd_rat.SetSampleTime(10);
 
   output_ypr[YW] = 0;
   output_ypr[AC] = 0;
   output_ypr[BD] = 0;
 
-  output_rate[YW] = 0;
-  output_rate[AC] = 0;
-  output_rate[BD] = 0;
+//  output_rate[YW] = 0;
+//  output_rate[AC] = 0;
+//  output_rate[BD] = 0;
 
   yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D); 
 
   ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
   bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-  ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-  bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+//  ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+//  bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
 
   yw_pid.SetMode(AUTOMATIC);
   
   ac_pid.SetMode(AUTOMATIC);
   bd_pid.SetMode(AUTOMATIC);
-  ac_rat.SetMode(AUTOMATIC);
-  bd_rat.SetMode(AUTOMATIC);
+//  ac_rat.SetMode(AUTOMATIC);
+//  bd_rat.SetMode(AUTOMATIC);
 
   system_check |= INIT_PID_ON ;
 }
@@ -138,17 +144,16 @@ void pid_off()
   output_ypr[BD] = 0.0;
   output_ypr[YW] = 0.0;
 
-  output_rate[YW] = 0;
-  output_rate[AC] = 0;
-  output_rate[BD] = 0;
-
+//  output_rate[YW] = 0;
+//  output_rate[AC] = 0;
+//  output_rate[BD] = 0;
 
   //turn the PID off
   yw_pid.SetMode(MANUAL);
   ac_pid.SetMode(MANUAL);
   bd_pid.SetMode(MANUAL);
-  ac_rat.SetMode(MANUAL);
-  bd_rat.SetMode(MANUAL);
+//  ac_rat.SetMode(MANUAL);
+//  bd_rat.SetMode(MANUAL);
 
   system_check &= ~INIT_PID_ON ;
 }
@@ -157,22 +162,22 @@ void update_pid_settings()
 {
     ////////////////////////////////////////////////////
     // Reset of PID when setpoint changes
-    if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset(); ac_rat.Reset(); }
-    if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset(); bd_rat.Reset(); }
-    if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset(); }
+    //if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset(); ac_rat.Reset(); }
+    //if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset(); bd_rat.Reset(); }
+    //if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset(); }
     
-    setpoint_changed = SETPOINT_UNCHANGED;
+    //setpoint_changed = SETPOINT_UNCHANGED;
     //
     ///////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////
     // 
-    ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-    bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-    ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-    bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+//    ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+//    bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+//    ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+//    bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
 
-    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
+//    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
     //
     //////////////////////////////////////////////////
 }

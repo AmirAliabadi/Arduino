@@ -15,8 +15,8 @@
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0,        // thrust
-                           4.5, 0, 0,  // Stable P/I/D
-                           1, 0, 0,  // Rate P/I/D
+                           .9, 0, .2,  // Stable P/I/D
+                           0.1, 0, 0,  // Rate P/I/D
                            0, 0, 0,  // YAW P/I/D
                            12.6,     // battery voltage level
                            0.0,
@@ -110,15 +110,17 @@ int vd = MIN_ESC_SIGNAL;
 float input_ypr[3]    = {0.0f, 0.0f, 0.0f};
 float output_ypr[3]   = {0.0f, 0.0f, 0.0f};
 float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
-float output_rate[3]  = {0.0f, 0.0f, 0.0f};
+//float output_rate[3]  = {0.0f, 0.0f, 0.0f};
+
 
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
 
-PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
-PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
+//PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
+//PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
+
 //
 ////////////////////////////////////////////////////////////////
 
@@ -188,8 +190,8 @@ void loop()
     //read_setpoint(AC);      if(mpuInterrupt) break;
     //read_setpoint(BD);      if(mpuInterrupt) break;
     //read_setpoint(YW);      if(mpuInterrupt) break;
-    read_pid_tunings(0);    if (mpuInterrupt) break;
-    read_pid_tunings(1);    if (mpuInterrupt) break;
+    //read_pid_tunings(0);    if (mpuInterrupt) break;
+    //read_pid_tunings(1);    if (mpuInterrupt) break;
     read_battery_voltage(); if (mpuInterrupt) break;
 
     process();
@@ -202,8 +204,8 @@ void loop()
   //read_setpoint(BD);
   //read_setpoint(YW);
   read_battery_voltage();
-  read_pid_tunings(0);
-  read_pid_tunings(1);
+  //read_pid_tunings(0);
+  //read_pid_tunings(1);
 
   process();
 

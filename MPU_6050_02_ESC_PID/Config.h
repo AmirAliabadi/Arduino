@@ -80,7 +80,7 @@ Your offsets: -62 366 1416  161 145 -19
         Roll -  |
      (x)D -----[Y]----- B Roll +
                 |(z)
-                |
+                !
                 C Pitch -
 */
 #define YW 0
@@ -103,7 +103,7 @@ Your offsets: -62 366 1416  161 145 -19
 
 ////////////////////////////////////////////////////////////////
 // ESC Settings
-#define ESC_ARM_DELAY 3000
+#define ESC_ARM_DELAY     3000
 #define MAX_ESC_SIGNAL    1900    // This is the max output that will be sent to ESC.  Limitiing for safetly reasons during debug.  Should be 2000 ideally.
 #define MIN_ESC_SIGNAL    1100    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A       9       // ESC signal wire conected to pin 9

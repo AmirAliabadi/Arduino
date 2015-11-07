@@ -26,8 +26,19 @@ void readCsvToVector()
     ++i;
     number[j] = '\0';
     j = 0;
-    
-    input_values[k++] = atof(number);
+
+    switch(k) {
+      case 0:
+          INPUT_THRUST = atof(number);
+          break;
+      case 1:
+          INPUT_STB_PID_P = atof(number);        
+          break;
+      case 2:      
+          INPUT_RAT_PID_P = atof(number);        
+          break;
+    }
+    k++;
   }
 }
 
@@ -36,11 +47,11 @@ void readCsvToVector()
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
-  //input_values[0] = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
+  INPUT_THRUST = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
 
   if( system_check & INIT_ESC_ARMED ) 
   {
-    INPUT_THRUST = constrain(input_values[0], MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
+    INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
   }
   else
   {
@@ -74,6 +85,10 @@ void read_pid_tunings(int type)
   //float i = 0.0; // map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
   //float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/3000.0;
 
+  float p_stab = map(analogRead(Kp_PIN),0,644,0.0,1000000.0)/200000.0;
+  //float p_rate = map(analogRead(Ki_PIN),0,644,0.0,1000000.0)/200000.0;
+  float kd = map(analogRead(Ki_PIN),0,644,0.0,1000000.0)/400000.0;
+
   //p = ((int)(p*100.0+.5))/100.0;
   //i = ((int)(i*100.0+.5))/100.0;
   //d = ((int)(d*100.0+.5))/100.0;
@@ -82,14 +97,12 @@ void read_pid_tunings(int type)
   //input_values[3+(type*3)] = i;
   //input_values[4+(type*3)] = d;  
 
-  /*
-  pid_xx_kp[type] = input_values[1+(type*3)];
-  pid_xx_ki[type] = input_values[2+(type*3)];
-  pid_xx_kd[type] = input_values[3+(type*3)];
+  INPUT_STB_PID_P   = p_stab;
+  // INPUT_STB_PID_I = xxx
+  INPUT_STB_PID_D   = kd;
+  
+  //INPUT_RAT_PID_P = p_rate;
 
-  pid_yw_kp[type] = 2.5; //pid_xx_kp[type]; // 15.0 workd but might have been too much
-  pid_yw_ki[type] = 0.0; //pid_xx_ki[type];
-  pid_yw_kd[type] = 0.75; //pid_xx_kd[type]; // 3.7 with the 15.0
-  */
+  
 }
 ///////////////////////////////////////////////////////////////////////

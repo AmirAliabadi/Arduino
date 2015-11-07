@@ -90,7 +90,7 @@ void attitude_process()
       return;
   }
 
-  if(INPUT_THRUST > MIN_INPUT_THRUST) {
+  if(INPUT_THRUST > MIN_INPUT_THRUST + 5.0) {
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
@@ -107,7 +107,7 @@ void attitude_process()
 
     yw_pid.Compute();
     ac_pid.Compute(); bd_pid.Compute(); 
-    ac_rat.Compute(); bd_rat.Compute();   
+//    ac_rat.Compute(); bd_rat.Compute();   
 
     //////////////////////////////////////////////////////
     // compute the boom velocity
@@ -153,10 +153,10 @@ gyro    o[P]  r[P]    va      vc
     v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
-    va = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]);
-    vc = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]);
-    vb = MIN_ESC_SIGNAL + (v_bd + output_rate[BD]);
-    vd = MIN_ESC_SIGNAL + (v_bd - output_rate[BD]);
+    va = MIN_ESC_SIGNAL + (v_ac + output_ypr[AC]);
+    vc = MIN_ESC_SIGNAL + (v_ac - output_ypr[AC]);
+    vb = MIN_ESC_SIGNAL + (v_bd + output_ypr[BD]);
+    vd = MIN_ESC_SIGNAL + (v_bd - output_ypr[BD]);
     //
     ////////////////////////////////
   }
