@@ -5,7 +5,7 @@ void process_off()
   {
     last_log = millis();
     Serial.print(F("#processing is off: "));    
-    log_data();
+//    log_data();
   }
   #endif    
 }
@@ -28,16 +28,20 @@ void check_if_stable()
   Serial.println(abs(ypr[YW] - last_yw),2);
 #endif
 
-  if(last_yw == ypr[YW]) {
-    system_check |= INIT_MPU_STABLE;
-    yw_offset = ypr[YW];
+  float yw_reading = (int)(ypr[YW]*10.0 + .5)/100.0;
 
+  if(last_yw == yw_reading) {
+    system_check |= INIT_MPU_STABLE;
+    
+    yw_offset = yw_reading;
     ypr[YW] = 0;
     ypr_last[YW] = 0;
+    
     process = &attitude_process;
   } else {
-    last_yw = ypr[YW];
+    last_yw = yw_reading;
     process = &wait_for_stable;
+    
   }
 }
 
@@ -67,7 +71,7 @@ void attitude_process()
       
 #ifdef DEBUG       
       Serial.print(F("#esc off: "));
-      log_data();     
+//      log_data();     
 #endif      
 
       process = &process_off;
@@ -83,7 +87,7 @@ void attitude_process()
         last_log = millis();       
              
         Serial.print(F("#esc not ready : "));
-        log_data(); 
+//        log_data(); 
       }     
 #endif      
 
@@ -107,7 +111,7 @@ void attitude_process()
 
     yw_pid.Compute();
     ac_pid.Compute(); bd_pid.Compute(); 
-//    ac_rat.Compute(); bd_rat.Compute();   
+    ac_rat.Compute(); bd_rat.Compute();   
 
     //////////////////////////////////////////////////////
     // compute the boom velocity
@@ -153,10 +157,10 @@ gyro    o[P]  r[P]    va      vc
     v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
-    va = MIN_ESC_SIGNAL + (v_ac + output_ypr[AC]);
-    vc = MIN_ESC_SIGNAL + (v_ac - output_ypr[AC]);
-    vb = MIN_ESC_SIGNAL + (v_bd + output_ypr[BD]);
-    vd = MIN_ESC_SIGNAL + (v_bd - output_ypr[BD]);
+    va = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]); // output_ypr
+    vc = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]); // output_ypr
+    vb = MIN_ESC_SIGNAL + (v_bd - output_rate[BD]); // output_ypr
+    vd = MIN_ESC_SIGNAL + (v_bd + output_rate[BD]); // output_ypr
     //
     ////////////////////////////////
   }
@@ -182,9 +186,10 @@ gyro    o[P]  r[P]    va      vc
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    log_data();
+//    log_data();
   }
 #endif    
+    SerialSend();
   
 }
 //////////////////////////////////////////////////////////////////////

@@ -14,11 +14,11 @@
 
 ///////////////////////////////////
 // user inputs
-float input_values[14] = { 0,        // thrust
-                           .9, 0, .2,  // Stable P/I/D
-                           0.1, 0, 0,  // Rate P/I/D
-                           0, 0, 0,  // YAW P/I/D
-                           12.6,     // battery voltage level
+float input_values[14] = { 0,                   // thrust
+                           0.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
+                           1.20,  0.0, 0.02,    // Rate P/I/D
+                           0, 0, 0,             // YAW P/I/D
+                           12.6,                // battery voltage level
                            0.0,
                            0.0,
                            0.0 };
@@ -110,16 +110,16 @@ int vd = MIN_ESC_SIGNAL;
 float input_ypr[3]    = {0.0f, 0.0f, 0.0f};
 float output_ypr[3]   = {0.0f, 0.0f, 0.0f};
 float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
-//float output_rate[3]  = {0.0f, 0.0f, 0.0f};
+float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 
-
+// input / output /setpoit
 PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 
-PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, REVERSE);
-PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, REVERSE);
+PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT);
+PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT);
 
-//PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
-//PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
+PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
+PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
 
 //
 ////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ void dmpDataReady()
 void setup()
 {
 #ifdef DEBUG
-  Serial.begin(115200);
+  Serial.begin(115200); //115200
   while (!Serial);
 #endif
 
@@ -212,6 +212,7 @@ void loop()
 }
 
 void serialEvent() {
-  readCsvToVector();
+  // readCsvToVector();
+  SerialReceive();
 }
 

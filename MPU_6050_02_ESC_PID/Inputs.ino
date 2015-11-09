@@ -49,6 +49,8 @@ void read_throttle()
 {
   INPUT_THRUST = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
 
+  if( INPUT_THRUST < 5.0 ) INPUT_THRUST = 0.0;
+
   if( system_check & INIT_ESC_ARMED ) 
   {
     INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
@@ -97,9 +99,13 @@ void read_pid_tunings(int type)
   //input_values[3+(type*3)] = i;
   //input_values[4+(type*3)] = d;  
 
-  INPUT_STB_PID_P   = p_stab;
+  //INPUT_STB_PID_P   = p_stab;
+  //// INPUT_STB_PID_I = xxx
+  //INPUT_STB_PID_D   = kd;
+
+  //INPUT_RAT_PID_P   = p_stab;
   // INPUT_STB_PID_I = xxx
-  INPUT_STB_PID_D   = kd;
+  //INPUT_RAT_PID_D   = kd;  
   
   //INPUT_RAT_PID_P = p_rate;
 

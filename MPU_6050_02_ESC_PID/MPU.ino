@@ -119,16 +119,29 @@ void read_mpu()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
-    mpu.dmpGetGyro(&gyro, fifoBuffer); // this is in degrees/s ??
+
+
+    VectorInt16 gyro1;
+    mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s ??
+
+    float alpha = 0.1;
+    gyro.x = gyro1.x * alpha + (gyro.x * (1.0 - alpha));
+    gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
+    gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha));    
 
     //gyro.x = gyro.x * 180.0 / M_PI;
     //gyro.y = gyro.y * 180.0 / M_PI;
     //gyro.z = gyro.z * 180.0 / M_PI;
     
     // convert radians to degrees
-    ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 1.0) + 0.5))/1.0;
-    ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 1.0) + 0.5))/1.0;
-    ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 1.0) + 0.5))/1.0;
+    //ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 100.0) + 0.5))/100.0;
+    //ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 100.0) + 0.5))/100.0;
+    //ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 100.0) + 0.5))/100.0;
+
+    ypr[YW] = ((ypr[YW] * 180.0 / M_PI) - yw_offset ) ;
+    ypr[AC] = ((ypr[AC] * 180.0 / M_PI)             ) ;
+    ypr[BD] = ((ypr[BD] * 180.0 / M_PI)             ) ;
+
 
     if( system_check & INIT_MPU_STABLE )
     {
