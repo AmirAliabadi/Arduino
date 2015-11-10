@@ -56,12 +56,12 @@ void init_mpu()
       mpu.setDMPEnabled(true);
       
       // enable Arduino interrupt detection
-      Serial.println(F("#Enabling interrupt detection (Arduino external interrupt 0)..."));
+      Serial.println(F("#Enabling int detection (external interrupt 0)..."));
       attachInterrupt(0, dmpDataReady, RISING);
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
-      Serial.println(F("#DMP ready! Waiting for first interrupt..."));
+      Serial.println(F("#DMP ready! Waiting for first int..."));
       dmpReady = true;
 
       // get expected DMP packet size for later comparison
@@ -75,7 +75,7 @@ void init_mpu()
       // 1 = initial memory load failed
       // 2 = DMP configuration updates failed
       // (if it's going to break, usually the code will be 1)
-      Serial.print(F("#DMP Initialization failed (code "));
+      Serial.print(F("#DMP Init failed (cd "));
       Serial.print(devStatus);
       Serial.println(F(")"));
     }
@@ -122,25 +122,21 @@ void read_mpu()
 
 
     VectorInt16 gyro1;
-    mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s ??
+    mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
-    float alpha = 0.1;
+    // low pass filter on the gyro data
+    float alpha = 0.4;
     gyro.x = gyro1.x * alpha + (gyro.x * (1.0 - alpha));
     gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
-    gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha));    
+    gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 
+    // low pass filter on the gyro data   
 
-    //gyro.x = gyro.x * 180.0 / M_PI;
-    //gyro.y = gyro.y * 180.0 / M_PI;
-    //gyro.z = gyro.z * 180.0 / M_PI;
-    
     // convert radians to degrees
-    //ypr[YW] = (float)((int)(( ((ypr[YW] * 180.0 / M_PI) - yw_offset ) * 100.0) + 0.5))/100.0;
-    //ypr[AC] = (float)((int)(( ((ypr[AC] * 180.0 / M_PI)             ) * 100.0) + 0.5))/100.0;
-    //ypr[BD] = (float)((int)(( ((ypr[BD] * 180.0 / M_PI)             ) * 100.0) + 0.5))/100.0;
-
     ypr[YW] = ((ypr[YW] * 180.0 / M_PI) - yw_offset ) ;
     ypr[AC] = ((ypr[AC] * 180.0 / M_PI)             ) ;
     ypr[BD] = ((ypr[BD] * 180.0 / M_PI)             ) ;
+
+    // maybe low pass filter here as well?  the 6050 should be using it's built in low pass filter
 
 
     if( system_check & INIT_MPU_STABLE )

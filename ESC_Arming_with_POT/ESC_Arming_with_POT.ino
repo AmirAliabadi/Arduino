@@ -42,7 +42,7 @@ void setup()
 
   Serial.println("attach motors to power...");
   
-  delay(5000);
+  //delay(5000);
 
   Serial.println("motors attached");
 
@@ -51,8 +51,36 @@ void setup()
 
 void loop()
 {
-  esc();
+  //esc();
   //pid();
+  tune_up_down();
+}
+
+float test_value = 0;
+void tune_up_down()
+{
+  float v = analogRead(THROTTLE_INPUT_PIN);
+  //float tune = map(v, 0, 935, 0, 935) / 1000;
+  //float tune =  (float)((int)((v / 10000000.0) * 100000.0 + .5))/100000.0;
+  float tune = 0.0 ;
+  if( v < 200 ) tune = -0.00001;
+  else if (v > 700 ) tune = 0.00001;
+
+  //tune = tune - 0.00005;
+
+  if( millis() - last > 200 ) {
+    test_value += tune;
+    
+    last = millis();
+    Serial.print(v, 3);
+    Serial.print(" ");
+
+    Serial.print(test_value, 5);
+    Serial.print(" ");
+    
+    Serial.println(tune, 5);
+  }
+  
 }
 
 void esc()

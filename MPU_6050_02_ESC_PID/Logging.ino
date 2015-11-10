@@ -46,7 +46,7 @@ void SerialReceive()
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
-    else foo.asBytes[index-2] = Serial.read();
+    else foo.asBytes[index-3] = Serial.read();
     index++;
   } 
 
@@ -99,6 +99,8 @@ INPUT_RAT_PID_D       = d;
     else ac_rat.SetControllerDirection(REVERSE);          //    
   }
   Serial.flush();                         // * clear any random data from the serial buffer
+
+  SerialSend();
 }
 
 // unlike our tiny microprocessor, the processing ap
@@ -151,11 +153,11 @@ void SerialSend()
   if(ac_pid.GetMode()==AUTOMATIC) Serial.print("Automatic");
   else Serial.print("Manual");  
   Serial.print(" ");
-  if(ac_pid.GetDirection()==DIRECT) Serial.print("Direct");
-  else Serial.print("Reverse");
+  if(ac_pid.GetDirection()==DIRECT) Serial.print("Dir");
+  else Serial.print("Rev");
   Serial.print(" ");
-  if(ac_rat.GetDirection()==DIRECT) Serial.println("Direct");
-  else Serial.println("Reverse");  
+  if(ac_rat.GetDirection()==DIRECT) Serial.println("Dir");
+  else Serial.println("Rev");  
 }
 
 //

@@ -17,7 +17,7 @@ void init_esc()
     }
     else 
     {
-      Serial.println(F("#zero throttle"));
+      Serial.println(F("#zero the throttle"));
     }
 }
 
@@ -35,13 +35,17 @@ void arm_esc()
 
 void disarm_esc()
 {
-    Serial.println(F("#Detach motor pins"));
+#ifdef DEBUG  
+    if( system_check & INIT_ESC_ATTACHED ) 
+    {
+      Serial.println(F("#Detaching motor pins"));
+    }
+#endif
 
     esc_a.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_c.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_b.writeMicroseconds(MIN_ESC_SIGNAL);
     esc_d.writeMicroseconds(MIN_ESC_SIGNAL);
-
     
     esc_a.detach();
     esc_c.detach();
