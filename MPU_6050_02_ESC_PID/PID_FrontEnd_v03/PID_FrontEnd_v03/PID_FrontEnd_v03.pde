@@ -65,7 +65,7 @@ int vertCount = 10;
 
 int nPoints = 0;
 
-float Input, Setpoint, Output_1, Output_2;
+float Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
 
 boolean madeContact =false;
 boolean justSent = true;
@@ -73,9 +73,12 @@ boolean justSent = true;
 Serial myPort;
 
 ControlP5 controlP5;
-controlP5.Button AMButton, DRButton, DRrButton;
+controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
 
 controlP5.Textlabel AMLabel, AMCurrent, InLabel, OutLabel, SPLabel, PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
+controlP5.Textlabel InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLable ;
+
+controlP5.Textlabel TogglePIDLable ;
 
 controlP5.Textfield SPField, InField, OutField, PField, IField, DField, PrField, IrField, DrField;
 
@@ -109,6 +112,9 @@ void setup()
   AMLabel = controlP5.addTextlabel("AM","Manual",12,72);            //
   AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,65);   //
   controlP5.addButton("Send_To_Arduino",0.0,10,475,120,20);         //
+  
+  controlP5.addButton("Toggle_PID",0.0, 10, 500, 120,20);
+  TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Stable",80,525);    
   
   SPLabel=controlP5.addTextlabel("SP","3",80,103);                  //
   InLabel=controlP5.addTextlabel("In","1",80,153);                  //
@@ -396,6 +402,17 @@ void Toggle_DRR() {
   }
 }
 
+void Toggle_PID() {
+  if(TogglePIDLable.get().getText()=="Stable") 
+  {
+    TogglePIDLable.setValue("Rate");
+  }
+  else
+  {
+    TogglePIDLable.setValue("Stable");   
+  }  
+}
+
 // Sending Floating point values to the arduino
 // is a huge pain.  if anyone knows an easier
 // way please let know.  the way I'm doing it:
@@ -424,16 +441,19 @@ void Send_To_Arduino()
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   
-  byte[] bbb = new byte[toSend.length * 4 + 3];
+  Byte pid_tuning = (TogglePIDLable.get().getText()=="Stable")?(byte)0:(byte)1;
+  
+  byte[] bbb = new byte[toSend.length * 4 + 4];
   
   bbb[0] = a;
   bbb[1] = d;
   bbb[2] = dr;
+  bbb[3] = pid_tuning;
   
   byte [] dddd = floatArrayToByteArray(toSend);
   for(int i=0; i< dddd.length; i++ )
   {
-    bbb[i+3] = dddd[i];
+    bbb[i+4] = dddd[i];
   }
   myPort.write(bbb);
   
@@ -464,6 +484,8 @@ byte[] floatArrayToByteArray(float[] input)
 //take the string the arduino sends us and parse it
 void serialEvent(Serial myPort)
 {
+// PID setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder
+  
   String read = myPort.readStringUntil(10);
   
   print(read);
@@ -471,29 +493,33 @@ void serialEvent(Serial myPort)
   if(outputFileName!="") output.print(str(millis())+ " "+read);
   String[] s = split(read, " ");
 
-  if (s.length == 14)
+  if (s.length == 15)
   {
-    Setpoint = float(s[1]);           // * pull the information
-    Input = float(s[2]);              //   we need out of the
+    Input_Setpoint = float(s[1]);           // * pull the information
+    Input_gyro = float(s[2]);              //   we need out of the
+    Input_angle = float(s[3]);              //   we need out of the    
     
-    Output_1 = float(s[3]);             //   string and put it
-    Output_2 = float(s[4]);             //   string and put it
+    Output_angle = float(s[4]);             //   string and put it
+    Output_gyro = float(s[5]);             //   string and put it
     
-    SPLabel.setValue(s[1]);           //   where it's needed
-    InLabel.setValue(s[2]);           //
-    OutLabel.setValue(trim(s[3]));    //
+    InputSetpointLabel.setValue(Input_Setpoint);
+    InputGyroLabel.setValue(Input_gyro);           //
+    InputAngleLabel.setValue(Input_gyro);           //
     
-    PLabel.setValue(trim(s[5]));      //
-    ILabel.setValue(trim(s[6]));      //
-    DLabel.setValue(trim(s[7]));      //
+    AngleOutLabel.setValue(Output_angle);    //
+    GyroOutLable.setValue(Output_gyro);
     
-    PrLabel.setValue(trim(s[8]));      //
-    IrLabel.setValue(trim(s[9]));      //
-    DrLabel.setValue(trim(s[10]));      //    
+    PLabel.setValue(trim(s[6]));      //
+    ILabel.setValue(trim(s[7]));      //
+    DLabel.setValue(trim(s[8]));      //
     
-    AMCurrent.setValue(trim(s[11]));   //
-    DRCurrent.setValue(trim(s[12]));
-    DRrCurrent.setValue(trim(s[13]));
+    PrLabel.setValue(trim(s[9]));      //
+    IrLabel.setValue(trim(s[10]));      //
+    DrLabel.setValue(trim(s[11]));      //    
+    
+    AMCurrent.setValue(trim(s[12]));   //
+    DRCurrent.setValue(trim(s[13]));
+    DRrCurrent.setValue(trim(s[14]));
     
     if(justSent)                      // * if this is the first read
     {                                 //   since we sent values to 

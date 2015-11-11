@@ -98,10 +98,10 @@ void init_pid()
   //turn the PID on
   yw_pid.SetOutputLimits(-250, 250);
   
-  ac_pid.SetOutputLimits(-45, 45);
-  bd_pid.SetOutputLimits(-45, 45);
-  ac_rat.SetOutputLimits(-100, 100);
-  bd_rat.SetOutputLimits(-100, 100);
+  ac_pid.SetOutputLimits(-75, 75);
+  bd_pid.SetOutputLimits(-75, 75);
+  ac_rat.SetOutputLimits(-125, 125);
+  bd_rat.SetOutputLimits(-125, 125);
 
   yw_pid.SetSampleTime(10);
   
@@ -169,12 +169,12 @@ void update_pid_settings()
 
     ///////////////////////////////////////////////////
     // 
-//    ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-//    bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-//    ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-//    bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+    ac_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+    bd_pid.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+    ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+    bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
 
-//    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
+    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
     //
     //////////////////////////////////////////////////
 }

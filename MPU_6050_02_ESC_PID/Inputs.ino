@@ -1,4 +1,4 @@
-
+/*
 void readCsvToVector() 
 {
   byte len;
@@ -41,6 +41,7 @@ void readCsvToVector()
     k++;
   }
 }
+*/
 
 //////////////////////////////////////////////////////////////////////
 // POT Inputs
@@ -87,9 +88,32 @@ void read_pid_tunings(int type)
   //float i = 0.0; // map(analogRead(Ki_PIN),0,644,0.0,100000.0)/50000.0;
   //float d = map(analogRead(Kd_PIN),0,644,0.0,100000.0)/3000.0;
 
-  float p_stab = map(analogRead(Kp_PIN),0,644,0.0,1000000.0)/200000.0;
+  //float p_stab = map(analogRead(Kp_PIN),0,644,0.0,1000000.0)/200000.0;
   //float p_rate = map(analogRead(Ki_PIN),0,644,0.0,1000000.0)/200000.0;
-  float kd = map(analogRead(Ki_PIN),0,644,0.0,1000000.0)/400000.0;
+  //float kd = map(analogRead(Ki_PIN),0,644,0.0,1000000.0)/400000.0;
+
+  if( selected_pid_tuning == 0 ) 
+  {
+    float v = analogRead(Kp_PIN);
+    if(v < 50) INPUT_STB_PID_P -= 0.001;
+    else if( v > 900) INPUT_STB_PID_P += 0.001;
+    INPUT_STB_PID_P = constrain(INPUT_STB_PID_P, 0.0, 20.0);
+  
+    v = analogRead(Ki_PIN);
+    if(v < 50) INPUT_STB_PID_D -= 0.0001;
+    else if( v > 900) INPUT_STB_PID_D += 0.001;
+    INPUT_STB_PID_D = constrain(INPUT_STB_PID_D, 0.0, 20.0);  
+  } else {
+    float v = analogRead(Kp_PIN);
+    if(v < 50) INPUT_RAT_PID_P -= 0.001;
+    else if( v > 900) INPUT_RAT_PID_P += 0.001;
+    INPUT_RAT_PID_P = constrain(INPUT_RAT_PID_P, 0.0, 20.0);
+  
+    v = analogRead(Ki_PIN);
+    if(v < 5) INPUT_RAT_PID_D -= 0.0001;
+    else if( v > 900) INPUT_RAT_PID_D += 0.0001;
+    INPUT_RAT_PID_D = constrain(INPUT_RAT_PID_D, 0.0, 20.0);   
+  }
 
   //p = ((int)(p*100.0+.5))/100.0;
   //i = ((int)(i*100.0+.5))/100.0;

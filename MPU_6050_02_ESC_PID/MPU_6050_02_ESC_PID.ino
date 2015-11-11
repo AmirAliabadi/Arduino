@@ -10,13 +10,15 @@
 //#include "MPU6050_9Axis_MotionApps41.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
+byte selected_pid_tuning = 0;
+
 #define DEBUG
 
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0,                   // thrust
-                           0.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
-                           1.20,  0.0, 0.02,    // Rate P/I/D
+                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
+                           1.20,  0.0, 0.16,    // Rate P/I/D
                            0, 0, 0,             // YAW P/I/D
                            12.6,                // battery voltage level
                            0.0,
@@ -190,7 +192,7 @@ void loop()
     //read_setpoint(AC);      if(mpuInterrupt) break;
     //read_setpoint(BD);      if(mpuInterrupt) break;
     //read_setpoint(YW);      if(mpuInterrupt) break;
-    //read_pid_tunings(0);    if (mpuInterrupt) break;
+    read_pid_tunings(0);    if (mpuInterrupt) break;
     //read_pid_tunings(1);    if (mpuInterrupt) break;
     read_battery_voltage(); if (mpuInterrupt) break;
 
@@ -204,7 +206,7 @@ void loop()
   //read_setpoint(BD);
   //read_setpoint(YW);
   read_battery_voltage();
-  //read_pid_tunings(0);
+  read_pid_tunings(0);
   //read_pid_tunings(1);
 
   process();

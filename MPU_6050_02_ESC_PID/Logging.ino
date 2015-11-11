@@ -41,18 +41,19 @@ void SerialReceive()
   byte Auto_Man = -1;
   byte Direct_Reverse = -1;
   byte Direct_Reverse_Rate = -1;
-  while(Serial.available() && index<39) //aa 26
+  while(Serial.available() && index<40) //aa 26
   {
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
-    else foo.asBytes[index-3] = Serial.read();
+    else if(index==3) selected_pid_tuning = Serial.read();
+    else foo.asBytes[index-4] = Serial.read();
     index++;
   } 
 
   // if the information we got was in the correct format, 
   // read it into the system
-  if(index==39  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
+  if(index==40  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
   {
     setpoint[AC]=double(foo.asFloat[0]);
     //Input=double(foo.asFloat[1]);       // * the user has the ability to send the 
@@ -62,24 +63,25 @@ void SerialReceive()
     {                                     //   manual mode.  otherwise we'll get an
       //aa output_ypr[AC]=double(foo.asFloat[2]);      //   output blip, then the controller will 
     }                                     //   overwrite.
-    
+
+    /*
     double p, i, d;                       // * read in and set the controller tunings
     p = double(foo.asFloat[3]);           //
     i = double(foo.asFloat[4]);           //
     d = double(foo.asFloat[5]);           //
-
-INPUT_STB_PID_P       = p;
-INPUT_STB_PID_I       = i;
-INPUT_STB_PID_D       = d;
+    INPUT_STB_PID_P       = p;
+    INPUT_STB_PID_I       = i;
+    INPUT_STB_PID_D       = d;
     ac_pid.SetTunings(p, i, d);            //
 
     p = double(foo.asFloat[6]);           //
     i = double(foo.asFloat[7]);           //
     d = double(foo.asFloat[8]);           //
-INPUT_RAT_PID_P       = p;
-INPUT_RAT_PID_I       = i;
-INPUT_RAT_PID_D       = d;    
-    ac_rat.SetTunings(p, i, d);            //    
+    INPUT_RAT_PID_P       = p;
+    INPUT_RAT_PID_I       = i;
+    INPUT_RAT_PID_D       = d;    
+    ac_rat.SetTunings(p, i, d);            //  
+    */  
     
     if(Auto_Man==0) 
     {
@@ -109,12 +111,14 @@ INPUT_RAT_PID_D       = d;
 // floats from processing to here no?
 void SerialSend()
 {
-// PID _ input_gyro _ input_angle _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
+// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
   Serial.print("PID ");
 
 /////////////////////////////
 // INPUTS
+  Serial.print(setpoint[AC]);   
+  Serial.print(" ");
   Serial.print(input_gyro[AC]);   
   Serial.print(" ");
   Serial.print(input_ypr[AC]);   
@@ -128,25 +132,24 @@ void SerialSend()
 //  Serial.print(" ");  
 //  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
 //  Serial.print(" ");
-
   Serial.print(output_ypr[AC]);   
   Serial.print(" ");  
   Serial.print(output_rate[AC]);   
   Serial.print(" ");
 /////////////////////////////  
 
-  Serial.print(ac_pid.GetKp());   
+  Serial.print(ac_pid.GetKp(), 3);   
   Serial.print(" ");
-  Serial.print(ac_pid.GetKi());   
+  Serial.print(ac_pid.GetKi(), 3);   
   Serial.print(" ");
-  Serial.print(ac_pid.GetKd());   
+  Serial.print(ac_pid.GetKd(), 3);   
   Serial.print(" ");
   
-  Serial.print(ac_rat.GetKp());   
+  Serial.print(ac_rat.GetKp(), 3);   
   Serial.print(" ");
-  Serial.print(ac_rat.GetKi());   
+  Serial.print(ac_rat.GetKi(), 3);   
   Serial.print(" ");
-  Serial.print(ac_rat.GetKd());   
+  Serial.print(ac_rat.GetKd(), 3);   
   Serial.print(" ");
 
   
