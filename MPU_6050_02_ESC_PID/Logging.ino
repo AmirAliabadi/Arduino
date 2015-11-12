@@ -46,7 +46,7 @@ void SerialReceive()
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
-    else if(index==3) selected_pid_tuning = Serial.read();
+    else if(index==3) selected_pot_tuning = Serial.read();
     else foo.asBytes[index-4] = Serial.read();
     index++;
   } 
@@ -55,7 +55,7 @@ void SerialReceive()
   // read it into the system
   if(index==40  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
   {
-    setpoint[AC]=double(foo.asFloat[0]);
+    //setpoint[AC]=double(foo.asFloat[0]);
     //Input=double(foo.asFloat[1]);       // * the user has the ability to send the 
                                           //   value of "Input"  in most cases (as 
                                           //   in this one) this is not needed.
@@ -115,6 +115,9 @@ void SerialSend()
   
   Serial.print("PID ");
 
+  Serial.print(INPUT_THRUST);  
+  Serial.print(" ");
+  
 /////////////////////////////
 // INPUTS
   Serial.print(setpoint[AC]);   

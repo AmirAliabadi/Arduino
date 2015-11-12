@@ -159,11 +159,10 @@ void update_pid_settings()
 {
     ////////////////////////////////////////////////////
     // Reset of PID when setpoint changes
-    //if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset(); ac_rat.Reset(); }
-    //if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset(); bd_rat.Reset(); }
-    //if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset(); }
-    
-    //setpoint_changed = SETPOINT_UNCHANGED;
+    if( setpoint_changed & SETPOINT_CHANGED_AC ) {ac_pid.Reset(); ac_rat.Reset(); }
+    if( setpoint_changed & SETPOINT_CHANGED_BD ) {bd_pid.Reset(); bd_rat.Reset(); }
+    if( setpoint_changed & SETPOINT_CHANGED_YW ) {yw_pid.Reset(); }
+    setpoint_changed = SETPOINT_UNCHANGED;
     //
     ///////////////////////////////////////////////////
 

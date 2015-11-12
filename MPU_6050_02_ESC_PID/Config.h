@@ -97,9 +97,9 @@ Your offsets: -62 366 1416  161 145 -19
 
 ////////////////////////////////////////////////////////////////
 // PID Tunning with a POT
-#define Kp_PIN 1
-#define Ki_PIN 2
-#define Kd_PIN 3
+#define Kp_PIN 0
+#define Ki_PIN 1
+#define Kd_PIN 2
 
 ////////////////////////////////////////////////////////////////
 // ESC Settings

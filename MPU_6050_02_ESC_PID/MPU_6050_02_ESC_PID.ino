@@ -10,7 +10,7 @@
 //#include "MPU6050_9Axis_MotionApps41.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
-byte selected_pid_tuning = 0;
+byte selected_pot_tuning = 0;
 
 #define DEBUG
 
@@ -37,8 +37,8 @@ float input_values[14] = { 0,                   // thrust
 #define INPUT_YAW_PID_D       input_values[9]
 #define INPUT_VOLTAGE_LEVEL   input_values[10]
 #define INPUT_SETPOINT_YAW    input_values[11]
-#define INPUT_SETPOINT_PITCH  input_values[12]
-#define INPUT_SETPOINT_ROLL   input_values[13]
+#define INPUT_SETPOINT_ROLL   input_values[12]
+#define INPUT_SETPOINT_PITCH  input_values[13]
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
@@ -189,7 +189,7 @@ void loop()
   while (!mpuInterrupt) // && fifoCount < packetSize)
   {
     read_throttle();        if (mpuInterrupt) break;
-    //read_setpoint(AC);      if(mpuInterrupt) break;
+    read_setpoint(AC);      if(mpuInterrupt) break;
     //read_setpoint(BD);      if(mpuInterrupt) break;
     //read_setpoint(YW);      if(mpuInterrupt) break;
     read_pid_tunings(0);    if (mpuInterrupt) break;
@@ -202,7 +202,7 @@ void loop()
   read_mpu();
 
   read_throttle();
-  //read_setpoint(AC);
+  read_setpoint(AC);
   //read_setpoint(BD);
   //read_setpoint(YW);
   read_battery_voltage();

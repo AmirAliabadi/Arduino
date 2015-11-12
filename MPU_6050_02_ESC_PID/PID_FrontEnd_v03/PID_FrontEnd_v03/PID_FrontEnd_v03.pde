@@ -65,7 +65,7 @@ int vertCount = 10;
 
 int nPoints = 0;
 
-float Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
+float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
 
 boolean madeContact =false;
 boolean justSent = true;
@@ -76,7 +76,7 @@ ControlP5 controlP5;
 controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
 
 controlP5.Textlabel AMLabel, AMCurrent; 
-controlP5.Textlabel InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLable ;
+controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLable ;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
 
@@ -114,8 +114,9 @@ void setup()
   controlP5.addButton("Send_To_Arduino",0.0,10,475,120,20);         //
   
   controlP5.addButton("Toggle_PID",0.0, 10, 500, 120,20);
-  TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Stable",80,525);    
-  
+  TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Flight",80,525);    
+
+  InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","",80,90);                  //
   InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",80,103);                  //
   InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",80,153);                  //
   InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",80,183);                  //
@@ -422,10 +423,14 @@ void Toggle_PID() {
   {
     TogglePIDLable.setValue("Rate");
   }
-  else
+  else if(TogglePIDLable.get().getText()=="Rate") 
   {
-    TogglePIDLable.setValue("Stable");   
-  }  
+    TogglePIDLable.setValue("Flight");   
+  } 
+  else 
+  {
+    TogglePIDLable.setValue("Stable");
+  }
 }
 
 // Sending Floating point values to the arduino
@@ -456,7 +461,7 @@ void Send_To_Arduino()
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   
-  Byte pid_tuning = (TogglePIDLable.get().getText()=="Stable")?(byte)0:(byte)1;
+  Byte pid_tuning = (TogglePIDLable.get().getText()=="Flight") ? (byte)0 : ( (TogglePIDLable.get().getText()=="Stable") ? (byte)1 : (byte)2 );
   
   byte[] bbb = new byte[toSend.length * 4 + 4];
   
@@ -499,7 +504,7 @@ byte[] floatArrayToByteArray(float[] input)
 //take the string the arduino sends us and parse it
 void serialEvent(Serial myPort)
 {
-// PID setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder
+// PID thrust _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder
   
   String read = myPort.readStringUntil(10);
   
@@ -508,52 +513,54 @@ void serialEvent(Serial myPort)
   if(outputFileName!="") output.print(str(millis())+ " "+read);
   String[] s = split(read, " ");
 
-  if (s.length == 15)
+  if (s.length == 16)
   {
-    Input_Setpoint = float(trim(s[1]));           // * pull the information
-    Input_gyro = float(trim(s[2]));              //   we need out of the
-    Input_angle = float(trim(s[3]));              //   we need out of the    
+    Input_Thrust = float(trim(s[1]));           // * pull the information
+    Input_Setpoint = float(trim(s[2]));           // * pull the information
+    Input_gyro = float(trim(s[3]));              //   we need out of the
+    Input_angle = float(trim(s[4]));              //   we need out of the    
     
-    Output_angle = float(trim(s[4]));             //   string and put it
-    Output_gyro = float(trim(s[5]));             //   string and put it
+    Output_angle = float(trim(s[5]));             //   string and put it
+    Output_gyro = float(trim(s[6]));             //   string and put it
     
-    InputSetpointLabel.setValue(trim(s[1]));
-    InputGyroLabel.setValue(trim(s[2]));           //
-    InputAngleLabel.setValue(trim(s[3]));           //
+    InputThrustLabel.setValue(trim(s[1]));
+    InputSetpointLabel.setValue(trim(s[2]));
+    InputGyroLabel.setValue(trim(s[3]));           //
+    InputAngleLabel.setValue(trim(s[4]));           //
     
-    AngleOutLabel.setValue(trim(s[4]));    //
-    GyroOutLable.setValue(trim(s[5]));
+    AngleOutLabel.setValue(trim(s[5]));    //
+    GyroOutLable.setValue(trim(s[6]));
     
-    PLabel.setValue(trim(s[6]));      //
-    ILabel.setValue(trim(s[7]));      //
-    DLabel.setValue(trim(s[8]));      //
+    PLabel.setValue(trim(s[7]));      //
+    ILabel.setValue(trim(s[8]));      //
+    DLabel.setValue(trim(s[9]));      //
     
-    PrLabel.setValue(trim(s[9]));      //
-    IrLabel.setValue(trim(s[10]));      //
-    DrLabel.setValue(trim(s[11]));      //    
+    PrLabel.setValue(trim(s[10]));      //
+    IrLabel.setValue(trim(s[11]));      //
+    DrLabel.setValue(trim(s[12]));      //    
     
-    AMCurrent.setValue(trim(s[12]));   //
-    DRCurrent.setValue(trim(s[13]));
-    DRrCurrent.setValue(trim(s[14]));
+    AMCurrent.setValue(trim(s[13]));   //
+    DRCurrent.setValue(trim(s[14]));
+    DRrCurrent.setValue(trim(s[15]));
     
     if(justSent)                      // * if this is the first read
     {                                 //   since we sent values to 
-      SPField.setText(trim(s[1]));    //   the arduino,  take the
+      //SPField.setText(trim(s[2]));    //   the arduino,  take the
       //InField.setText(trim(s[2]));    //   current values and put
       //OutField.setText(trim(s[3]));   //   them into the input fields
       
-      PField.setText(trim(s[6]));
-      IField.setText(trim(s[7]));
-      DField.setText(trim(s[8]));
+      PField.setText(trim(s[7]));
+      IField.setText(trim(s[8]));
+      DField.setText(trim(s[9]));
       
-      PrField.setText(trim(s[9]));
-      IrField.setText(trim(s[10]));
-      DrField.setText(trim(s[11]));      
+      PrField.setText(trim(s[10]));
+      IrField.setText(trim(s[11]));
+      DrField.setText(trim(s[12]));      
       
-      AMLabel.setValue(trim(s[12]));
+      AMLabel.setValue(trim(s[13]));
 
-      DRCurrent.setValue(trim(s[13]));
-      DRrCurrent.setValue(trim(s[14]));
+      DRCurrent.setValue(trim(s[14]));
+      DRrCurrent.setValue(trim(s[15]));
 
       justSent=false;
     }
