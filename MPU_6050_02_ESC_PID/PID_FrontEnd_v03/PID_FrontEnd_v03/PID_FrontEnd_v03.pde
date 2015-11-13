@@ -89,7 +89,7 @@ PFont AxisFont, TitleFont;
 
 void setup()
 {
-  frameRate(300); // 30
+  frameRate(30); // 30
   size(1500 , 768);
 
   println(Serial.list());                                           // * Initialize Serial
