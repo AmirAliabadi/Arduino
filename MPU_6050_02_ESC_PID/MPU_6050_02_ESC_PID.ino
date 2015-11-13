@@ -16,14 +16,18 @@ byte selected_pot_tuning = 0;
 
 ///////////////////////////////////
 // user inputs
-float input_values[14] = { 0,                   // thrust
-                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
-                           1.20,  0.0, 0.16,    // Rate P/I/D
-                           0, 0, 0,             // YAW P/I/D
-                           12.6,                // battery voltage level
+float input_values[14] = { 0,                       // thrust
+                           2.681,  0.0, 0.00,       // Stable P/I/D // .89,0,.23
+                           0.967,  0.125, 0.096,    // Rate P/I/D
+                           0, 0, 0,                 // YAW P/I/D
+                           12.6,                    // battery voltage level
                            0.0,
                            0.0,
                            0.0 };
+
+// PID values:
+// 4.7 / 0 / 0 | 1.2 / 0 / 0.16
+// 2.681 / 0 / 0 | 0.967 / 0.125 / 0.096                           
 
 #define INPUT_THRUST          input_values[0]
 #define INPUT_STB_PID_P       input_values[1]
