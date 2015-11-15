@@ -50,13 +50,14 @@ void read_throttle()
 {
   if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
   {  
+    float v = analogRead(Kd_PIN);
+    if(v < 50) INPUT_THRUST = 0;
+    
     // INPUT_THRUST = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
-    float v = analogRead(THROTTLE_PIN);
-    if(v < 50) INPUT_THRUST -= 0.1;
+    v = analogRead(THROTTLE_PIN);
+    if(v < 50) INPUT_THRUST -= 0.15;
     else if( v > 900) INPUT_THRUST += 0.1;
 
-    //if( INPUT_THRUST < 5.0 ) INPUT_THRUST = 0.0;
-  
     if( system_check & INIT_ESC_ARMED ) 
     {
       INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST*0.90);  // todo: determine max when arming
@@ -78,7 +79,11 @@ void read_setpoint(int type)
 {
   if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
   {   
-    float v = analogRead(Ki_PIN);
+    float v = analogRead(Kd_PIN);  
+    if(v < 50) input_values[11+type] = 0;  
+    else if(v > 900) input_values[11+type] = 0;
+    
+    v = analogRead(Ki_PIN);
     if(v < 50) input_values[11+type] -= 0.1;
     else if( v > 900) input_values[11+type] += 0.1;
 
