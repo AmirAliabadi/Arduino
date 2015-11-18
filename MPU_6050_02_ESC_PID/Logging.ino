@@ -114,18 +114,19 @@ void SerialSend()
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
   Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
-  Serial.print(" ");
+  Serial.print(F(" "));
   
 /////////////////////////////
 // INPUTS
   Serial.print(setpoint[AC]);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(input_gyro[AC]);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(input_ypr[AC]);   
-  Serial.print(" ");  
+  Serial.print(F(" "));  
 //
 /////////////////////////////  
 
@@ -136,34 +137,34 @@ void SerialSend()
 //  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
 //  Serial.print(" ");
   Serial.print(output_ypr[AC]);   
-  Serial.print(" ");  
+  Serial.print(F(" "));  
   Serial.print(output_rate[AC]);   
-  Serial.print(" ");
+  Serial.print(F(" "));
 /////////////////////////////  
 
   Serial.print(ac_pid.GetKp(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(ac_pid.GetKi(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(ac_pid.GetKd(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   
   Serial.print(ac_rat.GetKp(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(ac_rat.GetKi(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
   Serial.print(ac_rat.GetKd(), 3);   
-  Serial.print(" ");
+  Serial.print(F(" "));
 
   
-  if(ac_pid.GetMode()==AUTOMATIC) Serial.print("Automatic");
-  else Serial.print("Manual");  
-  Serial.print(" ");
-  if(ac_pid.GetDirection()==DIRECT) Serial.print("Dir");
-  else Serial.print("Rev");
-  Serial.print(" ");
-  if(ac_rat.GetDirection()==DIRECT) Serial.println("Dir");
-  else Serial.println("Rev");  
+  if(ac_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  else Serial.print(F("Manual"));  
+  Serial.print(F(" "));
+  if(ac_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev"));
+  Serial.print(F(" "));
+  if(ac_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
+  else Serial.println(F("Rev"));  
 }
 
 //

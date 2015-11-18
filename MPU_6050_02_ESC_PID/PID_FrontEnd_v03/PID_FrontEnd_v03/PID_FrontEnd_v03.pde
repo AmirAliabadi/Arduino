@@ -22,8 +22,8 @@ import controlP5.*;
 /***********************************************
  * User spcification section
  **********************************************/
-int windowWidth = 1300;      // set the size of the 
-int windowHeight = 700;     // form
+int windowWidth = 1350;      // set the size of the 
+int windowHeight = 690;     // form
 
 float InScaleMin = -75;       // set the Y-Axis Min
 float InScaleMax = 75;    // and Max for both
@@ -31,7 +31,7 @@ float OutScaleMin = -125;      // the top and
 float OutScaleMax = 125;    // bottom trends
 
 
-int windowSpan = 3000;//00;    // number of mS into the past you want to display
+int windowSpan = 30000;//00;    // number of mS into the past you want to display
 int refreshRate = 10;      // how often you want the graph to be reDrawn;
 
 float displayFactor = 1; //display Time as Milliseconds
@@ -90,7 +90,7 @@ PFont AxisFont, TitleFont;
 void setup()
 {
   frameRate(30); // 30
-  size(1300 , 700);
+  size(1350 , 690);
 
   println(Serial.list());                                           // * Initialize Serial
   myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
@@ -431,6 +431,8 @@ void Toggle_PID() {
   {
     TogglePIDLable.setValue("Stable");
   }
+  
+  Send_To_Arduino();
 }
 
 // Sending Floating point values to the arduino
