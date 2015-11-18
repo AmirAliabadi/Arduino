@@ -113,7 +113,7 @@ void SerialSend()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
-  Serial.print("PID ");
+  Serial.print(selected_pot_tuning);//"PID ");
 
   Serial.print(INPUT_THRUST);  
   Serial.print(" ");

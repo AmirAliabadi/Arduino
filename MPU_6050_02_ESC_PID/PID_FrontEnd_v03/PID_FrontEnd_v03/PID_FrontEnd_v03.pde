@@ -22,8 +22,8 @@ import controlP5.*;
 /***********************************************
  * User spcification section
  **********************************************/
-int windowWidth = 1500;      // set the size of the 
-int windowHeight = 768;     // form
+int windowWidth = 1300;      // set the size of the 
+int windowHeight = 700;     // form
 
 float InScaleMin = -75;       // set the Y-Axis Min
 float InScaleMax = 75;    // and Max for both
@@ -90,7 +90,7 @@ PFont AxisFont, TitleFont;
 void setup()
 {
   frameRate(30); // 30
-  size(1500 , 768);
+  size(1300 , 700);
 
   println(Serial.list());                                           // * Initialize Serial
   myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
