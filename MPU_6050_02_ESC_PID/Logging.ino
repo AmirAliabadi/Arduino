@@ -109,6 +109,65 @@ void SerialReceive()
 // has no problem converting strings into floats, so
 // we can just send strings.  much easier than getting
 // floats from processing to here no?
+/*
+void SerialSend()
+{
+// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
+  
+  Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print(F(" "));
+
+  Serial.print(INPUT_THRUST);  
+  Serial.print(F(" "));
+  
+/////////////////////////////
+// INPUTS
+  Serial.print(setpoint[BD]);   
+  Serial.print(F(" "));
+  Serial.print(input_gyro[BD]);   
+  Serial.print(F(" "));
+  Serial.print(input_ypr[BD]);   
+  Serial.print(F(" "));  
+//
+/////////////////////////////  
+
+/////////////////////////////  
+/// outputs
+//  Serial.print(va - MIN_ESC_SIGNAL - INPUT_THRUST); //output_ypr[AC]);   
+//  Serial.print(" ");  
+//  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
+//  Serial.print(" ");
+  Serial.print(output_ypr[BD]);   
+  Serial.print(F(" "));  
+  Serial.print(output_rate[BD]);   
+  Serial.print(F(" "));
+/////////////////////////////  
+
+  Serial.print(bd_pid.GetKp(), 3);   
+  Serial.print(F(" "));
+  Serial.print(bd_pid.GetKi(), 3);   
+  Serial.print(F(" "));
+  Serial.print(bd_pid.GetKd(), 3);   
+  Serial.print(F(" "));
+  
+  Serial.print(bd_rat.GetKp(), 3);   
+  Serial.print(F(" "));
+  Serial.print(bd_rat.GetKi(), 3);   
+  Serial.print(F(" "));
+  Serial.print(bd_rat.GetKd(), 3);   
+  Serial.print(F(" "));
+
+  
+  if(bd_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  else Serial.print(F("Manual"));  
+  Serial.print(F(" "));
+  if(bd_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev"));
+  Serial.print(F(" "));
+  if(bd_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
+  else Serial.println(F("Rev"));  
+}
+ */
 void SerialSend()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
@@ -148,7 +207,7 @@ void SerialSend()
   Serial.print(F(" "));
   Serial.print(ac_pid.GetKd(), 3);   
   Serial.print(F(" "));
-  
+   
   Serial.print(ac_rat.GetKp(), 3);   
   Serial.print(F(" "));
   Serial.print(ac_rat.GetKi(), 3);   

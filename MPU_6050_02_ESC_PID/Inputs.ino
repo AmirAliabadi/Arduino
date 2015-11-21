@@ -48,6 +48,13 @@ void readCsvToVector()
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
+//  system_check |= INIT_THROTTLE_ZEROED;
+//  if( system_check & INIT_ESC_ATTACHED ) 
+//      INPUT_THRUST = 50; 
+//    else 
+//      INPUT_THRUST = 0;
+//    return ;
+  
   if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
   {  
     float v = analogRead(Kd_PIN);
