@@ -109,7 +109,7 @@ void SerialReceive()
 // has no problem converting strings into floats, so
 // we can just send strings.  much easier than getting
 // floats from processing to here no?
-/*
+
 void SerialSend()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
@@ -167,7 +167,8 @@ void SerialSend()
   if(bd_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
   else Serial.println(F("Rev"));  
 }
- */
+
+ /*
 void SerialSend()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
@@ -225,6 +226,7 @@ void SerialSend()
   if(ac_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
   else Serial.println(F("Rev"));  
 }
+*/
 
 //
 //void log_data()
