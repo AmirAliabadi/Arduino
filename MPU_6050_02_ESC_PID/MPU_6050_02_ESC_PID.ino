@@ -19,7 +19,7 @@ byte selected_pot_tuning = 0;
 float input_values[14] = { 0,                       // thrust
                            3.0,  0.0, 0.00,       // Stable P/I/D // .89,0,.23
                            0.96,  0.0, 0.096,    // i was .125 Rate P/I/D
-                           0,0,0, //1.0, 0, 0.2,                 // YAW P/I/D
+                           1.0, 0, 0.2,                 // YAW P/I/D
                            12.6,                    // battery voltage level
                            0.0,
                            0.0,
