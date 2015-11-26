@@ -110,6 +110,67 @@ void SerialReceive()
 // we can just send strings.  much easier than getting
 // floats from processing to here no?
 
+
+void SerialSend()
+{
+// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
+  
+  Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print(F(" "));
+
+  Serial.print(INPUT_THRUST);  
+  Serial.print(F(" "));
+  
+/////////////////////////////
+// INPUTS
+  Serial.print(setpoint[YW]);   
+  Serial.print(F(" "));
+  Serial.print(input_gyro[YW]);   
+  Serial.print(F(" "));
+  Serial.print(input_ypr[YW]);   
+  Serial.print(F(" "));  
+//
+/////////////////////////////  
+
+/////////////////////////////  
+/// outputs
+//  Serial.print(va - MIN_ESC_SIGNAL - INPUT_THRUST); //output_ypr[AC]);   
+//  Serial.print(" ");  
+//  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
+//  Serial.print(" ");
+  Serial.print(output_ypr[YW]);   
+  Serial.print(F(" "));  
+  Serial.print(output_rate[YW]);   
+  Serial.print(F(" "));
+/////////////////////////////  
+
+  Serial.print(yw_pid.GetKp(), 3);   
+  Serial.print(F(" "));
+  Serial.print(yw_pid.GetKi(), 3);   
+  Serial.print(F(" "));
+  Serial.print(yw_pid.GetKd(), 3);   
+  Serial.print(F(" "));
+  
+  Serial.print(0.0,3); //yw_rat.GetKp(), 3);   
+  Serial.print(F(" "));
+  Serial.print(0.0,3); //yw_rat.GetKi(), 3);   
+  Serial.print(F(" "));
+  Serial.print(0.0,3); //yw_rat.GetKd(), 3);   
+  Serial.print(F(" "));
+
+  
+  if(yw_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  else Serial.print(F("Manual"));  
+  Serial.print(F(" "));
+  if(yw_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev"));
+  Serial.print(F(" "));
+  Serial.println(F("Dir"));
+  //if(yw_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
+  //else Serial.println(F("Rev"));  
+}
+
+/*
 void SerialSend()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
@@ -167,6 +228,7 @@ void SerialSend()
   if(bd_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
   else Serial.println(F("Rev"));  
 }
+*/
 
  /*
 void SerialSend()
