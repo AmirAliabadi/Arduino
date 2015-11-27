@@ -145,6 +145,23 @@ void read_pid_tunings(int type)
     if(v < 50) INPUT_RAT_PID_D -= 0.001;
     else if( v > 900) INPUT_RAT_PID_D += 0.001;
     INPUT_RAT_PID_D = constrain(INPUT_RAT_PID_D, 0.0, 20.0);    
+  } else if( selected_pot_tuning == 3 ) {
+
+    float v = analogRead(Kp_PIN);
+    if(v < 50) INPUT_YAW_PID_P -= 0.001;
+    else if( v > 900) INPUT_YAW_PID_P += 0.001;
+    INPUT_YAW_PID_P = constrain(INPUT_YAW_PID_P, 0.0, 20.0);
+  
+    v = analogRead(Ki_PIN);
+    if(v < 50) INPUT_YAW_PID_I -= 0.001;
+    else if( v > 900) INPUT_YAW_PID_I += 0.001;
+    INPUT_YAW_PID_I = constrain(INPUT_YAW_PID_I, 0.0, 20.0);  
+
+    v = analogRead(Kd_PIN);
+    if(v < 50) INPUT_YAW_PID_D -= 0.001;
+    else if( v > 900) INPUT_YAW_PID_D += 0.001;
+    INPUT_YAW_PID_D = constrain(INPUT_YAW_PID_D, 0.0, 20.0);      
+ 
   }
   
 }

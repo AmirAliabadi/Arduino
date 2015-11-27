@@ -48,9 +48,7 @@ String outputFileName = ""; // if you'd like to output data to
 int nextRefresh;
 int arrayLength = windowSpan / refreshRate+1;
 int[][] InputData = new int[3][arrayLength];     //we might not need them this big, but
-//int[] SetpointData = new int[arrayLength];  // this is worst case
 int[][] OutputData = new int[2][arrayLength];
-//int[] OutputData = new int[arrayLength];
 
 float inputTop = 25;
 float inputHeight = (windowHeight-70)*2/3;
@@ -76,7 +74,7 @@ ControlP5 controlP5;
 controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
 
 controlP5.Textlabel AMLabel, AMCurrent; 
-controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLable ;
+controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
 
@@ -89,6 +87,9 @@ PFont AxisFont, TitleFont;
 
 void setup()
 {
+  int group_x =0;
+  int group_y =0;
+  
   frameRate(30); // 30
   size(1350 , 690);
 
@@ -100,29 +101,30 @@ void setup()
   
   SPField= controlP5.addTextfield("Setpoint",10,100,60,20);         //   Buttons, Labels, and
  
-  PField = controlP5.addTextfield("Kp",10,275,60,20);          //
-  IField = controlP5.addTextfield("Ki",10,325,60,20);          //
-  DField = controlP5.addTextfield("Kd",10,375,60,20);          //
+  PField = controlP5.addTextfield("Kp",10,275,60,20); 
+  IField = controlP5.addTextfield("Ki",10,325,60,20);
+  DField = controlP5.addTextfield("Kd",10,375,60,20); 
   
-  PrField = controlP5.addTextfield("Krp",110,275,60,20);          //
-  IrField = controlP5.addTextfield("Kri",110,325,60,20);          //
-  DrField = controlP5.addTextfield("Krd",110,375,60,20);          //
+  PrField = controlP5.addTextfield("Krp",110,275,60,20); 
+  IrField = controlP5.addTextfield("Kri",110,325,60,20);
+  DrField = controlP5.addTextfield("Krd",110,375,60,20);
   
-  AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);      //
-  AMLabel = controlP5.addTextlabel("AM","Manual",12,72);            //
-  AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,65);   //
-  controlP5.addButton("Send_To_Arduino",0.0,10,475,120,20);         //
+  AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
+  AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
+  AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
+  
+  controlP5.addButton("Send_To_Arduino",0.0,10,475,120,20);
   
   controlP5.addButton("Toggle_PID",0.0, 10, 500, 120,20);
   TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Flight",80,525);    
 
-  InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","",80,90);                  //
-  InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",80,103);                  //
-  InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",80,153);                  //
-  InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",80,183);                  //
-  
-  AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",80,203);                //
-  GyroOutLable=controlP5.addTextlabel("GyroOutLable","",80,240);                //
+  group_x = 80; group_y=90;
+  InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);                  //
+  InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",group_x,group_y+=15);                  //
+  InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",group_x,group_y+=15);                  //
+  InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",group_x,group_y+=15);                  //
+  AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",group_x,group_y+=15);                //
+  GyroOutLabel=controlP5.addTextlabel("GyroOutLabel","",group_x,group_y+=15);                //
   
   PLabel=controlP5.addTextlabel("Ps","",75,278);                    //
   ILabel=controlP5.addTextlabel("Is","",75,328);                    //
@@ -419,17 +421,19 @@ void Toggle_DRR() {
 }
 
 void Toggle_PID() {
-  if(TogglePIDLable.get().getText()=="Stable") 
-  {
-    TogglePIDLable.setValue("Rate");
-  }
-  else if(TogglePIDLable.get().getText()=="Rate") 
-  {
-    TogglePIDLable.setValue("Flight");   
-  } 
-  else 
+  if(TogglePIDLable.get().getText()=="Flight") 
   {
     TogglePIDLable.setValue("Stable");
+  }
+  else if(TogglePIDLable.get().getText()=="Stable") 
+  {
+    TogglePIDLable.setValue("Rate");   
+  } 
+  else if(TogglePIDLable.get().getText()=="Rate") 
+  {
+    TogglePIDLable.setValue("Yaw");
+  } else {
+    TogglePIDLable.setValue("Flight");
   }
   
   Send_To_Arduino();
@@ -463,7 +467,7 @@ void Send_To_Arduino()
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   
-  Byte pid_tuning = (TogglePIDLable.get().getText()=="Flight") ? (byte)0 : ( (TogglePIDLable.get().getText()=="Stable") ? (byte)1 : (byte)2 );
+  Byte pid_tuning = (TogglePIDLable.get().getText()=="Flight") ? (byte)0 : ( (TogglePIDLable.get().getText()=="Stable") ? (byte)1 : ( (TogglePIDLable.get().getText()=="Rate") ? (byte)2 : (byte)3 ) );
   
   byte[] bbb = new byte[toSend.length * 4 + 4];
   
@@ -531,7 +535,7 @@ void serialEvent(Serial myPort)
     InputAngleLabel.setValue(trim(s[4]));           //
     
     AngleOutLabel.setValue(trim(s[5]));    //
-    GyroOutLable.setValue(trim(s[6]));
+    GyroOutLabel.setValue(trim(s[6]));
     
     PLabel.setValue(trim(s[7]));      //
     ILabel.setValue(trim(s[8]));      //

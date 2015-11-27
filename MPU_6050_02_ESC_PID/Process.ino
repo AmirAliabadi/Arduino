@@ -28,7 +28,7 @@ void check_if_stable()
   Serial.println(abs(ypr[YW] - last_yw),2);
 #endif
 
-  float yw_reading = (int)(ypr[YW]*10.0 + .5)/100.0;
+  float yw_reading = (int)(ypr[YW]*10.0 + .5)/10.0;
 
   if(last_yw == yw_reading) {
     system_check |= INIT_MPU_STABLE;

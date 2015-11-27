@@ -173,7 +173,7 @@ void update_pid_settings()
     ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
 
-    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_I);    
+    yw_pid.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
     //
     //////////////////////////////////////////////////
 }
