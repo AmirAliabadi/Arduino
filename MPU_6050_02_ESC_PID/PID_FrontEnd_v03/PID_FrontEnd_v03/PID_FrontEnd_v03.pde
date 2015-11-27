@@ -93,13 +93,13 @@ void setup()
   frameRate(30); // 30
   size(1350 , 690);
 
-  println(Serial.list());                                           // * Initialize Serial
+  println(Serial.list());                                             // * Initialize Serial
   myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
-  myPort.bufferUntil(10);                                           //   the Arduino
+  myPort.bufferUntil(10);                                             //   the Arduino
 
-  controlP5 = new ControlP5(this);                                  // * Initialize the various
+  controlP5 = new ControlP5(this);                                    // * Initialize the various
   
-  SPField= controlP5.addTextfield("Setpoint",10,100,60,20);         //   Buttons, Labels, and
+  SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
  
   PField = controlP5.addTextfield("Kp",10,275,60,20); 
   IField = controlP5.addTextfield("Ki",10,325,60,20);
@@ -118,13 +118,19 @@ void setup()
   controlP5.addButton("Toggle_PID",0.0, 10, 500, 120,20);
   TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Flight",80,525);    
 
-  group_x = 80; group_y=90;
-  InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);                  //
-  InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",group_x,group_y+=15);                  //
-  InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",group_x,group_y+=15);                  //
-  InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",group_x,group_y+=15);                  //
-  AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",group_x,group_y+=15);                //
-  GyroOutLabel=controlP5.addTextlabel("GyroOutLabel","",group_x,group_y+=15);                //
+  group_x = 80; group_y=140;
+  controlP5.addTextlabel("t1","Throttle",group_x-80,group_y);
+  InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);
+  controlP5.addTextlabel("t2","Setpoint",group_x-80,group_y+=15);
+  InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",group_x,group_y);
+  controlP5.addTextlabel("t3","Input Gyro",group_x-80,group_y+=15);
+  InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",group_x,group_y);
+  controlP5.addTextlabel("t4","Input Angle",group_x-80,group_y+=15);
+  InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",group_x,group_y); 
+  controlP5.addTextlabel("t5","Out Angle",group_x-80,group_y+=15);
+  AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",group_x,group_y); 
+  controlP5.addTextlabel("t6","Out Gyro",group_x-80,group_y+=15);
+  GyroOutLabel=controlP5.addTextlabel("GyroOutLabel","",group_x,group_y);
   
   PLabel=controlP5.addTextlabel("Ps","",75,278);                    //
   ILabel=controlP5.addTextlabel("Is","",75,328);                    //
