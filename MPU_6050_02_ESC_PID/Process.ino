@@ -187,7 +187,9 @@ gyro    o[P]  r[P]    va      vc
   {
     last_log = millis();
 //    log_data();
-    SerialSend();
+    if( serial_data_mode == 0 ) SerialSend_AC();
+    else if( serial_data_mode == 1 ) SerialSend_BD();
+    else SerialSend_YAW();
   }
 #endif    
     //SerialSend();

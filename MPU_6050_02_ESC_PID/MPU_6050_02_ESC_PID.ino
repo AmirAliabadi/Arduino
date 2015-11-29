@@ -11,6 +11,7 @@
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
 byte selected_pot_tuning = 0;
+byte serial_data_mode = 0;
 
 #define DEBUG
 
@@ -191,28 +192,30 @@ void loop()
 
   // wait for MPU interrupt or extra packet(s) available
   while (!mpuInterrupt) // && fifoCount < packetSize)
-  {
+  {  
     read_throttle();        if (mpuInterrupt) break;
-    //read_setpoint(AC);      if(mpuInterrupt) break;
-    //read_setpoint(BD);      if(mpuInterrupt) break;
-    read_setpoint(YW);      if(mpuInterrupt) break;
+    
+    if( serial_data_mode == 0 ) read_setpoint(AC);
+    else if( serial_data_mode == 1 ) read_setpoint(BD);
+    else if( serial_data_mode == 1) read_setpoint(YW);
+    
     read_pid_tunings(0);    if (mpuInterrupt) break;
     //read_pid_tunings(1);    if (mpuInterrupt) break;
-    read_battery_voltage(); if (mpuInterrupt) break;
 
+    read_battery_voltage(); if (mpuInterrupt) break;
     process();
   }
 
   read_mpu();
-
   read_throttle();
-  //read_setpoint(AC);
-  //read_setpoint(BD);
-  read_setpoint(YW);
-  read_battery_voltage();
+  if( serial_data_mode == 0 ) read_setpoint(AC);
+  else if( serial_data_mode == 1 ) read_setpoint(BD);
+  else if( serial_data_mode == 1) read_setpoint(YW);
+
   read_pid_tunings(0);
   //read_pid_tunings(1);
-
+  
+  read_battery_voltage();
   process();
 
 }

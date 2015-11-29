@@ -32,7 +32,7 @@ foo;                   // float array
 //  10-13: float output  
 //  14-17: float P_Param
 //  18-21: float I_Param
-//  22-245: float D_Param
+//  22-24: float D_Param
 void SerialReceive()
 {
 
@@ -41,19 +41,20 @@ void SerialReceive()
   byte Auto_Man = -1;
   byte Direct_Reverse = -1;
   byte Direct_Reverse_Rate = -1;
-  while(Serial.available() && index<40) //aa 26
+  while(Serial.available() && index<41) //aa 26
   {
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
     else if(index==3) selected_pot_tuning = Serial.read();
-    else foo.asBytes[index-4] = Serial.read();
+    else if(index==4) serial_data_mode = Serial.read();
+    else foo.asBytes[index-5] = Serial.read();
     index++;
   } 
 
   // if the information we got was in the correct format, 
   // read it into the system
-  if(index==40  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
+  if(index==41  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
   {
     //setpoint[AC]=double(foo.asFloat[0]);
     //Input=double(foo.asFloat[1]);       // * the user has the ability to send the 
@@ -63,35 +64,24 @@ void SerialReceive()
     {                                     //   manual mode.  otherwise we'll get an
       //aa output_ypr[AC]=double(foo.asFloat[2]);      //   output blip, then the controller will 
     }                                     //   overwrite.
-
-    /*
-    double p, i, d;                       // * read in and set the controller tunings
-    p = double(foo.asFloat[3]);           //
-    i = double(foo.asFloat[4]);           //
-    d = double(foo.asFloat[5]);           //
-    INPUT_STB_PID_P       = p;
-    INPUT_STB_PID_I       = i;
-    INPUT_STB_PID_D       = d;
-    ac_pid.SetTunings(p, i, d);            //
-
-    p = double(foo.asFloat[6]);           //
-    i = double(foo.asFloat[7]);           //
-    d = double(foo.asFloat[8]);           //
-    INPUT_RAT_PID_P       = p;
-    INPUT_RAT_PID_I       = i;
-    INPUT_RAT_PID_D       = d;    
-    ac_rat.SetTunings(p, i, d);            //  
-    */  
     
     if(Auto_Man==0) 
     {
       ac_pid.SetMode(MANUAL);// * set the controller mode
       ac_rat.SetMode(MANUAL);// * set the controller mode
+      bd_pid.SetMode(MANUAL);// * set the controller mode
+      bd_rat.SetMode(MANUAL);// * set the controller mode
+
+      yw_pid.SetMode(MANUAL);
     }
     else 
     {
       ac_pid.SetMode(AUTOMATIC);             //
       ac_rat.SetMode(AUTOMATIC);             //      
+      bd_pid.SetMode(AUTOMATIC);// * set the controller mode
+      ac_rat.SetMode(AUTOMATIC);// * set the controller mode
+
+      yw_pid.SetMode(AUTOMATIC);
     }
     
     if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);// * set the controller Direction
@@ -102,7 +92,9 @@ void SerialReceive()
   }
   Serial.flush();                         // * clear any random data from the serial buffer
 
-  SerialSend();
+  if( serial_data_mode == 0 ) SerialSend_AC();
+  else if( serial_data_mode == 1 ) SerialSend_BD();
+  else SerialSend_YAW();
 }
 
 // unlike our tiny microprocessor, the processing ap
@@ -110,12 +102,13 @@ void SerialReceive()
 // we can just send strings.  much easier than getting
 // floats from processing to here no?
 
-
-void SerialSend()
+void SerialSend_YAW()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
   Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print("_");
+  Serial.print(serial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -165,17 +158,25 @@ void SerialSend()
   if(yw_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  Serial.println(F("Dir"));
+  Serial.print(F("Dir"));
   //if(yw_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
   //else Serial.println(F("Rev"));  
+
+  Serial.print(F(" "));
+  
+  Serial.print(va); Serial.print(F(" "));
+  Serial.print(vb); Serial.print(F(" "));
+  Serial.print(vc); Serial.print(F(" "));
+  Serial.println(vd);   
 }
 
-/*
-void SerialSend()
+void SerialSend_BD()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
   Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print("_");
+  Serial.print(serial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -225,17 +226,22 @@ void SerialSend()
   if(bd_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  if(bd_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
-  else Serial.println(F("Rev"));  
+  if(bd_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev")); 
+  Serial.print(F(" "));
+  Serial.print(va); Serial.print(F(" "));
+  Serial.print(vb); Serial.print(F(" "));
+  Serial.print(vc); Serial.print(F(" "));
+  Serial.println(vd);   
 }
-*/
 
- /*
-void SerialSend()
+void SerialSend_AC()
 {
 // PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
   
   Serial.print(selected_pot_tuning);//"PID ");
+  Serial.print("_");
+  Serial.print(serial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -285,10 +291,17 @@ void SerialSend()
   if(ac_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  if(ac_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
-  else Serial.println(F("Rev"));  
+  if(ac_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev"));  
+  Serial.print(F(" "));
+  
+  Serial.print(va); Serial.print(F(" "));
+  Serial.print(vb); Serial.print(F(" "));
+  Serial.print(vc); Serial.print(F(" "));
+  Serial.println(vd); 
+    
 }
-*/
+
 
 //
 //void log_data()

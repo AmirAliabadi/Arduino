@@ -55,15 +55,12 @@ float inputHeight = (windowHeight-70)*2/3;
 float outputTop = inputHeight+50;
 float outputHeight = (windowHeight-70)*1/3;
 
-float ioLeft = 200, ioWidth = windowWidth-ioLeft-50;
+float ioLeft = 210, ioWidth = windowWidth-ioLeft-50;
 float ioRight = ioLeft+ioWidth;
 float pointWidth= (ioWidth)/float(arrayLength-1);
 
 int vertCount = 10;
-
 int nPoints = 0;
-
-float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
 
 boolean madeContact =false;
 boolean justSent = true;
@@ -73,12 +70,15 @@ Serial myPort;
 ControlP5 controlP5;
 controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
 
+RadioButton serial_data_mode, tuning_mode;
+
+float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
+byte i_serial_data_mode, i_tuning_mode;
+float va,vb,vc,vd;
+
 controlP5.Textlabel AMLabel, AMCurrent; 
 controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
-
-
-controlP5.Textlabel TogglePIDLable ;
 
 controlP5.Textfield SPField, /*InField, OutField,*/ PField, IField, DField, PrField, IrField, DrField;
 
@@ -93,10 +93,12 @@ void setup()
   frameRate(30); // 30
   size(1350 , 690);
 
-  println(Serial.list());                                             // * Initialize Serial
-  myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
-  myPort.bufferUntil(10);                                             //   the Arduino
-
+  println(Serial.list());   // * Initialize Serial
+  
+  if( Serial.list().length > 0 ) {
+    myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
+    myPort.bufferUntil(10);         //   the Arduino
+  }
   controlP5 = new ControlP5(this);                                    // * Initialize the various
   
   SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
@@ -113,11 +115,6 @@ void setup()
   AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
   AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
   
-  controlP5.addButton("Send_To_Arduino",0.0,10,475,120,20);
-  
-  controlP5.addButton("Toggle_PID",0.0, 10, 500, 120,20);
-  TogglePIDLable = controlP5.addTextlabel("TogglePIDLable","Flight",80,525);    
-
   group_x = 80; group_y=140;
   controlP5.addTextlabel("t1","Throttle",group_x-80,group_y);
   InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);
@@ -147,6 +144,69 @@ void setup()
   DRrButton = controlP5.addButton("Toggle_DRR",0.0,110,425,60,20);      //
   DRrLabel = controlP5.addTextlabel("DRr","Dir",120,447);            //
   DRrCurrent = controlP5.addTextlabel("DRrCurrent","Dir",175,430);   //  
+   
+  serial_data_mode = controlP5.addRadioButton("serial_data_mode_event")
+         .setPosition(5,25)
+         .setSize(10,10)
+         .setColorForeground(color(120))
+         .setColorActive(color(255))
+         .setColorLabel(color(255))
+         .setItemsPerRow(3)
+         .setSpacingColumn(15)
+         .addItem("AC",1)
+         .addItem("BD",2)
+         .addItem("YAW",3)
+         ;
+         
+  tuning_mode = controlP5.addRadioButton("tuning_mode_event")
+         .setPosition(5,5)
+         .setSize(10,10)
+         .setColorForeground(color(120))
+         .setColorActive(color(255))
+         .setColorLabel(color(255))
+         .setItemsPerRow(4)
+         .setSpacingColumn(33)
+         .addItem("Flight",1)
+         .addItem("Stable",2)
+         .addItem("Rate",3)
+         .addItem("Yaw",3)
+         ;         
+         
+   controlP5.addSlider("va")
+     .setPosition(10,460)
+     .setSize(20,100)
+     .setRange(1000,2000)
+     .setValue(0)
+     ;
+
+  controlP5.addSlider("vb")
+     .setPosition(50,460)
+     .setSize(20,100)
+     .setRange(1000,2000)
+     .setValue(0)
+     ;
+     
+  controlP5.addSlider("vc")
+     .setPosition(90,460)
+     .setSize(20,100)
+     .setRange(1000,2000)
+     .setValue(0)
+     ;
+     
+  controlP5.addSlider("vd")
+     .setPosition(130,460)
+     .setSize(20,100)
+     .setRange(1000,2000)
+     .setValue(0)
+     ;           
+     
+   // reposition the Label for controller 'slider'
+  controlP5.getController("va").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
+  controlP5.getController("vb").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
+  controlP5.getController("vc").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
+  controlP5.getController("vd").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
+   
+  controlP5.addButton("Send_To_Arduino",0.0,10,590,120,20);    
 
   AxisFont = loadFont("axis.vlw");
   TitleFont = loadFont("Titles.vlw");
@@ -392,7 +452,33 @@ void drawButtonArea()
   rect(0, 0, ioLeft, windowHeight);
 }
 
+void controlEvent(ControlEvent theEvent) {
+  if(theEvent.isFrom(tuning_mode)) {
+     if( tuning_mode.getState(0) ) i_tuning_mode = (byte) 0;
+    else if( tuning_mode.getState(1) ) i_tuning_mode = (byte) 1;
+    else if( tuning_mode.getState(2) ) i_tuning_mode = (byte) 2;
+    else if( tuning_mode.getState(3) ) i_tuning_mode = (byte) 3;
+    else i_tuning_mode = 0;   
+    
+    Send_To_Arduino();
+    
+    return;
+  } 
+  
+  if(theEvent.isFrom(serial_data_mode)) {
+    if( serial_data_mode.getState(0) ) i_serial_data_mode = (byte) 0;
+    else if( serial_data_mode.getState(1) ) i_serial_data_mode = (byte) 1;
+    else if( serial_data_mode.getState(2) ) i_serial_data_mode = (byte) 2;
+    else i_serial_data_mode = 0;
+    
+    Send_To_Arduino();
+    
+    return;
+  }   
+}
+
 void Toggle_AM() {
+  
   if(AMLabel.get().getText()=="Manual") 
   {
     AMLabel.setValue("Automatic");
@@ -426,24 +512,6 @@ void Toggle_DRR() {
   }
 }
 
-void Toggle_PID() {
-  if(TogglePIDLable.get().getText()=="Flight") 
-  {
-    TogglePIDLable.setValue("Stable");
-  }
-  else if(TogglePIDLable.get().getText()=="Stable") 
-  {
-    TogglePIDLable.setValue("Rate");   
-  } 
-  else if(TogglePIDLable.get().getText()=="Rate") 
-  {
-    TogglePIDLable.setValue("Yaw");
-  } else {
-    TogglePIDLable.setValue("Flight");
-  }
-  
-  Send_To_Arduino();
-}
 
 // Sending Floating point values to the arduino
 // is a huge pain.  if anyone knows an easier
@@ -473,19 +541,22 @@ void Send_To_Arduino()
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   
-  Byte pid_tuning = (TogglePIDLable.get().getText()=="Flight") ? (byte)0 : ( (TogglePIDLable.get().getText()=="Stable") ? (byte)1 : ( (TogglePIDLable.get().getText()=="Rate") ? (byte)2 : (byte)3 ) );
+  Byte pid_tuning = i_tuning_mode ; 
   
-  byte[] bbb = new byte[toSend.length * 4 + 4];
+  Byte serial_send_mode = i_serial_data_mode;
+  
+  byte[] bbb = new byte[toSend.length * 4 + 5];
   
   bbb[0] = a;
   bbb[1] = d;
   bbb[2] = dr;
   bbb[3] = pid_tuning;
+  bbb[4] = serial_send_mode;
   
   byte [] dddd = floatArrayToByteArray(toSend);
   for(int i=0; i< dddd.length; i++ )
   {
-    bbb[i+4] = dddd[i];
+    bbb[i+5] = dddd[i];
   }
   myPort.write(bbb);
   
@@ -525,7 +596,7 @@ void serialEvent(Serial myPort)
   if(outputFileName!="") output.print(str(millis())+ " "+read);
   String[] s = split(read, " ");
 
-  if (s.length == 16)
+  if (s.length == 20)
   {
     Input_Thrust = float(trim(s[1]));           // * pull the information
     Input_Setpoint = float(trim(s[2]));           // * pull the information
@@ -555,6 +626,16 @@ void serialEvent(Serial myPort)
     DRCurrent.setValue(trim(s[14]));
     DRrCurrent.setValue(trim(s[15]));
     
+    va = float(trim(s[16]));
+    vb = float(trim(s[17]));
+    vc = float(trim(s[18]));
+    vd = float(trim(s[19]));
+    
+    controlP5.getController("va").setValue(va);
+    controlP5.getController("vb").setValue(vb);
+    controlP5.getController("vc").setValue(vc);
+    controlP5.getController("vd").setValue(vd);
+
     if(justSent)                      // * if this is the first read
     {                                 //   since we sent values to 
       //SPField.setText(trim(s[2]));    //   the arduino,  take the
