@@ -30,6 +30,7 @@ public:
 private:
         void            _vprintf(unsigned char, const char *, va_list)
                 __attribute__ ((format(__printf__, 3, 0)));
+
 };
 
 #endif // __BETTERSTREAM_H

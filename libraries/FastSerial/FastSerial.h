@@ -105,7 +105,7 @@ public:
         virtual int     read(void);
         virtual int     peek(void);
         virtual void    flush(void);
-        virtual void    write(uint8_t c);
+        virtual size_t  write(uint8_t c); // AA changed from void write(unit8_t c) to size_t wirte(uint8_t c)
         using BetterStream::write;
 
         // public so the interrupt handlers can see it

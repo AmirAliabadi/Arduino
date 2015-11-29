@@ -31,7 +31,8 @@
 
 //#include "../AP_Common/AP_Common.h"
 #include "FastSerial.h"
-#include "WProgram.h"
+//#include "WProgram.h"
+#include "Arduino.h" 	// AA changed to Arduino.h from WProgram.h
 
 #if   defined(UDR3)
 # define FS_MAX_PORTS   4
@@ -216,13 +217,14 @@ FastSerial::flush(void)
         _txBuffer->tail = _rxBuffer->head;
 }
 
-void
+//void // AA changed to size_t
+size_t 
 FastSerial::write(uint8_t c)
 {
         int16_t         i;
 
         if (!_open)                     // drop bytes if not open
-                return;
+                return 0;				// AA changed to return 0 from return;
 
         // wait for room in the tx buffer
         i = (_txBuffer->head + 1) & _txBuffer->mask;
