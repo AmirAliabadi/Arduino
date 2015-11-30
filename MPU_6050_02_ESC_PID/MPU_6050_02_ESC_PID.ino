@@ -105,10 +105,10 @@ Servo esc_b;
 Servo esc_c;
 Servo esc_d;
 
-int va = MIN_ESC_SIGNAL;
-int vb = MIN_ESC_SIGNAL;
-int vc = MIN_ESC_SIGNAL;
-int vd = MIN_ESC_SIGNAL;
+uint8_t va = MIN_ESC_SIGNAL;
+uint8_t vb = MIN_ESC_SIGNAL;
+uint8_t vc = MIN_ESC_SIGNAL;
+uint8_t vd = MIN_ESC_SIGNAL;
 //
 ////////////////////////////////////////////////////////////////
 

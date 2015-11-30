@@ -84,11 +84,23 @@ void SerialReceive()
       yw_pid.SetMode(AUTOMATIC);
     }
     
-    if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);// * set the controller Direction
-    else ac_pid.SetControllerDirection(REVERSE);          //
-
-    if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);// * set the controller Direction
-    else ac_rat.SetControllerDirection(REVERSE);          //    
+    if( serial_data_mode == 0 ) {
+      if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);
+      else ac_pid.SetControllerDirection(REVERSE);
+      
+      if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);
+      else ac_rat.SetControllerDirection(REVERSE);  
+    } else if ( serial_data_mode == 1 ) {
+      if(Direct_Reverse==0) bd_pid.SetControllerDirection(DIRECT);
+      else bd_pid.SetControllerDirection(REVERSE);
+      
+      if(Direct_Reverse_Rate==0) bd_rat.SetControllerDirection(DIRECT);
+      else bd_rat.SetControllerDirection(REVERSE);       
+    } else if ( serial_data_mode == 2 ) {
+      if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
+      else yw_pid.SetControllerDirection(REVERSE);      
+    }
+    
   }
   Serial.flush();                         // * clear any random data from the serial buffer
 

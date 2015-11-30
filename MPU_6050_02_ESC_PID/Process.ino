@@ -60,8 +60,8 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-  int v_ac = 0;
-  int v_bd = 0;
+  uint8_t v_ac = 0;
+  uint8_t v_bd = 0;
 
   if( system_check & INIT_ESC_ARMED )
   {
