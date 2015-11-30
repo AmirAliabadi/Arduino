@@ -38,7 +38,7 @@ float displayFactor = 1; //display Time as Milliseconds
 //float displayFactor = 1000; //display Time as Seconds
 //float displayFactor = 60000; //display Time as Minutes
 
-String outputFileName = ""; // if you'd like to output data to 
+String outputFileName = "foo.bar"; // if you'd like to output data to 
 // a file, specify the path here
 
 /***********************************************
