@@ -82,6 +82,8 @@ controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCur
 
 controlP5.Textfield SPField, /*InField, OutField,*/ PField, IField, DField, PrField, IrField, DrField;
 
+controlP5.Slider throttle_slider;
+
 PrintWriter output;
 PFont AxisFont, TitleFont; 
 
@@ -173,7 +175,7 @@ void setup()
          ;      
          
    group_x = 10; group_y=460;         
-   controlP5.addSlider("throttle")
+   throttle_slider = controlP5.addSlider("throttle")
      .setPosition(group_x,group_y)
      .setSize(20,100)
      .setRange(0,800)
@@ -491,12 +493,13 @@ void throttle() {
   
   int cur_throttle = (int)(controlP5.getController("throttle").getValue());
   
-  if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
   last_throttle_position = cur_throttle;
   
-  controlP5.getController("throttle").setValue( 100 ); //(float)cur_throttle );
+  //controlP5.getController("throttle").setValue( 100.0 ); //(float)cur_throttle );
+  //throttle_slider.setValue( float("33.33") ); //(float)1.2 ) ;//(float)cur_throttle );
   
-  println( cur_throttle );
+  Send_To_Arduino();
 }
 
 void Toggle_AM() {
@@ -545,7 +548,7 @@ void Toggle_DRR() {
 // - send those bytes to the arduino
 void Send_To_Arduino()
 {
-  float[] toSend = new float[9];
+  float[] toSend = new float[10];
 
   toSend[0] = float(SPField.getText());
   toSend[1] = 0.0; //float(InField.getText());
@@ -558,6 +561,8 @@ void Send_To_Arduino()
   toSend[6] = float(PrField.getText());
   toSend[7] = float(IrField.getText());
   toSend[8] = float(DrField.getText());  
+  
+  toSend[9] = float(last_throttle_position);
   
   Byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
@@ -629,6 +634,9 @@ void serialEvent(Serial myPort)
     Output_gyro = float(trim(s[6]));             //   string and put it
     
     InputThrustLabel.setValue(trim(s[1]));
+    
+    //throttle_slider.setValue( float(trim(s[1])) );
+    
     InputSetpointLabel.setValue(trim(s[2]));
     InputGyroLabel.setValue(trim(s[3]));           //
     InputAngleLabel.setValue(trim(s[4]));           //
