@@ -6,8 +6,8 @@
 
 
 union {                // This Data structure lets
-  byte asBytes[36];    // us take the byte array
-  float asFloat[9];    // sent from processing and
+  byte asBytes[40];    // us take the byte array
+  float asFloat[10];    // sent from processing and
 }                      // easily convert it to a
 foo;                   // float array
 
@@ -41,7 +41,7 @@ void SerialReceive()
   byte Auto_Man = -1;
   byte Direct_Reverse = -1;
   byte Direct_Reverse_Rate = -1;
-  while(Serial.available() && index<41) //aa 26
+  while(Serial.available() && index<42) //aa 26
   {
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
@@ -54,32 +54,25 @@ void SerialReceive()
 
   // if the information we got was in the correct format, 
   // read it into the system
-  if(index==41  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
+  if(index==42) //  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
   {
-    //setpoint[AC]=double(foo.asFloat[0]);
-    //Input=double(foo.asFloat[1]);       // * the user has the ability to send the 
-                                          //   value of "Input"  in most cases (as 
-                                          //   in this one) this is not needed.
-    if(Auto_Man==0)                       // * only change the output if we are in 
-    {                                     //   manual mode.  otherwise we'll get an
-      //aa output_ypr[AC]=double(foo.asFloat[2]);      //   output blip, then the controller will 
-    }                                     //   overwrite.
+    INPUT_THRUST = foo.asFloat[9];
     
     if(Auto_Man==0) 
     {
-      ac_pid.SetMode(MANUAL);// * set the controller mode
-      ac_rat.SetMode(MANUAL);// * set the controller mode
-      bd_pid.SetMode(MANUAL);// * set the controller mode
-      bd_rat.SetMode(MANUAL);// * set the controller mode
+      ac_pid.SetMode(MANUAL);
+      ac_rat.SetMode(MANUAL);
+      bd_pid.SetMode(MANUAL);
+      bd_rat.SetMode(MANUAL);
 
       yw_pid.SetMode(MANUAL);
     }
     else 
     {
-      ac_pid.SetMode(AUTOMATIC);             //
-      ac_rat.SetMode(AUTOMATIC);             //      
-      bd_pid.SetMode(AUTOMATIC);// * set the controller mode
-      ac_rat.SetMode(AUTOMATIC);// * set the controller mode
+      ac_pid.SetMode(AUTOMATIC);
+      ac_rat.SetMode(AUTOMATIC);  
+      bd_pid.SetMode(AUTOMATIC);
+      ac_rat.SetMode(AUTOMATIC);
 
       yw_pid.SetMode(AUTOMATIC);
     }
@@ -90,15 +83,18 @@ void SerialReceive()
       
       if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);
       else ac_rat.SetControllerDirection(REVERSE);  
+      
     } else if ( serial_data_mode == 1 ) {
       if(Direct_Reverse==0) bd_pid.SetControllerDirection(DIRECT);
       else bd_pid.SetControllerDirection(REVERSE);
       
       if(Direct_Reverse_Rate==0) bd_rat.SetControllerDirection(DIRECT);
-      else bd_rat.SetControllerDirection(REVERSE);       
+      else bd_rat.SetControllerDirection(REVERSE);  
+           
     } else if ( serial_data_mode == 2 ) {
       if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
-      else yw_pid.SetControllerDirection(REVERSE);      
+      else yw_pid.SetControllerDirection(REVERSE);
+            
     }
     
   }

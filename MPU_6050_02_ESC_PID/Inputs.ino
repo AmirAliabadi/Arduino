@@ -1,47 +1,3 @@
-/*
-void readCsvToVector() 
-{
-  byte len;
-  if (Serial.available() <= 0)
-    return ;
-   
-  len = Serial.available();
-  
-  char stream[80];
-  char number[10];
-  
-  // Read the message
-  for (byte i = 0; i < len; ++i) {
-    stream[i] = Serial.read();
-  }
-  
-  byte i = 0, j = 0, k = 0;
-
-  while ( i < len && k < 12 ) {
-    while (stream[i] != ',' && i < len) {
-      number[j] = stream[i];
-      ++i;
-      ++j;
-    }
-    ++i;
-    number[j] = '\0';
-    j = 0;
-
-    switch(k) {
-      case 0:
-          INPUT_THRUST = atof(number);
-          break;
-      case 1:
-          INPUT_STB_PID_P = atof(number);        
-          break;
-      case 2:      
-          INPUT_RAT_PID_P = atof(number);        
-          break;
-    }
-    k++;
-  }
-}
-*/
 
 //////////////////////////////////////////////////////////////////////
 // POT Inputs
@@ -55,15 +11,15 @@ void read_throttle()
 //      INPUT_THRUST = 0;
 //    return ;
   
-  if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
-  {  
-    float v = analogRead(Kd_PIN);
-    if(v < 50) INPUT_THRUST = 0;
+//  if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
+///  {  
+//    float v = analogRead(Kd_PIN);
+//    if(v < 50) INPUT_THRUST = 0;
     
-    // INPUT_THRUST = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
-    v = analogRead(THROTTLE_PIN);
-    if(v < 50) INPUT_THRUST -= 0.15;
-    else if( v > 900) INPUT_THRUST += 0.1;
+//    // INPUT_THRUST = map(analogRead(THROTTLE_PIN),0,644,0.0,MAX_INPUT_THRUST);
+//    v = analogRead(THROTTLE_PIN);
+//    if(v < 50) INPUT_THRUST -= 0.15;
+//    else if( v > 900) INPUT_THRUST += 0.1;
 
     if( system_check & INIT_ESC_ARMED ) 
     {
@@ -79,31 +35,31 @@ void read_throttle()
       }
     }
     
-  }
+//  }
 }
 
 void read_setpoint(int type)
 {
-  if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
-  {   
-    float v = analogRead(Kd_PIN);  
-    if(v < 50) input_values[11+type] = 0;  
-    else if(v > 900) input_values[11+type] = 0;
-    
-    v = analogRead(Ki_PIN);
-    if(v < 50) input_values[11+type] -= 0.1;
-    else if( v > 900) input_values[11+type] += 0.1;
-
-    input_values[11+type] = constrain(input_values[11+type],-45.0,45.0);
-    
-    if( setpoint[type] != input_values[11+type] ) 
-    {  
-      setpoint_changed    |= SETPOINT_CHANGED_AC;
-      
-      last_setpoint[type] = setpoint[type]; 
-      setpoint[type]      = input_values[11+type];
-    }
-  }
+//  if( selected_pot_tuning == 0 ) // STABLE PID tuning P value only...
+//  {   
+//    float v = analogRead(Kd_PIN);  
+//    if(v < 50) input_values[11+type] = 0;  
+//    else if(v > 900) input_values[11+type] = 0;
+//    
+//    v = analogRead(Ki_PIN);
+//    if(v < 50) input_values[11+type] -= 0.1;
+//    else if( v > 900) input_values[11+type] += 0.1;
+//
+//    input_values[11+type] = constrain(input_values[11+type],-45.0,45.0);
+//    
+//    if( setpoint[type] != input_values[11+type] ) 
+//    {  
+//      setpoint_changed    |= SETPOINT_CHANGED_AC;
+//      
+//      last_setpoint[type] = setpoint[type]; 
+//      setpoint[type]      = input_values[11+type];
+//    }
+//  }
 }
 
 void read_battery_voltage() 

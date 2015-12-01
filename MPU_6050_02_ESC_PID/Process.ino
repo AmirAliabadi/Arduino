@@ -60,8 +60,8 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-  uint8_t v_ac = 0;
-  uint8_t v_bd = 0;
+  int v_ac = 0;
+  int v_bd = 0;
 
   if( system_check & INIT_ESC_ARMED )
   {
@@ -157,8 +157,8 @@ gyro    o[P]  r[P]    va      vc
     v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
-    va = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]); // output_ypr
-    vc = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]); // output_ypr
+    va = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]); // output_ypr
+    vc = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]); // output_ypr
     vb = MIN_ESC_SIGNAL + (v_bd - output_rate[BD]); // output_ypr
     vd = MIN_ESC_SIGNAL + (v_bd + output_rate[BD]); // output_ypr
     //

@@ -170,37 +170,46 @@ void setup()
          .addItem("Stable",2)
          .addItem("Rate",3)
          .addItem("Yaw",3)
-         ;         
+         ;      
+         
+   group_x = 10; group_y=460;         
+   controlP5.addSlider("throttle")
+     .setPosition(group_x,group_y)
+     .setSize(20,100)
+     .setRange(0,800)
+     .setValue(0)
+     ;         
          
    controlP5.addSlider("va")
-     .setPosition(10,460)
+     .setPosition(group_x+=40,group_y)
      .setSize(20,100)
      .setRange(1000,2000)
      .setValue(0)
      ;
 
   controlP5.addSlider("vb")
-     .setPosition(50,460)
+    .setPosition(group_x+=40,group_y)
      .setSize(20,100)
      .setRange(1000,2000)
      .setValue(0)
      ;
      
   controlP5.addSlider("vc")
-     .setPosition(90,460)
+    .setPosition(group_x+=40,group_y)
      .setSize(20,100)
      .setRange(1000,2000)
      .setValue(0)
      ;
      
   controlP5.addSlider("vd")
-     .setPosition(130,460)
+     .setPosition(group_x+=40,group_y)
      .setSize(20,100)
      .setRange(1000,2000)
      .setValue(0)
      ;           
      
    // reposition the Label for controller 'slider'
+  controlP5.getController("throttle").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
   controlP5.getController("va").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
   controlP5.getController("vb").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
   controlP5.getController("vc").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
@@ -475,6 +484,19 @@ void controlEvent(ControlEvent theEvent) {
     
     return;
   }   
+}
+
+int last_throttle_position = 0;
+void throttle() {
+  
+  int cur_throttle = (int)(controlP5.getController("throttle").getValue());
+  
+  if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+  last_throttle_position = cur_throttle;
+  
+  controlP5.getController("throttle").setValue( 100 ); //(float)cur_throttle );
+  
+  println( cur_throttle );
 }
 
 void Toggle_AM() {
