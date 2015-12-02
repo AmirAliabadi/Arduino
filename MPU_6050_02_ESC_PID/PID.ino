@@ -93,7 +93,7 @@ with the full quad!
 
 void init_pid()
 {
-  Serial.println("#initializing pid...");
+  Serial.println("#init pid...");
   
   //turn the PID on
   yw_pid.SetOutputLimits(-250, 250);

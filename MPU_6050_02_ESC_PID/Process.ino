@@ -34,6 +34,9 @@ void check_if_stable()
     system_check |= INIT_MPU_STABLE;
     
     yw_offset = yw_reading;
+    ac_offset = ypr[AC];
+    bd_offset = ypr[BD];
+    
     ypr[YW] = 0;
     ypr_last[YW] = 0;
     
@@ -60,8 +63,8 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-  int v_ac = 0;
-  int v_bd = 0;
+  uint16_t v_ac = 0;
+  uint16_t v_bd = 0;
 
   if( system_check & INIT_ESC_ARMED )
   {

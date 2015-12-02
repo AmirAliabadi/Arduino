@@ -496,8 +496,8 @@ void throttle() {
   //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
   last_throttle_position = cur_throttle;
   
-  //controlP5.getController("throttle").setValue( 100.0 ); //(float)cur_throttle );
-  //throttle_slider.setValue( float("33.33") ); //(float)1.2 ) ;//(float)cur_throttle );
+  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
+  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
   
   Send_To_Arduino();
 }
@@ -548,7 +548,7 @@ void Toggle_DRR() {
 // - send those bytes to the arduino
 void Send_To_Arduino()
 {
-  float[] toSend = new float[10];
+  float[] toSend = new float[11];
 
   toSend[0] = float(SPField.getText());
   toSend[1] = 0.0; //float(InField.getText());
@@ -563,6 +563,8 @@ void Send_To_Arduino()
   toSend[8] = float(DrField.getText());  
   
   toSend[9] = float(last_throttle_position);
+  toSend[10] = float(last_throttle_position);
+  
   
   Byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
@@ -587,9 +589,6 @@ void Send_To_Arduino()
   }
   myPort.write(bbb);
   
-  //myPort.write(a);
-  //myPort.write(d);
-  //myPort.write(floatArrayToByteArray(toSend));
   justSent=true;
 } 
 
@@ -665,6 +664,28 @@ void serialEvent(Serial myPort)
     controlP5.getController("vb").setValue(vb);
     controlP5.getController("vc").setValue(vc);
     controlP5.getController("vd").setValue(vd);
+    
+    if( va > vc )
+    {
+      controlP5.getController("va").setColorForeground(color(255, 0, 0));
+      controlP5.getController("vc").setColorForeground(color(0, 0, 255));    
+    }
+    else
+    {
+      controlP5.getController("va").setColorForeground(color(0, 0, 255));
+      controlP5.getController("vc").setColorForeground(color(255, 0, 0));  
+    }
+    
+    if( vb > vd )
+    {
+      controlP5.getController("vb").setColorForeground(color(255, 0, 0));
+      controlP5.getController("vd").setColorForeground(color(0, 0, 255));    
+    }
+    else
+    {
+      controlP5.getController("vb").setColorForeground(color(0, 0, 255));
+      controlP5.getController("vd").setColorForeground(color(255, 0, 0));  
+    }    
 
     if(justSent)                      // * if this is the first read
     {                                 //   since we sent values to 

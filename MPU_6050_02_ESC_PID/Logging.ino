@@ -6,8 +6,8 @@
 
 
 union {                // This Data structure lets
-  byte asBytes[40];    // us take the byte array
-  float asFloat[10];    // sent from processing and
+  byte asBytes[44];    // us take the byte array
+  float asFloat[11];    // sent from processing and
 }                      // easily convert it to a
 foo;                   // float array
 
@@ -41,7 +41,7 @@ void SerialReceive()
   byte Auto_Man = -1;
   byte Direct_Reverse = -1;
   byte Direct_Reverse_Rate = -1;
-  while(Serial.available() && index<42) //aa 26
+  while(Serial.available() && index<49) //aa 26
   {
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
@@ -51,12 +51,15 @@ void SerialReceive()
     else foo.asBytes[index-5] = Serial.read();
     index++;
   } 
-
+  
   // if the information we got was in the correct format, 
   // read it into the system
-  if(index==42) //  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
+  if(index==49) //  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
   {
-    INPUT_THRUST = foo.asFloat[9];
+    if( foo.asFloat[9] != foo.asFloat[10] ) return;
+    if( serial_data_mode > 2 ) return;
+    
+    INPUT_THRUST = double(foo.asFloat[9]);
     
     if(Auto_Man==0) 
     {
@@ -98,17 +101,12 @@ void SerialReceive()
     }
     
   }
-  Serial.flush();                         // * clear any random data from the serial buffer
+  //Serial.flush();                         // * clear any random data from the serial buffer
 
   if( serial_data_mode == 0 ) SerialSend_AC();
   else if( serial_data_mode == 1 ) SerialSend_BD();
-  else SerialSend_YAW();
+  else if( serial_data_mode == 2 ) SerialSend_YAW();
 }
-
-// unlike our tiny microprocessor, the processing ap
-// has no problem converting strings into floats, so
-// we can just send strings.  much easier than getting
-// floats from processing to here no?
 
 void SerialSend_YAW()
 {

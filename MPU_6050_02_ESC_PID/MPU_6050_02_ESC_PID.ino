@@ -94,6 +94,8 @@ VectorInt16 gyro;
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 float yw_offset   = 0.0;
+float ac_offset   = 0.0;
+float bd_offset   = 0.0;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -105,10 +107,10 @@ Servo esc_b;
 Servo esc_c;
 Servo esc_d;
 
-int va = MIN_ESC_SIGNAL;
-int vb = MIN_ESC_SIGNAL;
-int vc = MIN_ESC_SIGNAL;
-int vd = MIN_ESC_SIGNAL;
+uint16_t va = MIN_ESC_SIGNAL;
+uint16_t vb = MIN_ESC_SIGNAL;
+uint16_t vc = MIN_ESC_SIGNAL;
+uint16_t vd = MIN_ESC_SIGNAL;
 //
 ////////////////////////////////////////////////////////////////
 
@@ -197,7 +199,7 @@ void loop()
     
     if( serial_data_mode == 0 ) read_setpoint(AC);
     else if( serial_data_mode == 1 ) read_setpoint(BD);
-    else if( serial_data_mode == 1) read_setpoint(YW);
+    else if( serial_data_mode == 2 ) read_setpoint(YW);
     
     read_pid_tunings(0);    if (mpuInterrupt) break;
     //read_pid_tunings(1);    if (mpuInterrupt) break;
@@ -210,7 +212,7 @@ void loop()
   read_throttle();
   if( serial_data_mode == 0 ) read_setpoint(AC);
   else if( serial_data_mode == 1 ) read_setpoint(BD);
-  else if( serial_data_mode == 1) read_setpoint(YW);
+  else if( serial_data_mode == 2 ) read_setpoint(YW);
 
   read_pid_tunings(0);
   //read_pid_tunings(1);

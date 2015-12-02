@@ -5,12 +5,12 @@ void init_mpu()
 {
     system_check &= ~(INIT_MPU_ARMED | INIT_MPU_STABLE);
       
-    Serial.println(F("#Initializing MPU I2C connection..."));
+    Serial.println(F("#Init MPU I2C conne..."));
     mpu.initialize();
 
     // verify connection
-    Serial.println(F("#Testing device connections..."));
-    Serial.println(mpu.testConnection() ? F("#MPU6050 connection successful") : F("MPU6050 connection failed"));
+    Serial.println(F("#Test device conn..."));
+    Serial.println(mpu.testConnection() ? F("#MPU6050 ok") : F("MPU6050 failed"));
 
     delay(500);
 
@@ -56,12 +56,12 @@ void init_mpu()
       mpu.setDMPEnabled(true);
       
       // enable Arduino interrupt detection
-      Serial.println(F("#Enabling int detection (external interrupt 0)..."));
+      Serial.println(F("#Enabling int detection"));
       attachInterrupt(0, dmpDataReady, RISING);
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
-      Serial.println(F("#DMP ready! Waiting for first int..."));
+      Serial.println(F("#DMP ready!"));
       dmpReady = true;
 
       // get expected DMP packet size for later comparison
@@ -125,16 +125,17 @@ void read_mpu()
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
-    float alpha = 0.4;
+    #define alpha 0.4
     gyro.x = gyro1.x * alpha + (gyro.x * (1.0 - alpha));
     gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
     gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 
     // low pass filter on the gyro data   
 
     // convert radians to degrees
-    ypr[YW] = ((ypr[YW] * 180.0 / M_PI) - yw_offset ) ;
-    ypr[AC] = ((ypr[AC] * 180.0 / M_PI)             ) ;
-    ypr[BD] = ((ypr[BD] * 180.0 / M_PI)             ) ;
+    #define A_180_DIV_PI 57.2957795131
+    ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
+    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;
 
     // maybe low pass filter here as well?  the 6050 should be using it's built in low pass filter
 
