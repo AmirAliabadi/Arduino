@@ -58,9 +58,15 @@ void SerialReceive()
   {
     if( foo.asFloat[9] != foo.asFloat[10] ) return;
     if( serial_data_mode > 2 ) return;
-    
-    INPUT_THRUST = double(foo.asFloat[9]);
-    
+
+    if( foo.asFloat[9] > INPUT_THRUST )
+    { 
+       if( foo.asFloat[9] > INPUT_THRUST + 50 ) INPUT_THRUST += 50;
+       else INPUT_THRUST =  foo.asFloat[9];
+    }
+    else 
+      INPUT_THRUST = foo.asFloat[9] ;
+        
     if(Auto_Man==0) 
     {
       ac_pid.SetMode(MANUAL);

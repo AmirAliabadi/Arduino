@@ -19,6 +19,8 @@ import java.nio.ByteBuffer;
 import processing.serial.*;
 import controlP5.*;
 
+int last_throttle_position = 0;
+
 /***********************************************
  * User spcification section
  **********************************************/
@@ -486,21 +488,34 @@ void controlEvent(ControlEvent theEvent) {
     
     return;
   }   
+  
+  if(theEvent.isFrom(throttle_slider)) {
+    int cur_throttle = (int)(throttle_slider.getValue());
+    
+    //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+    last_throttle_position = cur_throttle;
+    
+    //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
+    //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
+    
+    Send_To_Arduino();  
+    
+    return;
+  }
 }
 
-int last_throttle_position = 0;
-void throttle() {
+//void xthrottle() {
   
-  int cur_throttle = (int)(controlP5.getController("throttle").getValue());
+//  int cur_throttle = (int)(controlP5.getController("throttle").getValue());
   
-  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
-  last_throttle_position = cur_throttle;
+//  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+//  last_throttle_position = cur_throttle;
   
-  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
-  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
+//  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
+//  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
   
-  Send_To_Arduino();
-}
+//  Send_To_Arduino();
+//}
 
 void Toggle_AM() {
   
