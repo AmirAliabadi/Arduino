@@ -40,7 +40,7 @@ float displayFactor = 1; //display Time as Milliseconds
 //float displayFactor = 1000; //display Time as Seconds
 //float displayFactor = 60000; //display Time as Minutes
 
-String outputFileName = "foo.bar"; // if you'd like to output data to 
+String outputFileName = "s"; // if you'd like to output data to 
 // a file, specify the path here
 
 /***********************************************
@@ -489,19 +489,33 @@ void controlEvent(ControlEvent theEvent) {
     return;
   }   
   
-  if(theEvent.isFrom(throttle_slider)) {
-    int cur_throttle = (int)(throttle_slider.getValue());
+  //if(theEvent.isFrom(throttle_slider)) {
+  //  int cur_throttle = (int)(throttle_slider.getValue());
     
-    //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+  //  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
+  //  last_throttle_position = cur_throttle;
+    
+  //  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
+  //  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
+    
+  //  Send_To_Arduino();  
+    
+  //  return;
+  //}
+}
+  int cur_throttle ;
+void keyPressed() {
+    if( key == 'a' ) {
+      cur_throttle += 20;
+    } else if ( key == 'z' ) {
+      cur_throttle -= 20;
+    } else {
+      cur_throttle = 0;
+    }
     last_throttle_position = cur_throttle;
+    throttle_slider.setValue(cur_throttle);
     
-    //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
-    //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
-    
-    Send_To_Arduino();  
-    
-    return;
-  }
+    Send_To_Arduino();
 }
 
 //void xthrottle() {
@@ -602,7 +616,9 @@ void Send_To_Arduino()
   {
     bbb[i+5] = dddd[i];
   }
-  myPort.write(bbb);
+  if( myPort != null ) {
+    myPort.write(bbb);
+  }
   
   justSent=true;
 } 
