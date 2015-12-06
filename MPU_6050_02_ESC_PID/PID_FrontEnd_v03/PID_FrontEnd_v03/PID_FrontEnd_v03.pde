@@ -40,7 +40,7 @@ float displayFactor = 1; //display Time as Milliseconds
 //float displayFactor = 1000; //display Time as Seconds
 //float displayFactor = 60000; //display Time as Minutes
 
-String outputFileName = "s"; // if you'd like to output data to 
+String outputFileName = ""; // if you'd like to output data to 
 // a file, specify the path here
 
 /***********************************************
@@ -488,48 +488,64 @@ void controlEvent(ControlEvent theEvent) {
     
     return;
   }   
-  
-  //if(theEvent.isFrom(throttle_slider)) {
-  //  int cur_throttle = (int)(throttle_slider.getValue());
-    
-  //  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
-  //  last_throttle_position = cur_throttle;
-    
-  //  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
-  //  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
-    
-  //  Send_To_Arduino();  
-    
-  //  return;
-  //}
-}
-  int cur_throttle ;
-void keyPressed() {
-    if( key == 'a' ) {
-      cur_throttle += 20;
-    } else if ( key == 'z' ) {
-      cur_throttle -= 20;
-    } else {
-      cur_throttle = 0;
-    }
-    last_throttle_position = cur_throttle;
-    throttle_slider.setValue(cur_throttle);
-    
-    Send_To_Arduino();
 }
 
-//void xthrottle() {
-  
-//  int cur_throttle = (int)(controlP5.getController("throttle").getValue());
-  
-//  //if( cur_throttle > last_throttle_position + 30 ) cur_throttle = last_throttle_position + 30 ;
-//  last_throttle_position = cur_throttle;
-  
-//  //controlP5.getController("throttle").setValue( 100); //(float)cur_throttle );
-//  //throttle_slider.setValue( 100 ); //(float)1.2 ) ;//(float)cur_throttle );
-  
-//  Send_To_Arduino();
-//}
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
+
+int cur_throttle ;
+void keyPressed() {
+    switch(key) {
+      case 'a':
+        cur_throttle += 10;
+        break;
+      case 'z':
+        cur_throttle -= 20;
+        break;
+      case ' ':
+        cur_throttle = 0;
+        break;
+      case '7':
+        kp += 0.01;
+        break;
+      case '8':
+        ki += 0.01;     
+        break;
+      case '9':  
+        kd += 0.01;           
+        break;
+      case 'u':
+        kp -= 0.01;      
+        break;
+      case 'i':
+        ki -= 0.01;
+        break;
+      case 'o':
+        kd -= 0.01;
+        break;
+        
+      case 'j':
+        krp += 0.01;
+        break;
+      case 'k':
+        kri += 0.01;
+        break;
+      case 'l':
+        krd += 0.01;
+        break;
+      case 'm':
+        krp -= 0.01;
+        break;
+      case ',':
+        kri -= 0.01;
+        break;
+      case '.':
+        krd -= 0.01;
+        break;
+    }
+    last_throttle_position = cur_throttle;
+   
+    Send_To_Arduino();
+}
 
 void Toggle_AM() {
   
@@ -583,13 +599,13 @@ void Send_To_Arduino()
   toSend[1] = 0.0; //float(InField.getText());
   toSend[2] = 0.0; //float(OutField.getText());
   
-  toSend[3] = float(PField.getText());
-  toSend[4] = float(IField.getText());
-  toSend[5] = float(DField.getText());
+  toSend[3] = kp;
+  toSend[4] = ki;
+  toSend[5] = kd;
   
-  toSend[6] = float(PrField.getText());
-  toSend[7] = float(IrField.getText());
-  toSend[8] = float(DrField.getText());  
+  toSend[6] = krp;
+  toSend[7] = kri;
+  toSend[8] = krd;
   
   toSend[9] = float(last_throttle_position);
   toSend[10] = float(last_throttle_position);
@@ -644,7 +660,9 @@ byte[] floatArrayToByteArray(float[] input)
 //take the string the arduino sends us and parse it
 void serialEvent(Serial myPort)
 {
-// PID thrust _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder
+// S thrust _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder E
+// S 0_0 0.00 0.00 0.00 0.15 0.00 0.00 3.000 0.000 0.000 0.960 0.000 0.096 Manual Dir Dir 1100 1100 1100 1100 E
+
   
   String read = myPort.readStringUntil(10);
   
@@ -653,43 +671,53 @@ void serialEvent(Serial myPort)
   if(outputFileName!="") output.print(str(millis())+ " "+read);
   String[] s = split(read, " ");
 
-  if (s.length == 20)
+  if (s.length == 22)
   {
-    Input_Thrust = float(trim(s[1]));           // * pull the information
-    Input_Setpoint = float(trim(s[2]));           // * pull the information
-    Input_gyro = float(trim(s[3]));              //   we need out of the
-    Input_angle = float(trim(s[4]));              //   we need out of the    
+    if(! trim(s[0]).equals("S") ) return;
+    if(! trim(s[21]).equals("E") ) return;
     
-    Output_angle = float(trim(s[5]));             //   string and put it
-    Output_gyro = float(trim(s[6]));             //   string and put it
+    Input_Thrust = float(trim(s[2])); 
+    Input_Setpoint = float(trim(s[3]));
+    Input_gyro = float(trim(s[4]));
+    Input_angle = float(trim(s[5]));
     
-    InputThrustLabel.setValue(trim(s[1]));
+    Output_angle = float(trim(s[6]));
+    Output_gyro = float(trim(s[7]));
     
-    //throttle_slider.setValue( float(trim(s[1])) );
+    cur_throttle = (int)float(trim(s[2]));
+    InputThrustLabel.setValue(trim(s[2]));
+    throttle_slider.setValue( float(trim(s[2])) );
     
-    InputSetpointLabel.setValue(trim(s[2]));
-    InputGyroLabel.setValue(trim(s[3]));           //
-    InputAngleLabel.setValue(trim(s[4]));           //
+    InputSetpointLabel.setValue(trim(s[3]));
+    InputGyroLabel.setValue(trim(s[4])); 
+    InputAngleLabel.setValue(trim(s[5]));
     
-    AngleOutLabel.setValue(trim(s[5]));    //
-    GyroOutLabel.setValue(trim(s[6]));
+    AngleOutLabel.setValue(trim(s[6])); 
+    GyroOutLabel.setValue(trim(s[7]));
     
-    PLabel.setValue(trim(s[7]));      //
-    ILabel.setValue(trim(s[8]));      //
-    DLabel.setValue(trim(s[9]));      //
+    kp = float(trim(s[8]));
+    ki = float(trim(s[9]));
+    kd = float(trim(s[10]));
+    krp = float(trim(s[11]));
+    kri = float(trim(s[12]));
+    krd = float(trim(s[13]));
+
+    PLabel.setValue(Float.toString(kp));
+    ILabel.setValue(Float.toString(ki)); 
+    DLabel.setValue(Float.toString(kd)); 
     
-    PrLabel.setValue(trim(s[10]));      //
-    IrLabel.setValue(trim(s[11]));      //
-    DrLabel.setValue(trim(s[12]));      //    
+    PrLabel.setValue(Float.toString(krp));  
+    IrLabel.setValue(Float.toString(kri));
+    DrLabel.setValue(Float.toString(krd)); 
     
-    AMCurrent.setValue(trim(s[13]));   //
-    DRCurrent.setValue(trim(s[14]));
-    DRrCurrent.setValue(trim(s[15]));
+    AMCurrent.setValue(trim(s[14]));
+    DRCurrent.setValue(trim(s[15]));
+    DRrCurrent.setValue(trim(s[16]));
     
-    va = float(trim(s[16]));
-    vb = float(trim(s[17]));
-    vc = float(trim(s[18]));
-    vd = float(trim(s[19]));
+    va = float(trim(s[17]));
+    vb = float(trim(s[18]));
+    vc = float(trim(s[19]));
+    vd = float(trim(s[20]));
     
     controlP5.getController("va").setValue(va);
     controlP5.getController("vb").setValue(vb);
@@ -698,44 +726,48 @@ void serialEvent(Serial myPort)
     
     if( va > vc )
     {
-      controlP5.getController("va").setColorForeground(color(255, 0, 0));
+      int c = (int)abs(va-vc)*20;
+      controlP5.getController("va").setColorForeground(color(c, 0, 255));
       controlP5.getController("vc").setColorForeground(color(0, 0, 255));    
     }
     else
     {
+      int c = (int)abs(va-vc)*20;
       controlP5.getController("va").setColorForeground(color(0, 0, 255));
-      controlP5.getController("vc").setColorForeground(color(255, 0, 0));  
+      controlP5.getController("vc").setColorForeground(color(c, 0, 255));  
     }
     
     if( vb > vd )
     {
-      controlP5.getController("vb").setColorForeground(color(255, 0, 0));
+      int c = (int)abs(vb-vd)*20;      
+      controlP5.getController("vb").setColorForeground(color(c, 0, 255));
       controlP5.getController("vd").setColorForeground(color(0, 0, 255));    
     }
     else
     {
+      int c = (int)abs(vb-vd)*20;
       controlP5.getController("vb").setColorForeground(color(0, 0, 255));
-      controlP5.getController("vd").setColorForeground(color(255, 0, 0));  
+      controlP5.getController("vd").setColorForeground(color(c, 0, 255));  
     }    
 
-    if(justSent)                      // * if this is the first read
-    {                                 //   since we sent values to 
-      //SPField.setText(trim(s[2]));    //   the arduino,  take the
-      //InField.setText(trim(s[2]));    //   current values and put
-      //OutField.setText(trim(s[3]));   //   them into the input fields
+    if(justSent)                     
+    {                                
+      //SPField.setText(trim(s[2]));
+      //InField.setText(trim(s[2]));
+      //OutField.setText(trim(s[3]));
       
-      PField.setText(trim(s[7]));
-      IField.setText(trim(s[8]));
-      DField.setText(trim(s[9]));
+      PField.setValue(Float.toString(kp));
+      IField.setValue(Float.toString(ki)); 
+      DField.setValue(Float.toString(kd)); 
       
-      PrField.setText(trim(s[10]));
-      IrField.setText(trim(s[11]));
-      DrField.setText(trim(s[12]));      
+      PrField.setValue(Float.toString(krp));  
+      IrField.setValue(Float.toString(kri));
+      DrField.setValue(Float.toString(krd));           
       
-      AMLabel.setValue(trim(s[13]));
+      AMLabel.setValue(trim(s[14]));
 
-      DRCurrent.setValue(trim(s[14]));
-      DRrCurrent.setValue(trim(s[15]));
+      DRCurrent.setValue(trim(s[15]));
+      DRrCurrent.setValue(trim(s[16]));
 
       justSent=false;
     }
