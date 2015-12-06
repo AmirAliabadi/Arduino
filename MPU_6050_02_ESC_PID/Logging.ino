@@ -144,6 +144,9 @@ void SerialReceive()
   if( serial_data_mode == 0 ) SerialSend_AC();
   else if( serial_data_mode == 1 ) SerialSend_BD();
   else if( serial_data_mode == 2 ) SerialSend_YAW();
+
+  Serial.flush();                         // * clear any random data from the serial buffer
+
 }
 
 void SerialSend_YAW()
