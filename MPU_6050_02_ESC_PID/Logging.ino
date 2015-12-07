@@ -9,7 +9,7 @@ union {                // This Data structure lets
   byte asBytes[44];    // us take the byte array
   float asFloat[11];    // sent from processing and
 }                      // easily convert it to a
-foo;                   // float array
+from_processing;                   // float array
 
 
 
@@ -42,16 +42,17 @@ void SerialReceive()
   byte Direct_Reverse = -1;
   byte Direct_Reverse_Rate = -1;
 
-  byte temp = -1;
+  byte temp;
   bool read_good = 1;
   while(Serial.available() && index<49) //aa 26
   {
+    temp = 99;
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
     else if(index==3){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0;} else{selected_pot_tuning = temp;} }
     else if(index==4){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0;} else{serial_data_mode = temp;} } 
-    else foo.asBytes[index-5] = Serial.read();
+    else from_processing.asBytes[index-5] = Serial.read();
     index++;
   } 
 
@@ -62,19 +63,20 @@ void SerialReceive()
   
   // if the information we got was in the correct format, 
   // read it into the system
-  if(index==49) //  && (Auto_Man==0 || Auto_Man==1)&& (Direct_Reverse==0 || Direct_Reverse==1))
+  if(index==49) 
   {
-    if( foo.asFloat[9] != foo.asFloat[10] ) return;
+    if( from_processing.asFloat[9] != from_processing.asFloat[10] ) return;
     if( serial_data_mode > 2 ) return;
+    if( (int)serial_data_mode != (int)(from_processing.asFloat[2]) ) return;
 
-    if( foo.asFloat[9] > INPUT_THRUST )
+    if( from_processing.asFloat[9] > INPUT_THRUST )
     { 
-       if( foo.asFloat[9] > INPUT_THRUST + 50 ) INPUT_THRUST += 50;
-       else INPUT_THRUST =  foo.asFloat[9];
+       if( from_processing.asFloat[9] > INPUT_THRUST + 50 ) INPUT_THRUST += 50;
+       else INPUT_THRUST =  from_processing.asFloat[9];
     }
     else 
     {
-      INPUT_THRUST = foo.asFloat[9] ;
+      INPUT_THRUST = from_processing.asFloat[9] ;
     }
             
     if(Auto_Man==0) 
@@ -105,12 +107,12 @@ void SerialReceive()
       else ac_rat.SetControllerDirection(REVERSE);  
 
 
-      INPUT_STB_PID_P = foo.asFloat[3];
-      INPUT_STB_PID_I = foo.asFloat[4];
-      INPUT_STB_PID_D = foo.asFloat[5];
-      INPUT_RAT_PID_P = foo.asFloat[6];
-      INPUT_RAT_PID_I = foo.asFloat[7];
-      INPUT_RAT_PID_D = foo.asFloat[8];
+      INPUT_STB_PID_P = from_processing.asFloat[3];
+      INPUT_STB_PID_I = from_processing.asFloat[4];
+      INPUT_STB_PID_D = from_processing.asFloat[5];
+      INPUT_RAT_PID_P = from_processing.asFloat[6];
+      INPUT_RAT_PID_I = from_processing.asFloat[7];
+      INPUT_RAT_PID_D = from_processing.asFloat[8];
 
       
     } else if ( serial_data_mode == 1 ) {
@@ -121,20 +123,20 @@ void SerialReceive()
       else bd_rat.SetControllerDirection(REVERSE); 
 
 
-      INPUT_STB_PID_P = foo.asFloat[3];
-      INPUT_STB_PID_I = foo.asFloat[4];
-      INPUT_STB_PID_D = foo.asFloat[5];
-      INPUT_RAT_PID_P = foo.asFloat[6];
-      INPUT_RAT_PID_I = foo.asFloat[7];
-      INPUT_RAT_PID_D = foo.asFloat[8];       
+      INPUT_STB_PID_P = from_processing.asFloat[3];
+      INPUT_STB_PID_I = from_processing.asFloat[4];
+      INPUT_STB_PID_D = from_processing.asFloat[5];
+      INPUT_RAT_PID_P = from_processing.asFloat[6];
+      INPUT_RAT_PID_I = from_processing.asFloat[7];
+      INPUT_RAT_PID_D = from_processing.asFloat[8];       
            
     } else if ( serial_data_mode == 2 ) {
       if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
       else yw_pid.SetControllerDirection(REVERSE);
 
-      INPUT_YAW_PID_P = foo.asFloat[3];
-      INPUT_YAW_PID_I = foo.asFloat[4]; 
-      INPUT_YAW_PID_D = foo.asFloat[5];
+      INPUT_YAW_PID_P = from_processing.asFloat[3];
+      INPUT_YAW_PID_I = from_processing.asFloat[4]; 
+      INPUT_YAW_PID_D = from_processing.asFloat[5];
             
     }
     
@@ -175,10 +177,6 @@ void SerialSend_YAW()
 
 /////////////////////////////  
 /// outputs
-//  Serial.print(va - MIN_ESC_SIGNAL - INPUT_THRUST); //output_ypr[AC]);   
-//  Serial.print(" ");  
-//  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
-//  Serial.print(" ");
   Serial.print(output_ypr[YW]);   
   Serial.print(F(" "));  
   Serial.print(output_rate[YW]);   
@@ -314,10 +312,6 @@ void SerialSend_AC()
 
 /////////////////////////////  
 /// outputs
-//  Serial.print(va - MIN_ESC_SIGNAL - INPUT_THRUST); //output_ypr[AC]);   
-//  Serial.print(" ");  
-//  Serial.print(vc - MIN_ESC_SIGNAL - INPUT_THRUST); //output_rate[AC]);   
-//  Serial.print(" ");
   Serial.print(output_ypr[AC]);   
   Serial.print(F(" "));  
   Serial.print(output_rate[AC]);   

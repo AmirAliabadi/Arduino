@@ -49,7 +49,7 @@ String outputFileName = ""; // if you'd like to output data to
 
 int nextRefresh;
 int arrayLength = windowSpan / refreshRate+1;
-int[][] InputData = new int[3][arrayLength];     //we might not need them this big, but
+int[][] InputData = new int[3][arrayLength];
 int[][] OutputData = new int[2][arrayLength];
 
 float inputTop = 25;
@@ -597,7 +597,7 @@ void Send_To_Arduino()
 
   toSend[0] = float(SPField.getText());
   toSend[1] = 0.0; //float(InField.getText());
-  toSend[2] = 0.0; //float(OutField.getText());
+  toSend[2] = i_serial_data_mode; //float(OutField.getText());
   
   toSend[3] = kp;
   toSend[4] = ki;
@@ -614,6 +614,9 @@ void Send_To_Arduino()
   Byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
   Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
+  
+  println(i_tuning_mode);
+  println(i_serial_data_mode);
   
   Byte pid_tuning = i_tuning_mode ; 
   
