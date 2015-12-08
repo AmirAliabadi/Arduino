@@ -5,11 +5,11 @@
  ********************************************/
 
 
-union {                // This Data structure lets
-  byte asBytes[44];    // us take the byte array
-  float asFloat[11];    // sent from processing and
-}                      // easily convert it to a
-from_processing;                   // float array
+union { 
+  byte asBytes[44];    
+  float asFloat[11];   
+}                    
+from_processing;        
 
 
 
@@ -65,9 +65,8 @@ void SerialReceive()
   // read it into the system
   if(index==49) 
   {
-    if( from_processing.asFloat[9] != from_processing.asFloat[10] ) return;
-    if( serial_data_mode > 2 ) return;
-    if( (int)serial_data_mode != (int)(from_processing.asFloat[2]) ) return;
+    if( from_processing.asFloat[9] != from_processing.asFloat[10] ) {Serial.println(F("#thrust miss match")); return;}
+    if( (int)serial_data_mode != (int)(from_processing.asFloat[2]) ) {Serial.println(F("#serial mode miss match")); return;}
 
     if( from_processing.asFloat[9] > INPUT_THRUST )
     { 
@@ -351,110 +350,5 @@ void SerialSend_AC()
   Serial.println(F("E"));
     
 }
-
-
-//
-//void log_data()
-//{
-//  // line thrust  setpoint_yw setpoint_roll setpoint_pitch  input_yy  input_roll  input_pitch output_yw output_roll output_pitch  va  vc  vb  vd  ac_pid.pterm  ac_pid.iterm  ac_pid.dterm  kp  ki  kd
-//  
-//  Serial.print(log_line++);
-//  Serial.print(F("\t"));
-//  
-//  Serial.print(INPUT_THRUST);
-//  Serial.print(F("\t"));
-///*
-//  Serial.print(F("setpoint: "));
-//
-//  Serial.print(setpoint[YW], 1);
-//  Serial.print(F("\t"));  
-//  Serial.print(setpoint[AC], 1);
-//  Serial.print(F("\t"));  
-//  Serial.print(setpoint[BD], 1);
-//  Serial.print(F("\tyw:"));  
-//*/
-///*
-//  Serial.print(input_ypr[YW], 1);
-//  Serial.print(F("\t"));
-//*/
-//  Serial.print(input_ypr[AC], 1);
-//  Serial.print(F("\t"));
-///*
-//  Serial.print(input_ypr[BD], 1);
-//  Serial.print(F("\t"));
-//
-//  Serial.print(input_gyro[YW], 1);
-//  Serial.print(F("\t")); */
-//  
-//  Serial.print(input_gyro[AC], 1);
-//  Serial.print(F("\t"));
-//
-//  /*
-//  Serial.print(input_gyro[BD], 1);
-//  Serial.print(F("\t"));  */
-//
-////  Serial.print(output_ypr[YW], 1);
-////  Serial.print(F("\t"));  
-//  
-//  Serial.print(output_ypr[AC], 1);
-//  Serial.print(F("\t"));  
-////  Serial.print(output_ypr[BD], 1);
-////  Serial.print(F("\t")); 
-//
-////  Serial.print(output_rate[AC], 1);
-////  Serial.print(F("\t"));  
-////  Serial.print(output_rate[BD], 1);
-////  Serial.print(F("\t"));  
-//
-//  Serial.print(va);
-//  Serial.print(F("\t"));
-//  Serial.print(vc);
-//  Serial.print(F("\t"));
-///*
-//  Serial.print(vb/100.0);
-//  Serial.print(F("\t"));
-//  Serial.print(vd/100.0);
-//  Serial.print(F("\t")); */
-//    /*
-//
-//  Serial.print(ac_pid.pterm, 1);
-//  Serial.print(F("\t"));
-//
-//  Serial.print(ac_pid.iterm, 1);
-//  Serial.print(F("\t"));
-//  Serial.print(ac_pid.dterm, 1);
-//  Serial.print(F("\t"));
-//
-//  Serial.print(bd_pid.pterm, 1);
-//  Serial.print(F("\t"));
-//  Serial.print(bd_pid.iterm, 1);
-//  Serial.print(F("\t"));
-//  Serial.print(bd_pid.dterm, 1);
-//  Serial.print(F("\t"));
-//*/
-//  Serial.print(ac_pid.GetKp()*10, 3);  Serial.print(F("\t"));
-////  Serial.print(ac_rat.GetKp()*10, 3);  Serial.print(F("\t"));
-//
-//  /*
-//  Serial.print(ac_pid.GetKi()*10, 3);
-//  Serial.print(F("\t")); */
-//  Serial.print(ac_pid.GetKd()*10, 3);
-//  Serial.print(F("\t"));
-//  /*
-//  Serial.print(bd_pid.GetKp()*10, 3);
-//  Serial.print(F("\t"));
-//  Serial.print(bd_pid.GetKi()*10, 3);
-//  Serial.print(F("\t"));
-//  Serial.print(bd_pid.GetKd()*10, 3);
-//  */
-//
-////  Serial.print("\t");
-////  Serial.print(mpu.getDLPFMode(), 4);
-////  Serial.print("\t");
-////  Serial.print(mpu.getDHPFMode(), 4);  
-//
-//  Serial.println();  
-//  
-//}
 
 #endif

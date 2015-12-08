@@ -157,10 +157,12 @@ void setup()
          .setColorLabel(color(255))
          .setItemsPerRow(3)
          .setSpacingColumn(15)
-         .addItem("AC",1)
-         .addItem("BD",2)
-         .addItem("YAW",3)
+         .addItem("AC",0)
+         .addItem("BD",1)
+         .addItem("YAW",2)
          ;
+         
+  serial_data_mode.activate(0);          
          
   tuning_mode = controlP5.addRadioButton("tuning_mode_event")
          .setPosition(5,5)
@@ -170,11 +172,13 @@ void setup()
          .setColorLabel(color(255))
          .setItemsPerRow(4)
          .setSpacingColumn(33)
-         .addItem("Flight",1)
-         .addItem("Stable",2)
-         .addItem("Rate",3)
+         .addItem("Flight",0)
+         .addItem("Stable",1)
+         .addItem("Rate",2)
          .addItem("Yaw",3)
-         ;      
+         ;   
+         
+  tuning_mode.activate(0);         
          
    group_x = 10; group_y=460;         
    throttle_slider = controlP5.addSlider("throttle")
@@ -471,7 +475,7 @@ void controlEvent(ControlEvent theEvent) {
     else if( tuning_mode.getState(1) ) i_tuning_mode = (byte) 1;
     else if( tuning_mode.getState(2) ) i_tuning_mode = (byte) 2;
     else if( tuning_mode.getState(3) ) i_tuning_mode = (byte) 3;
-    else i_tuning_mode = 0;   
+    //else i_tuning_mode = 0;   
     
     Send_To_Arduino();
     
@@ -482,7 +486,7 @@ void controlEvent(ControlEvent theEvent) {
     if( serial_data_mode.getState(0) ) i_serial_data_mode = (byte) 0;
     else if( serial_data_mode.getState(1) ) i_serial_data_mode = (byte) 1;
     else if( serial_data_mode.getState(2) ) i_serial_data_mode = (byte) 2;
-    else i_serial_data_mode = 0;
+    //else i_serial_data_mode = 0;
     
     Send_To_Arduino();
     
@@ -496,50 +500,50 @@ int cur_throttle ;
 void keyPressed() {
     switch(key) {
       case 'a':
-        cur_throttle += 10;
+        if(cur_throttle < 800) cur_throttle += 10;
         break;
       case 'z':
-        cur_throttle -= 20;
+        if(cur_throttle > 0) cur_throttle -= 20;
         break;
       case ' ':
         cur_throttle = 0;
         break;
       case '7':
-        kp += 0.01;
+        if( kp < 10) kp += 0.01;
         break;
       case '8':
-        ki += 0.01;     
+        if( ki < 10 ) ki += 0.01;     
         break;
       case '9':  
-        kd += 0.01;           
+        if( kd < 10 ) kd += 0.01;           
         break;
       case 'u':
-        kp -= 0.01;      
+        if( kp > 0 ) kp -= 0.01;      
         break;
       case 'i':
-        ki -= 0.01;
+        if( ki > 0 ) ki -= 0.01;
         break;
       case 'o':
-        kd -= 0.01;
+        if( kd > 0 ) kd -= 0.01;
         break;
         
       case 'j':
-        krp += 0.01;
+        if( krp < 10 ) krp += 0.01;
         break;
       case 'k':
-        kri += 0.01;
+        if( kri < 10 ) kri += 0.01;
         break;
       case 'l':
-        krd += 0.01;
+        if( krd < 10 ) krd += 0.01;
         break;
       case 'm':
-        krp -= 0.01;
+        if( krp > 0 ) krp  -= 0.01;
         break;
       case ',':
-        kri -= 0.01;
+        if( kri > 0 ) kri -= 0.01;
         break;
       case '.':
-        krd -= 0.01;
+        if( krd > 0 ) krd -= 0.01;
         break;
     }
     last_throttle_position = cur_throttle;
