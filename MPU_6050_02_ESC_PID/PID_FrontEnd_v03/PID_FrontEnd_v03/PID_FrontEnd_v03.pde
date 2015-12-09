@@ -545,6 +545,7 @@ void keyPressed() {
       case '.':
         if( krd > 0 ) krd -= 0.01;
         break;
+        
     }
     last_throttle_position = cur_throttle;
    

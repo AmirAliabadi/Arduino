@@ -4,7 +4,7 @@ void process_off()
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    Serial.print(F("#processing is off: "));    
+//    Serial.print(F("#processing is off: "));    
 //    log_data();
   }
   #endif    
@@ -73,7 +73,7 @@ void attitude_process()
       disarm_esc();
       
 #ifdef DEBUG       
-      Serial.print(F("#esc off: "));
+//      Serial.print(F("#esc off: "));
 //      log_data();     
 #endif      
 
@@ -89,7 +89,7 @@ void attitude_process()
       {   
         last_log = millis();       
              
-        Serial.print(F("#esc not ready : "));
+//        Serial.print(F("#esc not ready : "));
 //        log_data(); 
       }     
 #endif      
@@ -116,44 +116,9 @@ void attitude_process()
     ac_pid.Compute(); bd_pid.Compute(); 
     ac_rat.Compute(); bd_rat.Compute();   
 
-    //////////////////////////////////////////////////////
-    // compute the boom velocity
-    /*
-    float v_ac = (abs(output_ypr[YW] - 100) / 100) * thrust;
-    float v_bd = (   (output_ypr[YW] + 100) / 100) * thrust;
-    
-    // distribute the boom velocity to each boom motor
-    float va = ((output_ypr[AC] + 100) / 100) * v_ac;
-    float vb = ((output_ypr[BD] + 100) / 100) * v_bd;
-    
-    float vc = (abs((output_ypr[AC] - 100) / 100)) * v_ac;
-    float vd = (abs((output_ypr[BD] - 100) / 100)) * v_bd;
-    */
-    //
-    //////////////////////////////////////////////////////
-
-/*
- * 
- * gyro = angle/s
- * o[P] = angle error (setpoint - ypr{PITCH])
- * r[P] = what to apply to motors
-gyro    o[P]  r[P]    va      vc
-0.0     0.0   0.0     15.00   15.00 
-0.0     0.0   0.0     15.00   15.00 
-0.0     0.0   -1.0    14.99   15.01 
-2.0     0.0   1.0     15.01   14.99 
-42.0    4.5   23.5    15.23   14.76 
-138.0   27.0  89.0    15.89   14.11 
-235.0   45.0  190.0   16.90   13.10 
-220.0   45.0  175.0   16.75   13.25 
-
-4.5 / 1 / REVERSE / REVERSE
- * 
- */
-    
 
     //////////////////////////////
-    // Motor Mix Alorithm       //
+    // Motor Mix Algorithm       //
     //////////////////////////////
     // compute the boom thrust  //
     v_ac = INPUT_THRUST - output_ypr[YW];
@@ -189,13 +154,9 @@ gyro    o[P]  r[P]    va      vc
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-//    log_data();
-    if( serial_data_mode == 0 ) SerialSend_AC();
-    else if( serial_data_mode == 1 ) SerialSend_BD();
-    else SerialSend_YAW();
+    log_data();
   }
-#endif    
-    //SerialSend();
+#endif
   
 }
 //////////////////////////////////////////////////////////////////////

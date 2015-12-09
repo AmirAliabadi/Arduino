@@ -11,7 +11,7 @@
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
 byte selected_pot_tuning = 0;
-byte serial_data_mode = 0;
+byte aserial_data_mode = 0;
 
 #define DEBUG
 
@@ -197,9 +197,9 @@ void loop()
   {  
     read_throttle();        if (mpuInterrupt) break;
     
-    if( serial_data_mode == 0 ) read_setpoint(AC);
-    else if( serial_data_mode == 1 ) read_setpoint(BD);
-    else if( serial_data_mode == 2 ) read_setpoint(YW);
+    if( aserial_data_mode == 0 ) read_setpoint(AC);
+    else if( aserial_data_mode == 1 ) read_setpoint(BD);
+    else if( aserial_data_mode == 2 ) read_setpoint(YW);
     
     read_pid_tunings(0);    if (mpuInterrupt) break;
     //read_pid_tunings(1);    if (mpuInterrupt) break;
@@ -210,9 +210,9 @@ void loop()
 
   read_mpu();
   read_throttle();
-  if( serial_data_mode == 0 ) read_setpoint(AC);
-  else if( serial_data_mode == 1 ) read_setpoint(BD);
-  else if( serial_data_mode == 2 ) read_setpoint(YW);
+  if( aserial_data_mode == 0 ) read_setpoint(AC);
+  else if( aserial_data_mode == 1 ) read_setpoint(BD);
+  else if( aserial_data_mode == 2 ) read_setpoint(YW);
 
   read_pid_tunings(0);
   //read_pid_tunings(1);

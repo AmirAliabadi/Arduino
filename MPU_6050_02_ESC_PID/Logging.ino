@@ -44,14 +44,19 @@ void SerialReceive()
 
   byte temp;
   bool read_good = 1;
+  bool serial_mode_changed = 0;
   while(Serial.available() && index<49) //aa 26
   {
-    temp = 99;
+    temp = 7;
     if(index==0) Auto_Man = Serial.read();
     else if(index==1) Direct_Reverse = Serial.read();
     else if(index==2) Direct_Reverse_Rate = Serial.read();
-    else if(index==3){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0;} else{selected_pot_tuning = temp;} }
-    else if(index==4){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0;} else{serial_data_mode = temp;} } 
+    else if(index==3){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0; break;} else{selected_pot_tuning = temp;} }
+    else if(index==4){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0; break;} else{ 
+        serial_mode_changed = !(aserial_data_mode == temp) ;
+        aserial_data_mode = temp;
+      } 
+   } 
     else from_processing.asBytes[index-5] = Serial.read();
     index++;
   } 
@@ -66,87 +71,89 @@ void SerialReceive()
   if(index==49) 
   {
     if( from_processing.asFloat[9] != from_processing.asFloat[10] ) {Serial.println(F("#thrust miss match")); return;}
-    if( (int)serial_data_mode != (int)(from_processing.asFloat[2]) ) {Serial.println(F("#serial mode miss match")); return;}
+    if( (int)aserial_data_mode != (int)(from_processing.asFloat[2]) ) {Serial.println(F("#serial mode miss match")); return;}
 
     if( from_processing.asFloat[9] > INPUT_THRUST )
     { 
+       // more safety around throttle input.  don't increate throttle by more that 50 at any time...
        if( from_processing.asFloat[9] > INPUT_THRUST + 50 ) INPUT_THRUST += 50;
-       else INPUT_THRUST =  from_processing.asFloat[9];
+       else INPUT_THRUST = from_processing.asFloat[9];
     }
     else 
     {
       INPUT_THRUST = from_processing.asFloat[9] ;
     }
-            
-    if(Auto_Man==0) 
+
+    if( !serial_mode_changed )
     {
-      ac_pid.SetMode(MANUAL);
-      ac_rat.SetMode(MANUAL);
-      bd_pid.SetMode(MANUAL);
-      bd_rat.SetMode(MANUAL);
-
-      yw_pid.SetMode(MANUAL);
+      if(Auto_Man==0) 
+      {
+        ac_pid.SetMode(MANUAL);
+        ac_rat.SetMode(MANUAL);
+        bd_pid.SetMode(MANUAL);
+        bd_rat.SetMode(MANUAL);
+  
+        yw_pid.SetMode(MANUAL);
+      }
+      else 
+      {
+        ac_pid.SetMode(AUTOMATIC);
+        ac_rat.SetMode(AUTOMATIC);  
+        bd_pid.SetMode(AUTOMATIC);
+        ac_rat.SetMode(AUTOMATIC);
+  
+        yw_pid.SetMode(AUTOMATIC);
+      }
+  
+      if( aserial_data_mode == 0 ) {
+        if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);
+        else ac_pid.SetControllerDirection(REVERSE);
+        
+        if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);
+        else ac_rat.SetControllerDirection(REVERSE);  
+  
+  
+        INPUT_STB_PID_P = from_processing.asFloat[3];
+        INPUT_STB_PID_I = from_processing.asFloat[4];
+        INPUT_STB_PID_D = from_processing.asFloat[5];
+        INPUT_RAT_PID_P = from_processing.asFloat[6];
+        INPUT_RAT_PID_I = from_processing.asFloat[7];
+        INPUT_RAT_PID_D = from_processing.asFloat[8];
+  
+        
+      } else if ( aserial_data_mode == 1 ) {
+        if(Direct_Reverse==0) bd_pid.SetControllerDirection(DIRECT);
+        else bd_pid.SetControllerDirection(REVERSE);
+        
+        if(Direct_Reverse_Rate==0) bd_rat.SetControllerDirection(DIRECT);
+        else bd_rat.SetControllerDirection(REVERSE); 
+  
+  
+        INPUT_STB_PID_P = from_processing.asFloat[3];
+        INPUT_STB_PID_I = from_processing.asFloat[4];
+        INPUT_STB_PID_D = from_processing.asFloat[5];
+        INPUT_RAT_PID_P = from_processing.asFloat[6];
+        INPUT_RAT_PID_I = from_processing.asFloat[7];
+        INPUT_RAT_PID_D = from_processing.asFloat[8];       
+             
+      } else if ( aserial_data_mode == 2 ) {
+        if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
+        else yw_pid.SetControllerDirection(REVERSE);
+  
+        INPUT_YAW_PID_P = from_processing.asFloat[3];
+        INPUT_YAW_PID_I = from_processing.asFloat[4]; 
+        INPUT_YAW_PID_D = from_processing.asFloat[5];
+              
+      }
     }
-    else 
-    {
-      ac_pid.SetMode(AUTOMATIC);
-      ac_rat.SetMode(AUTOMATIC);  
-      bd_pid.SetMode(AUTOMATIC);
-      ac_rat.SetMode(AUTOMATIC);
-
-      yw_pid.SetMode(AUTOMATIC);
-    }
-
-    
-    if( serial_data_mode == 0 ) {
-      if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);
-      else ac_pid.SetControllerDirection(REVERSE);
-      
-      if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);
-      else ac_rat.SetControllerDirection(REVERSE);  
-
-
-      INPUT_STB_PID_P = from_processing.asFloat[3];
-      INPUT_STB_PID_I = from_processing.asFloat[4];
-      INPUT_STB_PID_D = from_processing.asFloat[5];
-      INPUT_RAT_PID_P = from_processing.asFloat[6];
-      INPUT_RAT_PID_I = from_processing.asFloat[7];
-      INPUT_RAT_PID_D = from_processing.asFloat[8];
-
-      
-    } else if ( serial_data_mode == 1 ) {
-      if(Direct_Reverse==0) bd_pid.SetControllerDirection(DIRECT);
-      else bd_pid.SetControllerDirection(REVERSE);
-      
-      if(Direct_Reverse_Rate==0) bd_rat.SetControllerDirection(DIRECT);
-      else bd_rat.SetControllerDirection(REVERSE); 
-
-
-      INPUT_STB_PID_P = from_processing.asFloat[3];
-      INPUT_STB_PID_I = from_processing.asFloat[4];
-      INPUT_STB_PID_D = from_processing.asFloat[5];
-      INPUT_RAT_PID_P = from_processing.asFloat[6];
-      INPUT_RAT_PID_I = from_processing.asFloat[7];
-      INPUT_RAT_PID_D = from_processing.asFloat[8];       
-           
-    } else if ( serial_data_mode == 2 ) {
-      if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
-      else yw_pid.SetControllerDirection(REVERSE);
-
-      INPUT_YAW_PID_P = from_processing.asFloat[3];
-      INPUT_YAW_PID_I = from_processing.asFloat[4]; 
-      INPUT_YAW_PID_D = from_processing.asFloat[5];
-            
-    }
-    
   }
-  Serial.flush();                         // * clear any random data from the serial buffer
+  Serial.flush();
 
-  if( serial_data_mode == 0 ) SerialSend_AC();
-  else if( serial_data_mode == 1 ) SerialSend_BD();
-  else if( serial_data_mode == 2 ) SerialSend_YAW();
+  //if( aserial_data_mode == 0 ) SerialSend_AC();
+  //else if( aserial_data_mode == 1 ) SerialSend_BD();
+  //else if( aserial_data_mode == 2 ) SerialSend_YAW();
 
-  Serial.flush();                         // * clear any random data from the serial buffer
+  //Serial.flush();
 
 }
 
@@ -156,8 +163,8 @@ void SerialSend_YAW()
 
   Serial.print(F("S "));  
   Serial.print(selected_pot_tuning);
-  Serial.print("_");
-  Serial.print(serial_data_mode);
+  Serial.print(F("_"));
+  Serial.print(aserial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -223,8 +230,8 @@ void SerialSend_BD()
 
   Serial.print(F("S "));  
   Serial.print(selected_pot_tuning);//"PID ");
-  Serial.print("_");
-  Serial.print(serial_data_mode);
+  Serial.print(F("_"));
+  Serial.print(aserial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -291,8 +298,8 @@ void SerialSend_AC()
 
   Serial.print(F("S "));
   Serial.print(selected_pot_tuning);
-  Serial.print("_");
-  Serial.print(serial_data_mode);
+  Serial.print(F("_"));
+  Serial.print(aserial_data_mode);
   Serial.print(F(" "));
 
   Serial.print(INPUT_THRUST);  
@@ -349,6 +356,13 @@ void SerialSend_AC()
 
   Serial.println(F("E"));
     
+}
+
+void log_data()
+{
+  if( aserial_data_mode == 0 ) SerialSend_AC();
+  else if( aserial_data_mode == 1 ) SerialSend_BD();
+  else if( aserial_data_mode == 2 ) SerialSend_YAW(); 
 }
 
 #endif
