@@ -148,13 +148,6 @@ void SerialReceive()
     }
   }
   Serial.flush();
-
-  //if( aserial_data_mode == 0 ) SerialSend_AC();
-  //else if( aserial_data_mode == 1 ) SerialSend_BD();
-  //else if( aserial_data_mode == 2 ) SerialSend_YAW();
-
-  //Serial.flush();
-
 }
 
 void SerialSend_YAW()
