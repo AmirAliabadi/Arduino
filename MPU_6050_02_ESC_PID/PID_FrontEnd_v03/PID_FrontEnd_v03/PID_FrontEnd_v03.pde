@@ -33,7 +33,7 @@ float OutScaleMin = -125;      // the top and
 float OutScaleMax = 125;    // bottom trends
 
 
-int windowSpan = 7000;//0;//00;    // number of mS into the past you want to display
+int windowSpan = 4000;//0;//00;    // number of mS into the past you want to display
 int refreshRate = 10;      // how often you want the graph to be reDrawn;
 
 float displayFactor = 1; //display Time as Milliseconds

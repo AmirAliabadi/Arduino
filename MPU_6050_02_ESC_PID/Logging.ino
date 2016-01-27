@@ -63,6 +63,7 @@ void SerialReceive()
 
   if(!read_good) {
     Serial.flush();
+    Serial.println(index);
     return;
   }
   
