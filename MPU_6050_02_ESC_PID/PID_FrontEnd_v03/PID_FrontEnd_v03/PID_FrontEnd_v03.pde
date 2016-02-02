@@ -316,7 +316,9 @@ void drawGraph()
     }
     if (nPoints < arrayLength) nPoints++;
 
-    InputData[0][0] = int(inputHeight)-int(inputHeight*(Input_Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
+    //InputData[0][0] = int(inputHeight)-int(inputHeight*(Input_Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
+    InputData[0][0] = int(inputHeight)-int(inputHeight*(Output_gyro-InScaleMin)/(InScaleMax-InScaleMin));
+    
     InputData[1][0] = int(inputHeight)-int(inputHeight*(Input_gyro-InScaleMin)/(InScaleMax-InScaleMin));
     InputData[2][0] = int(inputHeight)-int(inputHeight*(Input_angle-InScaleMin)/(InScaleMax-InScaleMin));    
     //SetpointData[0] =int( inputHeight)-int(inputHeight*(Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
@@ -499,14 +501,24 @@ float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 int cur_throttle ;
 void keyPressed() {
     switch(key) {
+      case ' ':
+        cur_throttle = 0;
+        break;
+      case 'w':
+        outputFileName = "c:\\temp\\drone_" + year()+month()+day()+hour()+minute()+second()+".txt";
+        output = createWriter(outputFileName);
+        output.println("t S selected.pot.tuning_serial.data.mode INPUT_THRUST SETPOINT inputgyro inputypr outputypr outputrate kp ki kd rKp rKi rKd A/M D/R rD/R va vb vc vd E");        
+        break;
+      case 'e':
+        output.flush(); // Writes the remaining data to the file
+        output.close(); // Finishes the file
+        outputFileName = "";        
+        break;        
       case 'a':
         if(cur_throttle < 800) cur_throttle += 10;
         break;
       case 'z':
         if(cur_throttle > 0) cur_throttle -= 20;
-        break;
-      case ' ':
-        cur_throttle = 0;
         break;
       case '7':
         if( kp < 10) kp += 0.01;
@@ -671,12 +683,14 @@ void serialEvent(Serial myPort)
 // S thrust _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder E
 // S 0_0 0.00 0.00 0.00 0.15 0.00 0.00 3.000 0.000 0.000 0.960 0.000 0.096 Manual Dir Dir 1100 1100 1100 1100 E
 
+// HEADER
+// t S selected.pot.tuning_serial.data.mode INPUT_THRUST SETPOINT inputgyro inputypr outputypr outputrate kp ki kd rKp rKi rKd A/M D/R rD/R va vb vc vd E
   
   String read = myPort.readStringUntil(10);
   
   print(read);
   
-  if(outputFileName!="") output.print(str(millis())+ " "+read);
+  if(outputFileName!="") output.print(str(millis())+ " " + read);
   String[] s = split(read, " ");
 
   if (s.length == 22)
