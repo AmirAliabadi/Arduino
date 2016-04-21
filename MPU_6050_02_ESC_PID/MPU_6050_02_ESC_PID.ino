@@ -18,8 +18,8 @@ byte aserial_data_mode = 0;
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0,                       // thrust
-                           0.70,  0.0, 0.00,       // Stable P/I/D // .89,0,.23
-                           0.20,  0.0, 0.00,    // i was .125 Rate P/I/D
+                           1.75,  0.0, 0.00,       // Stable P/I/D // .89,0,.23
+                           0.95,  0.0, 0.05,    // i was .125 Rate P/I/D
                            0,0,0, //1.0, 0, 0.2,                 // YAW P/I/D
                            12.6,                    // battery voltage level
                            0.0,

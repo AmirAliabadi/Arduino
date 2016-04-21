@@ -8,7 +8,7 @@ Servo esc4;
 
 #define MAX_SIGNAL 2000      // Simulate throttle at full
 #define MIN_SIGNAL 1100     // Simulate throttle at min
-#define MOTOR_PIN_A 9
+#define MOTOR_PIN_A 3
 #define MOTOR_PIN_C 6
 #define MOTOR_PIN_B 5
 #define MOTOR_PIN_D 10
@@ -51,9 +51,9 @@ void setup()
 
 void loop()
 {
-  //esc();
+  esc();
   //pid();
-  tune_up_down();
+  //tune_up_down();
 }
 
 float test_value = 0;
