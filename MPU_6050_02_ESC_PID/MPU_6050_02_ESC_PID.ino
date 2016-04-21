@@ -192,21 +192,22 @@ void loop()
 
   if (!dmpReady) return;
 
-  // wait for MPU interrupt or extra packet(s) available
-  while (!mpuInterrupt) // && fifoCount < packetSize)
-  {  
-    read_throttle();        if (mpuInterrupt) break;
-    
-    if( aserial_data_mode == 0 ) read_setpoint(AC);
-    else if( aserial_data_mode == 1 ) read_setpoint(BD);
-    else if( aserial_data_mode == 2 ) read_setpoint(YW);
-    
-    read_pid_tunings(0);    if (mpuInterrupt) break;
-    //read_pid_tunings(1);    if (mpuInterrupt) break;
-
-    read_battery_voltage(); if (mpuInterrupt) break;
-    process();
-  }
+/// don't really need to be interrup driven...
+//  // wait for MPU interrupt or extra packet(s) available
+//  while (!mpuInterrupt) // && fifoCount < packetSize)
+//  {  
+//    read_throttle();        if (mpuInterrupt) break;
+//    
+//    if( aserial_data_mode == 0 ) read_setpoint(AC);
+//    else if( aserial_data_mode == 1 ) read_setpoint(BD);
+//    else if( aserial_data_mode == 2 ) read_setpoint(YW);
+//    
+//    read_pid_tunings(0);    if (mpuInterrupt) break;
+//    //read_pid_tunings(1);    if (mpuInterrupt) break;
+//
+//    read_battery_voltage(); if (mpuInterrupt) break;
+//    process();
+//  }
 
   read_mpu();
   read_throttle();

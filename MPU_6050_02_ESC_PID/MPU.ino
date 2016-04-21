@@ -56,8 +56,8 @@ void init_mpu()
       mpu.setDMPEnabled(true);
       
       // enable Arduino interrupt detection
-      Serial.println(F("#Enabling int detection"));
-      attachInterrupt(0, dmpDataReady, RISING);
+      //Serial.println(F("#Enabling int detection"));
+      //attachInterrupt(0, dmpDataReady, RISING);
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
