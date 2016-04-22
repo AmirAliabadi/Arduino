@@ -53,8 +53,7 @@ void arm_esc_process()
     read_throttle();
     init_esc();
       
-    if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) 
-    {
+    if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) {
       process = &wait_for_stable;    
     }
 }
@@ -63,20 +62,11 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-  uint16_t v_ac = 0;
-  uint16_t v_bd = 0;
-
   if( system_check & INIT_ESC_ARMED )
   {
     if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
       disarm_esc();
-      
-#ifdef DEBUG       
-//      Serial.print(F("#esc off: "));
-//      log_data();     
-#endif      
-
       process = &process_off;
       return;
     }
@@ -88,9 +78,6 @@ void attitude_process()
       if (millis() - last_log > LOG_FREQUENCY)
       {   
         last_log = millis();       
-             
-//        Serial.print(F("#esc not ready : "));
-//        log_data(); 
       }     
 #endif      
 

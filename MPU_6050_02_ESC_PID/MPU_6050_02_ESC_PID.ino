@@ -90,6 +90,7 @@ VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor mea
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
 VectorInt16 gyro;
+VectorInt16 gyro1;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
@@ -111,6 +112,9 @@ uint16_t va = MIN_ESC_SIGNAL;
 uint16_t vb = MIN_ESC_SIGNAL;
 uint16_t vc = MIN_ESC_SIGNAL;
 uint16_t vd = MIN_ESC_SIGNAL;
+
+uint16_t v_ac = 0;
+uint16_t v_bd = 0;
 //
 ////////////////////////////////////////////////////////////////
 

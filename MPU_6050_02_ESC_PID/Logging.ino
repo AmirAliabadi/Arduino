@@ -5,7 +5,7 @@
  ********************************************/
 
 
-union { 
+union foo { 
   byte asBytes[44];    
   float asFloat[11];   
 }                    

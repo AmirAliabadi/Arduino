@@ -120,8 +120,6 @@ void read_mpu()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
 
-
-    VectorInt16 gyro1;
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
@@ -137,14 +135,11 @@ void read_mpu()
     ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
     ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;
 
-    // maybe low pass filter here as well?  the 6050 should be using it's built in low pass filter
-
-
     if( system_check & INIT_MPU_STABLE )
     {
       if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
       {
-        Serial.print(F("#* bg chng *"));
+        Serial.print(F("#bg chng"));
         Serial.print("\t");
         Serial.print(ypr_last[AC]);
         Serial.print("\t");
@@ -153,7 +148,7 @@ void read_mpu()
 
       if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
       {
-        Serial.print(F("#*bg chng"));
+        Serial.print(F("#bg chng"));
         Serial.print("\t");
         Serial.print(ypr_last[BD]);
         Serial.print("\t");
