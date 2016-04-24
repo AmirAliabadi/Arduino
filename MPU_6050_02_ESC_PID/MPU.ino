@@ -87,7 +87,7 @@ void init_mpu()
 void read_mpu()
 {
   // reset interrupt flag and get INT_STATUS byte
-  mpuInterrupt = false;
+  // mpuInterrupt = false;
   mpuIntStatus = mpu.getIntStatus();
 
   // get current FIFO count

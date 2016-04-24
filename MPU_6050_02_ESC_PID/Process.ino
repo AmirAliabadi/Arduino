@@ -126,10 +126,15 @@ void attitude_process()
     pid_off();
   }
 
-  va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+//  va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+//  vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+//  vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+//  vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+
+  va = constration_esc(va);
+  vc = constration_esc(vc); 
+  vb = constration_esc(vb); 
+  vd = constration_esc(vd); 
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
@@ -146,4 +151,12 @@ void attitude_process()
 #endif
   
 }
+
+float constration_esc( float a )
+{
+  float x = constrain(a, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  if( x < MIN_ESC_CUTOFF ) x = MIN_ESC_SIGNAL;
+  return x;
+}
+
 //////////////////////////////////////////////////////////////////////

@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 import processing.serial.*;
 import controlP5.*;
 
-int last_throttle_position = 0;
+float last_throttle_position = 0;
 
 /***********************************************
  * User spcification section
@@ -472,14 +472,21 @@ void drawButtonArea()
 }
 
 void controlEvent(ControlEvent theEvent) {
+  
   if(theEvent.isFrom(tuning_mode)) {
-     if( tuning_mode.getState(0) ) i_tuning_mode = (byte) 0;
+    if( tuning_mode.getState(0) ) i_tuning_mode = (byte) 0;
     else if( tuning_mode.getState(1) ) i_tuning_mode = (byte) 1;
     else if( tuning_mode.getState(2) ) i_tuning_mode = (byte) 2;
     else if( tuning_mode.getState(3) ) i_tuning_mode = (byte) 3;
     //else i_tuning_mode = 0;   
     
-    Send_To_Arduino();
+    if( tuning_mode.getState(0) ) Send_To_Arduino2(101.0, 0);
+    else if( tuning_mode.getState(1) ) Send_To_Arduino2(101.0, 1);
+    else if( tuning_mode.getState(2) ) Send_To_Arduino2(101.0, 2);
+    else if( tuning_mode.getState(3) ) Send_To_Arduino2(101.0, 3);    
+    
+    //Send_To_Arduino();
+    //Send_To_Arduino2(101.0, (float)i_tuning_mode);
     
     return;
   } 
@@ -490,7 +497,11 @@ void controlEvent(ControlEvent theEvent) {
     else if( serial_data_mode.getState(2) ) i_serial_data_mode = (byte) 2;
     //else i_serial_data_mode = 0;
     
-    Send_To_Arduino();
+    if( serial_data_mode.getState(0) ) Send_To_Arduino2(100.0, 0.0);
+    else if( serial_data_mode.getState(1) ) Send_To_Arduino2(100.0, 1.0);
+    else if( serial_data_mode.getState(2) ) Send_To_Arduino2(100.0, 2.0);    
+    
+    //Send_To_Arduino2(100.0, (float)i_serial_data_mode);
     
     return;
   }   
@@ -498,11 +509,12 @@ void controlEvent(ControlEvent theEvent) {
 
 float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 
-int cur_throttle ;
+float cur_throttle ;
 void keyPressed() {
     switch(key) {
       case ' ':
-        cur_throttle = 0;
+        cur_throttle = 0.0;
+        Send_To_Arduino2(0.0, cur_throttle);         
         break;
       case 'w':
         outputFileName = "c:\\temp\\drone_" + year()+month()+day()+hour()+minute()+second()+".txt";
@@ -515,53 +527,67 @@ void keyPressed() {
         outputFileName = "";        
         break;        
       case 'a':
-        if(cur_throttle < 800) cur_throttle += 10;
+        if(cur_throttle < 800.0) cur_throttle += 10.0;
+        Send_To_Arduino2(0.0, cur_throttle);        
         break;
       case 'z':
-        if(cur_throttle > 0) cur_throttle -= 20;
+        if(cur_throttle > 0) cur_throttle -= 20.0;
+        Send_To_Arduino2(0.0, cur_throttle);           
         break;
       case '7':
-        if( kp < 10) kp += 0.01;
+        if( kp < 10.0) kp += 0.01;
+        Send_To_Arduino2(1.0, kp);        
         break;
       case '8':
-        if( ki < 10 ) ki += 0.01;     
+        if( ki < 10.0 ) ki += 0.01; 
+        Send_To_Arduino2(2.0, ki);        
         break;
       case '9':  
-        if( kd < 10 ) kd += 0.01;           
+        if( kd < 10.0 ) kd += 0.01; 
+        Send_To_Arduino2(3.0, kd);        
         break;
       case 'u':
-        if( kp > 0 ) kp -= 0.01;      
+        if( kp > 0.0 ) kp -= 0.01; 
+        Send_To_Arduino2(1.0, kp);        
         break;
       case 'i':
-        if( ki > 0 ) ki -= 0.01;
+        if( ki > 0.0 ) ki -= 0.01;
+        Send_To_Arduino2(2.0, ki);        
         break;
       case 'o':
-        if( kd > 0 ) kd -= 0.01;
+        if( kd > 0.0 ) kd -= 0.01;
+        Send_To_Arduino2(3.0, kd);        
         break;
         
       case 'j':
-        if( krp < 10 ) krp += 0.01;
+        if( krp < 10.0 ) krp += 0.01;
+        Send_To_Arduino2(4.0, krp);        
         break;
       case 'k':
         if( kri < 10 ) kri += 0.01;
+        Send_To_Arduino2(5.0, kri);        
         break;
       case 'l':
-        if( krd < 10 ) krd += 0.01;
+        if( krd < 10.0 ) krd += 0.01;
+        Send_To_Arduino2(6.0, krd);        
         break;
       case 'm':
-        if( krp > 0 ) krp  -= 0.01;
+        if( krp > 0.0 ) krp  -= 0.01;
+        Send_To_Arduino2(4.0, krp);        
         break;
       case ',':
-        if( kri > 0 ) kri -= 0.01;
+        if( kri > 0.0 ) kri -= 0.01;
+        Send_To_Arduino2(5.0, kri);        
         break;
       case '.':
-        if( krd > 0 ) krd -= 0.01;
+        if( krd > 0.0 ) krd -= 0.01;
+        Send_To_Arduino2(6.0, krd);        
         break;
         
     }
     last_throttle_position = cur_throttle;
    
-    Send_To_Arduino();
+    // Send_To_Arduino();
 }
 
 void Toggle_AM() {
@@ -599,6 +625,24 @@ void Toggle_DRR() {
   }
 }
 
+void Send_To_Arduino2(float command, float value)
+{
+  float[] toSend = new float[2]; 
+  toSend[0] = command;
+  toSend[1] = value;
+  
+  byte[] bbb = new byte[toSend.length * 4];
+  byte [] dddd = floatArrayToByteArray(toSend);
+  for(int i=0; i< dddd.length; i++ )
+  {
+    bbb[i] = dddd[i];
+  }
+  if( myPort != null ) {
+    myPort.write(bbb);
+  }  
+  
+   justSent=true;
+}
 
 // Sending Floating point values to the arduino
 // is a huge pain.  if anyone knows an easier
@@ -608,7 +652,7 @@ void Toggle_DRR() {
 // - using the java ByteBuffer class, convert
 //   that array to a 24 member byte array
 // - send those bytes to the arduino
-void Send_To_Arduino()
+void Send_To_Arduinox()
 {
   float[] toSend = new float[11];
 
@@ -628,16 +672,16 @@ void Send_To_Arduino()
   toSend[10] = float(last_throttle_position);
   
   
-  Byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
-  Byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
-  Byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
+  byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
+  byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
+  byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
   
-  println(i_tuning_mode);
-  println(i_serial_data_mode);
+  //println(i_tuning_mode);
+  //println(i_serial_data_mode);
   
-  Byte pid_tuning = i_tuning_mode ; 
+  byte pid_tuning = i_tuning_mode ; 
   
-  Byte serial_send_mode = i_serial_data_mode;
+  byte serial_send_mode = i_serial_data_mode;
   
   byte[] bbb = new byte[toSend.length * 4 + 5];
   
@@ -656,6 +700,8 @@ void Send_To_Arduino()
     myPort.write(bbb);
   }
   
+  println( bbb );
+  
   justSent=true;
 } 
 
@@ -663,7 +709,6 @@ void Send_To_Arduino()
 byte[] floatArrayToByteArray(float[] input)
 {
   int len = 4*input.length;
-  int index=0;
   byte[] b = new byte[4];
   byte[] out = new byte[len];
   ByteBuffer buf = ByteBuffer.wrap(b);

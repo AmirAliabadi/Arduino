@@ -4,152 +4,42 @@
  * Serial Communication functions / helpers
  ********************************************/
 
-
-union foo { 
-  byte asBytes[44];    
-  float asFloat[11];   
+union _from_processing { 
+  byte asBytes[8];    
+  float asFloat[2];   
 }                    
-from_processing;        
+from_processing; 
 
 
-
-// getting float values from processing into the arduino
-// was no small task.  the way this program does it is
-// as follows:
-//  * a float takes up 4 bytes.  in processing, convert
-//    the array of floats we want to send, into an array
-//    of bytes.
-//  * send the bytes to the arduino
-//  * use a data structure known as a union to convert
-//    the array of bytes back into an array of floats
-
-//  the bytes coming from the arduino follow the following
-//  format:
-//  0: 0=Manual, 1=Auto, else = ? error ?
-//  1: 0=Direct, 1=Reverse, else = ? error ?
-//  2-5: float setpoint
-//  6-9: float input
-//  10-13: float output  
-//  14-17: float P_Param
-//  18-21: float I_Param
-//  22-24: float D_Param
 void SerialReceive()
 {
+  Serial.readBytes( from_processing.asBytes, 8 );
 
-  // read the bytes sent from Processing
-  int index=0;
-  byte Auto_Man = -1;
-  byte Direct_Reverse = -1;
-  byte Direct_Reverse_Rate = -1;
-
-  byte temp;
-  bool read_good = 1;
-  bool serial_mode_changed = 0;
-  while(Serial.available() && index<49) //aa 26
-  {
-    temp = 7;
-    if(index==0) Auto_Man = Serial.read();
-    else if(index==1) Direct_Reverse = Serial.read();
-    else if(index==2) Direct_Reverse_Rate = Serial.read();
-    else if(index==3){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0; break;} else{selected_pot_tuning = temp;} }
-    else if(index==4){ temp = Serial.read(); if( temp < 0 or temp > 3){read_good = 0; break;} else{ 
-        serial_mode_changed = !(aserial_data_mode == temp) ;
-        aserial_data_mode = temp;
-      } 
-   } 
-    else from_processing.asBytes[index-5] = Serial.read();
-    index++;
-  } 
-
-  if(!read_good) {
-    Serial.flush();
-    Serial.println(index);
-    return;
-  }
-  
-  // if the information we got was in the correct format, 
-  // read it into the system
-  if(index==49) 
-  {
-    if( from_processing.asFloat[9] != from_processing.asFloat[10] ) {Serial.println(F("#thrust miss match")); return;}
-    if( (int)aserial_data_mode != (int)(from_processing.asFloat[2]) ) {Serial.println(F("#serial mode miss match")); return;}
-
-    if( from_processing.asFloat[9] > INPUT_THRUST )
-    { 
-       // more safety around throttle input.  don't increate throttle by more that 50 at any time...
-       if( from_processing.asFloat[9] > INPUT_THRUST + 50 ) INPUT_THRUST += 50;
-       else INPUT_THRUST = from_processing.asFloat[9];
-    }
-    else 
-    {
-      INPUT_THRUST = from_processing.asFloat[9] ;
-    }
-
-    if( !serial_mode_changed )
-    {
-      if(Auto_Man==0) 
-      {
-        ac_pid.SetMode(MANUAL);
-        ac_rat.SetMode(MANUAL);
-        bd_pid.SetMode(MANUAL);
-        bd_rat.SetMode(MANUAL);
-  
-        yw_pid.SetMode(MANUAL);
-      }
-      else 
-      {
-        ac_pid.SetMode(AUTOMATIC);
-        ac_rat.SetMode(AUTOMATIC);  
-        bd_pid.SetMode(AUTOMATIC);
-        ac_rat.SetMode(AUTOMATIC);
-  
-        yw_pid.SetMode(AUTOMATIC);
-      }
-  
-      if( aserial_data_mode == 0 ) {
-        if(Direct_Reverse==0) ac_pid.SetControllerDirection(DIRECT);
-        else ac_pid.SetControllerDirection(REVERSE);
-        
-        if(Direct_Reverse_Rate==0) ac_rat.SetControllerDirection(DIRECT);
-        else ac_rat.SetControllerDirection(REVERSE);  
-  
-  
-        INPUT_STB_PID_P = from_processing.asFloat[3];
-        INPUT_STB_PID_I = from_processing.asFloat[4];
-        INPUT_STB_PID_D = from_processing.asFloat[5];
-        INPUT_RAT_PID_P = from_processing.asFloat[6];
-        INPUT_RAT_PID_I = from_processing.asFloat[7];
-        INPUT_RAT_PID_D = from_processing.asFloat[8];
-  
-        
-      } else if ( aserial_data_mode == 1 ) {
-        if(Direct_Reverse==0) bd_pid.SetControllerDirection(DIRECT);
-        else bd_pid.SetControllerDirection(REVERSE);
-        
-        if(Direct_Reverse_Rate==0) bd_rat.SetControllerDirection(DIRECT);
-        else bd_rat.SetControllerDirection(REVERSE); 
-  
-  
-        INPUT_STB_PID_P = from_processing.asFloat[3];
-        INPUT_STB_PID_I = from_processing.asFloat[4];
-        INPUT_STB_PID_D = from_processing.asFloat[5];
-        INPUT_RAT_PID_P = from_processing.asFloat[6];
-        INPUT_RAT_PID_I = from_processing.asFloat[7];
-        INPUT_RAT_PID_D = from_processing.asFloat[8];       
-             
-      } else if ( aserial_data_mode == 2 ) {
-        if(Direct_Reverse==0) yw_pid.SetControllerDirection(DIRECT);
-        else yw_pid.SetControllerDirection(REVERSE);
-  
-        INPUT_YAW_PID_P = from_processing.asFloat[3];
-        INPUT_YAW_PID_I = from_processing.asFloat[4]; 
-        INPUT_YAW_PID_D = from_processing.asFloat[5];
-              
-      }
+  int cmd = (int)from_processing.asFloat[0];
+  if( cmd <= 13 ) {
+    input_values[ cmd ] = from_processing.asFloat[1] ;
+    
+  } else {
+    if(cmd == 100) {
+      if( from_processing.asFloat[1]==0.0 ) aserial_data_mode = 0;
+      if( from_processing.asFloat[1]==1.0 ) aserial_data_mode = 1;
+      if( from_processing.asFloat[1]==2.0 ) aserial_data_mode = 2;
+      
+    } else if (cmd == 101) {
+      
+    } else if (cmd == 102) {
+      
     }
   }
-  Serial.flush();
+
+  Serial.flush();  
+  Serial.print(cmd);
+  Serial.print(" ");
+  Serial.print(from_processing.asFloat[0]);  
+  Serial.print(" ");
+  Serial.println(from_processing.asFloat[1]);
 }
+
 
 void SerialSend_YAW()
 {

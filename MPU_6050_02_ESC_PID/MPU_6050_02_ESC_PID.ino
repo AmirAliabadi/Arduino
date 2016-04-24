@@ -21,10 +21,11 @@ float input_values[14] = { 0,                       // thrust
                            1.75,  0.0, 0.00,       // Stable P/I/D // .89,0,.23
                            0.95,  0.0, 0.05,    // i was .125 Rate P/I/D
                            0,0,0, //1.0, 0, 0.2,                 // YAW P/I/D
-                           12.6,                    // battery voltage level
                            0.0,
                            0.0,
-                           0.0 };
+                           0.0,
+                           12.6                    // battery voltage level
+                           };
 
 // PID values:
 // 4.7 / 0 / 0 | 1.2 / 0 / 0.16
@@ -40,10 +41,10 @@ float input_values[14] = { 0,                       // thrust
 #define INPUT_YAW_PID_P       input_values[7]
 #define INPUT_YAW_PID_I       input_values[8]
 #define INPUT_YAW_PID_D       input_values[9]
-#define INPUT_VOLTAGE_LEVEL   input_values[10]
-#define INPUT_SETPOINT_YAW    input_values[11]
-#define INPUT_SETPOINT_ROLL   input_values[12]
-#define INPUT_SETPOINT_PITCH  input_values[13]
+#define INPUT_SETPOINT_YAW    input_values[10]
+#define INPUT_SETPOINT_ROLL   input_values[11]
+#define INPUT_SETPOINT_PITCH  input_values[12]
+#define INPUT_VOLTAGE_LEVEL   input_values[13]
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 
@@ -154,11 +155,11 @@ long last_blink = 0;
 // ===               INTERRUPT DETECTION ROUTINE                ===
 // ================================================================
 
-volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
-void dmpDataReady()
-{
-  mpuInterrupt = true;
-}
+//volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+//void dmpDataReady()
+//{
+//  mpuInterrupt = true;
+//}
 
 //////////////////////////////////////////////////////////////////////
 // setup
@@ -196,23 +197,6 @@ void loop()
 
   if (!dmpReady) return;
 
-/// don't really need to be interrup driven...
-//  // wait for MPU interrupt or extra packet(s) available
-//  while (!mpuInterrupt) // && fifoCount < packetSize)
-//  {  
-//    read_throttle();        if (mpuInterrupt) break;
-//    
-//    if( aserial_data_mode == 0 ) read_setpoint(AC);
-//    else if( aserial_data_mode == 1 ) read_setpoint(BD);
-//    else if( aserial_data_mode == 2 ) read_setpoint(YW);
-//    
-//    read_pid_tunings(0);    if (mpuInterrupt) break;
-//    //read_pid_tunings(1);    if (mpuInterrupt) break;
-//
-//    read_battery_voltage(); if (mpuInterrupt) break;
-//    process();
-//  }
-
   read_mpu();
   read_throttle();
   if( aserial_data_mode == 0 ) read_setpoint(AC);
@@ -228,7 +212,6 @@ void loop()
 }
 
 void serialEvent() {
-  // readCsvToVector();
   SerialReceive();
 }
 
