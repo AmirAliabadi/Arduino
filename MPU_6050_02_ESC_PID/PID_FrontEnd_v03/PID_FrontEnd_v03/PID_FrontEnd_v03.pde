@@ -531,7 +531,7 @@ void keyPressed() {
         Send_To_Arduino2(0.0, cur_throttle);        
         break;
       case 'z':
-        if(cur_throttle > 0) cur_throttle -= 20.0;
+        if(cur_throttle > 0.0) cur_throttle -= 20.0;
         Send_To_Arduino2(0.0, cur_throttle);           
         break;
       case '7':
@@ -631,6 +631,23 @@ void Send_To_Arduino2(float command, float value)
   toSend[0] = command;
   toSend[1] = value;
   
+  if( myPort != null ) {
+    myPort.write(floatArrayToByteArray(toSend));
+  }    
+  
+  //println( FloatArray2ByteArray(toSend) );
+  //println( "----------" );
+  //println( floatArrayToByteArray(toSend) );
+  
+  justSent=true;  
+}
+
+void Send_To_Arduino2x(float command, float value)
+{
+  float[] toSend = new float[2]; 
+  toSend[0] = command;
+  toSend[1] = value;
+  
   byte[] bbb = new byte[toSend.length * 4];
   byte [] dddd = floatArrayToByteArray(toSend);
   for(int i=0; i< dddd.length; i++ )
@@ -641,7 +658,8 @@ void Send_To_Arduino2(float command, float value)
     myPort.write(bbb);
   }  
   
-   justSent=true;
+  println( bbb );
+  justSent=true;
 }
 
 // Sending Floating point values to the arduino
@@ -668,8 +686,8 @@ void Send_To_Arduinox()
   toSend[7] = kri;
   toSend[8] = krd;
   
-  toSend[9] = float(last_throttle_position);
-  toSend[10] = float(last_throttle_position);
+  toSend[9] = last_throttle_position;
+  toSend[10] = last_throttle_position;
   
   
   byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
@@ -705,6 +723,15 @@ void Send_To_Arduinox()
   justSent=true;
 } 
 
+byte[] FloatArray2ByteArray(float[] values)
+{
+  ByteBuffer buffer = ByteBuffer.allocate(4 * values.length);
+  
+  for (float value : values){
+      buffer.putFloat(value);
+  }
+  return buffer.array();
+}
 
 byte[] floatArrayToByteArray(float[] input)
 {
@@ -733,7 +760,7 @@ void serialEvent(Serial myPort)
   
   String read = myPort.readStringUntil(10);
   
-  print(read);
+  // print(read);
   
   if(outputFileName!="") output.print(str(millis())+ " " + read);
   String[] s = split(read, " ");
@@ -837,8 +864,12 @@ void serialEvent(Serial myPort)
       DRrCurrent.setValue(trim(s[16]));
 
       justSent=false;
-    }
+    } 
 
     if(!madeContact) madeContact=true;
-  }
+  }else {
+      
+      print(read);
+      
+    }
 }
