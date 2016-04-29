@@ -84,7 +84,7 @@ void attitude_process()
       return;
   }
 
-  if(INPUT_THRUST > MIN_INPUT_THRUST + 5.0) {
+  if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
@@ -103,7 +103,6 @@ void attitude_process()
     ac_pid.Compute(); bd_pid.Compute(); 
     ac_rat.Compute(); bd_rat.Compute();   
 
-
     //////////////////////////////
     // Motor Mix Algorithm       //
     //////////////////////////////
@@ -112,10 +111,10 @@ void attitude_process()
     v_bd = INPUT_THRUST + output_ypr[YW];
 
     // compute motor speeds
-    va = MIN_ESC_SIGNAL + (v_ac - output_rate[AC]); // output_ypr
-    vc = MIN_ESC_SIGNAL + (v_ac + output_rate[AC]); // output_ypr
-    vb = MIN_ESC_SIGNAL + (v_bd - output_rate[BD]); // output_ypr
-    vd = MIN_ESC_SIGNAL + (v_bd + output_rate[BD]); // output_ypr
+    va = MIN_ESC_CUTOFF + (v_ac - output_rate[AC]); // output_ypr
+    vc = MIN_ESC_CUTOFF + (v_ac + output_rate[AC]); // output_ypr
+    vb = MIN_ESC_CUTOFF + (v_bd - output_rate[BD]); // output_ypr
+    vd = MIN_ESC_CUTOFF + (v_bd + output_rate[BD]); // output_ypr
     //
     ////////////////////////////////
   }
@@ -131,10 +130,10 @@ void attitude_process()
 //  vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
 //  vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
 
-  va = constration_esc(va);
-  vc = constration_esc(vc); 
-  vb = constration_esc(vb); 
-  vd = constration_esc(vd); 
+//  va = constration_esc(va);
+//  vc = constration_esc(vc); 
+//  vb = constration_esc(vb); 
+//  vd = constration_esc(vd); 
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
@@ -151,12 +150,12 @@ void attitude_process()
 #endif
   
 }
-
-float constration_esc( float a )
-{
-  float x = constrain(a, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  if( x < MIN_ESC_CUTOFF ) x = MIN_ESC_SIGNAL;
-  return x;
-}
+//
+//float constration_esc( float a )
+//{
+//  float x = constrain(a, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+//  if( x < MIN_ESC_CUTOFF ) x = MIN_ESC_SIGNAL;
+//  return x;
+//}
 
 //////////////////////////////////////////////////////////////////////
