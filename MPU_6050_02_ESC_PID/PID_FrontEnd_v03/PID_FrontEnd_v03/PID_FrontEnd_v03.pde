@@ -507,7 +507,7 @@ void controlEvent(ControlEvent theEvent) {
   }   
 }
 
-float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0,yawKp=0,yawKi=0,yawKd=0;
 
 float cur_throttle ;
 void keyPressed() {
@@ -525,9 +525,38 @@ void keyPressed() {
         output.flush(); // Writes the remaining data to the file
         output.close(); // Finishes the file
         outputFileName = "";        
-        break;        
+        break;
+        
+      case '0':
+        if( yawKp < 10.0 ) yawKp += 0.1;
+        Send_To_Arduino2(7.0, yawKp);
+        break;
+      case 'p':
+        if( yawKp > 0.0 ) yawKp -= 0.1;
+        Send_To_Arduino2(7.0, yawKp);      
+        break;
+
+      case '-':
+        if( yawKi < 10.0 ) yawKi += 0.1;
+        Send_To_Arduino2(8.0, yawKi);
+        break;
+      case '[':
+        if( yawKi > 0.0 ) yawKi -= 0.1;
+        Send_To_Arduino2(8.0, yawKi);      
+        break;      
+
+      case '-':
+        if( yawKd < 10.0 ) yawKd += 0.1;
+        Send_To_Arduino2(9.0, yawKd);
+        break;
+      case '[':
+        if( yawKd > 0.0 ) yawKd -= 0.1;
+        Send_To_Arduino2(9.0, yawKd);      
+        break;      
+      
+      
       case 'a':
-        if(cur_throttle < 800.0) cur_throttle += 10.0;
+        if(cur_throttle < 900.0) cur_throttle += 10.0;
         Send_To_Arduino2(0.0, cur_throttle);        
         break;
       case 'z':

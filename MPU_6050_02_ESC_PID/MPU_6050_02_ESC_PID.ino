@@ -21,9 +21,9 @@ float input_values[14] = { 0,                       // thrust
                            1.75,  0.0, 0.4,       // Stable P/I/D // .89,0,.23
                            0.95,  0.0, 0.05,    // i was .125 Rate P/I/D
                            1.0,0,0.2, //1.0, 0, 0.2,                 // YAW P/I/D
-                           0.0,
-                           0.0,
-                           0.0,
+                           0.0, // setpoint yaw
+                           0.0, // setpoint roll
+                           0.0, // setpoint pitch
                            12.6                    // battery voltage level
                            };
 
