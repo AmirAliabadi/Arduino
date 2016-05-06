@@ -115,6 +115,7 @@ void setup()
   IrField = controlP5.addTextfield("Kri",110,325,60,20);
   DrField = controlP5.addTextfield("Krd",110,375,60,20);
   
+  
   AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
   AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
   AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
@@ -545,11 +546,11 @@ void keyPressed() {
         Send_To_Arduino2(8.0, yawKi);      
         break;      
 
-      case '-':
+      case '=':
         if( yawKd < 10.0 ) yawKd += 0.1;
         Send_To_Arduino2(9.0, yawKd);
         break;
-      case '[':
+      case ']':
         if( yawKd > 0.0 ) yawKd -= 0.1;
         Send_To_Arduino2(9.0, yawKd);      
         break;      
@@ -699,6 +700,7 @@ void Send_To_Arduino2x(float command, float value)
 // - using the java ByteBuffer class, convert
 //   that array to a 24 member byte array
 // - send those bytes to the arduino
+/*
 void Send_To_Arduinox()
 {
   float[] toSend = new float[11];
@@ -761,7 +763,7 @@ byte[] FloatArray2ByteArray(float[] values)
   }
   return buffer.array();
 }
-
+*/
 byte[] floatArrayToByteArray(float[] input)
 {
   int len = 4*input.length;
@@ -878,14 +880,15 @@ void serialEvent(Serial myPort)
       //SPField.setText(trim(s[2]));
       //InField.setText(trim(s[2]));
       //OutField.setText(trim(s[3]));
-      
+      /*
       PField.setValue(Float.toString(kp));
       IField.setValue(Float.toString(ki)); 
       DField.setValue(Float.toString(kd)); 
       
       PrField.setValue(Float.toString(krp));  
       IrField.setValue(Float.toString(kri));
-      DrField.setValue(Float.toString(krd));           
+      DrField.setValue(Float.toString(krd));    
+      */
       
       AMLabel.setValue(trim(s[14]));
 
