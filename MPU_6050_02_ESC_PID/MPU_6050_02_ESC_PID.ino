@@ -127,7 +127,7 @@ float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
 float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoit
-PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
+PID yw_pid(&input_gyro[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT);
