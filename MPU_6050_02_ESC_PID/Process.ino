@@ -95,9 +95,9 @@ void attitude_process()
     input_ypr[AC] = ypr[AC];
     input_ypr[BD] = ypr[BD];
 
-    input_gyro[YW] = gyro.z*-1.0;//[YW];
-    input_gyro[AC] = gyro.x;//[AC];
-    input_gyro[BD] = gyro.y*-1.0;//[BD];
+    input_gyro[YW] = gyro.z*-1.0;
+    input_gyro[AC] = gyro.x;
+    input_gyro[BD] = gyro.y*-1.0;
 
     yw_pid.Compute(); //yw_rat.Compute();
     ac_pid.Compute(); bd_pid.Compute(); 
