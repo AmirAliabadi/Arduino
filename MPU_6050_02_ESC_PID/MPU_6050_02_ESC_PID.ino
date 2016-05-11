@@ -17,14 +17,14 @@ byte aserial_data_mode = 0;
 
 ///////////////////////////////////
 // user inputs
-float input_values[14] = { 0,                       // thrust
-                           1.75,  0.0, 0.4,       // Stable P/I/D // .89,0,.23
-                           0.95,  0.0, 0.05,    // i was .125 Rate P/I/D
-                           1.0,0,0.2, //1.0, 0, 0.2,                 // YAW P/I/D
+float input_values[14] = { 0,                     // thrust
+                           1.75,  0.0, 0.40,      // Stable Pitch/Role PID P/I/D // .89,0,.23
+                           0.95,  0.0, 0.05,      // Rate Pitch/Role PID P/I/D
+                           1.00,  0.0, 0.20,      // 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
-                           12.6                    // battery voltage level
+                           12.6                   // battery voltage level
                            };
 
 // PID values:
@@ -52,16 +52,6 @@ uint8_t setpoint_changed = SETPOINT_UNCHANGED;
 float setpoint[3] = {0, 0, 0};
 float last_setpoint[3] = {0, 0, 0};
 
-/*
-int thrust = 0;
-float voltage = 12.6;
-float pid_xx_kp[2];
-float pid_xx_ki[2];
-float pid_xx_kd[2];
-
-float pid_yw_kp[2];
-float pid_yw_ki[2];
-float pid_yw_kd[2]; */
 //
 //////////////////////////////////////////////////////////////////
 
@@ -94,7 +84,7 @@ VectorInt16 gyro;
 VectorInt16 gyro1;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
-float ypr_last[3] = {0.0f, 0.0f, 0.0f};
+//float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 float yw_offset   = 0.0;
 float ac_offset   = 0.0;
 float bd_offset   = 0.0;
@@ -127,11 +117,11 @@ float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
 float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoit
-PID yw_pid(&input_gyro[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
-
+PID yw_pid(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
 PID ac_pid(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT);
 PID bd_pid(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT);
 
+PID yw_rat(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT);
 PID ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
 PID bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
 

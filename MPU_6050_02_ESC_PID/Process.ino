@@ -38,7 +38,7 @@ void check_if_stable()
     bd_offset = ypr[BD];
     
     ypr[YW] = 0;
-    ypr_last[YW] = 0;
+    //ypr_last[YW] = 0;
     
     process = &attitude_process;
   } else {
@@ -99,7 +99,7 @@ void attitude_process()
     input_gyro[AC] = gyro.x;//[AC];
     input_gyro[BD] = gyro.y*-1.0;//[BD];
 
-    yw_pid.Compute();
+    yw_pid.Compute(); //yw_rat.Compute();
     ac_pid.Compute(); bd_pid.Compute(); 
     ac_rat.Compute(); bd_rat.Compute();   
 
