@@ -21,10 +21,8 @@ void SerialReceive()
     
   } else {
     if(cmd == 100) {
-      if( from_processing.asFloat[1]==0.0 ) aserial_data_mode = 0;
-      if( from_processing.asFloat[1]==1.0 ) aserial_data_mode = 1;
-      if( from_processing.asFloat[1]==2.0 ) aserial_data_mode = 2;
-      
+      aserial_data_mode = (int)from_processing.asFloat[1];
+            
     } else if (cmd == 101) {
       
     } else if (cmd == 102) {
@@ -33,11 +31,6 @@ void SerialReceive()
   }
 
   Serial.flush();  
-  Serial.print(cmd);
-  Serial.print(" ");
-  Serial.print(from_processing.asFloat[0]);  
-  Serial.print(" ");
-  Serial.println(from_processing.asFloat[1]);
 }
 
 

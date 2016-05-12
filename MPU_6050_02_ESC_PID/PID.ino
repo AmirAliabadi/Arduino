@@ -98,10 +98,10 @@ void init_pid()
   //turn the PID on
   yw_pid.SetOutputLimits(-250, 250);
   
-  ac_pid.SetOutputLimits(-75, 75);
-  bd_pid.SetOutputLimits(-75, 75);
-  ac_rat.SetOutputLimits(-125, 125);
-  bd_rat.SetOutputLimits(-125, 125);
+  ac_pid.SetOutputLimits(-175, 175);
+  bd_pid.SetOutputLimits(-175, 175);
+  ac_rat.SetOutputLimits(-225, 225);
+  bd_rat.SetOutputLimits(-225, 225);
 
   yw_pid.SetSampleTime(10);
   
