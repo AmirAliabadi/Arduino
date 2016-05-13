@@ -18,9 +18,9 @@ byte aserial_data_mode = 0;
 ///////////////////////////////////
 // user inputs
 float input_values[14] = { 0,                     // thrust
-                           1.75,  0.0, 0.40,      // Stable Pitch/Role PID P/I/D // .89,0,.23
-                           0.95,  0.0, 0.05,      // Rate Pitch/Role PID P/I/D
-                           1.00,  0.0, 0.20,      // 1.0, 0, 0.2,                 // YAW P/I/D
+                           2.00,  0.0, 0.30,      // Stable Pitch/Role PID P/I/D // .89,0,.23
+                           0.00,  0.0, 0.00,      // Rate Pitch/Role PID P/I/D
+                           2.00,  0.0, 0.20,      // 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch

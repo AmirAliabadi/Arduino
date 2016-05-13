@@ -96,12 +96,12 @@ void init_pid()
   Serial.println("#init pid...");
   
   //turn the PID on
-  yw_pid.SetOutputLimits(-250, 250);
+  yw_pid.SetOutputLimits(-300, 300);
   
-  ac_pid.SetOutputLimits(-175, 175);
-  bd_pid.SetOutputLimits(-175, 175);
-  ac_rat.SetOutputLimits(-225, 225);
-  bd_rat.SetOutputLimits(-225, 225);
+  ac_pid.SetOutputLimits(-300, 300);
+  bd_pid.SetOutputLimits(-300, 300);
+  ac_rat.SetOutputLimits(-300, 300);
+  bd_rat.SetOutputLimits(-300, 300);
 
   yw_pid.SetSampleTime(10);
   
@@ -141,9 +141,9 @@ void pid_off()
   output_ypr[BD] = 0.0;
   output_ypr[YW] = 0.0;
 
-  output_rate[YW] = 0;
-  output_rate[AC] = 0;
-  output_rate[BD] = 0;
+  output_rate[YW] = 0.0;
+  output_rate[AC] = 0.0;
+  output_rate[BD] = 0.0;
 
   //turn the PID off
   yw_pid.SetMode(MANUAL);

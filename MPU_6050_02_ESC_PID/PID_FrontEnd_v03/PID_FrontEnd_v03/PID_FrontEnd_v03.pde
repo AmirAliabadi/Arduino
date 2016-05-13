@@ -529,29 +529,29 @@ void keyPressed() {
         break;
         
       case '0':
-        if( yawKp < 10.0 ) yawKp += 0.1;
+        if( yawKp < 10.0 ) yawKp += 0.05;
         Send_To_Arduino2(7.0, yawKp);
         break;
       case 'p':
-        if( yawKp > 0.0 ) yawKp -= 0.1;
+        if( yawKp > 0.0 ) yawKp -= 0.05;
         Send_To_Arduino2(7.0, yawKp);      
         break;
 
       case '-':
-        if( yawKi < 10.0 ) yawKi += 0.1;
+        if( yawKi < 10.0 ) yawKi += 0.05;
         Send_To_Arduino2(8.0, yawKi);
         break;
       case '[':
-        if( yawKi > 0.0 ) yawKi -= 0.1;
+        if( yawKi > 0.0 ) yawKi -= 0.05;
         Send_To_Arduino2(8.0, yawKi);      
         break;      
 
       case '=':
-        if( yawKd < 10.0 ) yawKd += 0.1;
+        if( yawKd < 10.0 ) yawKd += 0.05;
         Send_To_Arduino2(9.0, yawKd);
         break;
       case ']':
-        if( yawKd > 0.0 ) yawKd -= 0.1;
+        if( yawKd > 0.0 ) yawKd -= 0.05;
         Send_To_Arduino2(9.0, yawKd);      
         break;      
       
@@ -565,52 +565,52 @@ void keyPressed() {
         Send_To_Arduino2(0.0, cur_throttle);           
         break;
       case '7':
-        if( kp < 10.0) kp += 0.01;
+        if( kp < 10.0) kp += 0.005;
         Send_To_Arduino2(1.0, kp);        
         break;
       case '8':
-        if( ki < 10.0 ) ki += 0.01; 
+        if( ki < 10.0 ) ki += 0.005; 
         Send_To_Arduino2(2.0, ki);        
         break;
       case '9':  
-        if( kd < 10.0 ) kd += 0.01; 
+        if( kd < 10.0 ) kd += 0.005; 
         Send_To_Arduino2(3.0, kd);        
         break;
       case 'u':
-        if( kp > 0.0 ) kp -= 0.01; 
+        if( kp > 0.0 ) kp -= 0.005; 
         Send_To_Arduino2(1.0, kp);        
         break;
       case 'i':
-        if( ki > 0.0 ) ki -= 0.01;
+        if( ki > 0.0 ) ki -= 0.005;
         Send_To_Arduino2(2.0, ki);        
         break;
       case 'o':
-        if( kd > 0.0 ) kd -= 0.01;
+        if( kd > 0.0 ) kd -= 0.005;
         Send_To_Arduino2(3.0, kd);        
         break;
         
       case 'j':
-        if( krp < 10.0 ) krp += 0.01;
+        if( krp < 10.0 ) krp += 0.005;
         Send_To_Arduino2(4.0, krp);        
         break;
       case 'k':
-        if( kri < 10 ) kri += 0.01;
+        if( kri < 10 ) kri += 0.005;
         Send_To_Arduino2(5.0, kri);        
         break;
       case 'l':
-        if( krd < 10.0 ) krd += 0.01;
+        if( krd < 10.0 ) krd += 0.005;
         Send_To_Arduino2(6.0, krd);        
         break;
       case 'm':
-        if( krp > 0.0 ) krp  -= 0.01;
+        if( krp > 0.0 ) krp  -= 0.005;
         Send_To_Arduino2(4.0, krp);        
         break;
       case ',':
-        if( kri > 0.0 ) kri -= 0.01;
+        if( kri > 0.0 ) kri -= 0.005;
         Send_To_Arduino2(5.0, kri);        
         break;
       case '.':
-        if( krd > 0.0 ) krd -= 0.01;
+        if( krd > 0.0 ) krd -= 0.005;
         Send_To_Arduino2(6.0, krd);        
         break;
         
