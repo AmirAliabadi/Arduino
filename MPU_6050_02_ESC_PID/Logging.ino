@@ -66,30 +66,29 @@ void SerialSend_YAW()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(yw_pid.GetKp(), 3);   
+  Serial.print(pid_yw_stable.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(yw_pid.GetKi(), 3);   
+  Serial.print(pid_yw_stable.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(yw_pid.GetKd(), 3);   
+  Serial.print(pid_yw_stable.GetKd(), 3);   
   Serial.print(F(" "));
   
-  Serial.print(0.0,3); //yw_rat.GetKp(), 3);   
+  Serial.print(pid_yw_rat.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(0.0,3); //yw_rat.GetKi(), 3);   
+  Serial.print(pid_yw_rat.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(0.0,3); //yw_rat.GetKd(), 3);   
+  Serial.print(pid_yw_rat.GetKd(), 3);   
   Serial.print(F(" "));
 
   
-  if(yw_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  if(pid_yw_stable.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
   else Serial.print(F("Manual"));  
   Serial.print(F(" "));
-  if(yw_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  if(pid_yw_stable.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  Serial.print(F("Dir"));
-  //if(yw_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
-  //else Serial.println(F("Rev"));  
+  if(pid_yw_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
+  else Serial.println(F("Rev"));  
 
   Serial.print(F(" "));
   
@@ -137,28 +136,28 @@ void SerialSend_BD()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(bd_pid.GetKp(), 3);   
+  Serial.print(pid_bd_stable.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(bd_pid.GetKi(), 3);   
+  Serial.print(pid_bd_stable.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(bd_pid.GetKd(), 3);   
+  Serial.print(pid_bd_stable.GetKd(), 3);   
   Serial.print(F(" "));
   
-  Serial.print(bd_rat.GetKp(), 3);   
+  Serial.print(pid_bd_rat.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(bd_rat.GetKi(), 3);   
+  Serial.print(pid_bd_rat.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(bd_rat.GetKd(), 3);   
+  Serial.print(pid_bd_rat.GetKd(), 3);   
   Serial.print(F(" "));
 
   
-  if(bd_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  if(pid_bd_stable.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
   else Serial.print(F("Manual"));  
   Serial.print(F(" "));
-  if(bd_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  if(pid_bd_stable.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  if(bd_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  if(pid_bd_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev")); 
   Serial.print(F(" "));
   Serial.print(va); Serial.print(F(" "));
@@ -201,28 +200,28 @@ void SerialSend_AC()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(ac_pid.GetKp(), 3);   
+  Serial.print(pid_ac_stable.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(ac_pid.GetKi(), 3);   
+  Serial.print(pid_ac_stable.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(ac_pid.GetKd(), 3);   
+  Serial.print(pid_ac_stable.GetKd(), 3);   
   Serial.print(F(" "));
    
-  Serial.print(ac_rat.GetKp(), 3);   
+  Serial.print(pid_ac_rat.GetKp(), 3);   
   Serial.print(F(" "));
-  Serial.print(ac_rat.GetKi(), 3);   
+  Serial.print(pid_ac_rat.GetKi(), 3);   
   Serial.print(F(" "));
-  Serial.print(ac_rat.GetKd(), 3);   
+  Serial.print(pid_ac_rat.GetKd(), 3);   
   Serial.print(F(" "));
 
   
-  if(ac_pid.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
+  if(pid_ac_stable.GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
   else Serial.print(F("Manual"));  
   Serial.print(F(" "));
-  if(ac_pid.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  if(pid_ac_stable.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  if(ac_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  if(pid_ac_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));  
   Serial.print(F(" "));
   

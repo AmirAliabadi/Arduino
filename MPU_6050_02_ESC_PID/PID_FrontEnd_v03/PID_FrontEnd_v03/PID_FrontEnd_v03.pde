@@ -508,7 +508,7 @@ void controlEvent(ControlEvent theEvent) {
   }   
 }
 
-float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0,yawKp=0,yawKi=0,yawKd=0;
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0,yawKp=0,yawKi=0,yawKd=0,yawKpr=0,yawKir=0,yawKdr=0;
 
 float cur_throttle ;
 void keyPressed() {
@@ -555,6 +555,37 @@ void keyPressed() {
         Send_To_Arduino2(9.0, yawKd);      
         break;      
       
+
+/////
+
+      case 'k':
+        if( yawKpr < 10.0 ) yawKp += 0.05;
+        Send_To_Arduino2(7.0, yawKp);
+        break;
+      case ',':
+        if( yawKpr > 0.0 ) yawKp -= 0.05;
+        Send_To_Arduino2(7.0, yawKp);      
+        break;
+
+      case 'l':
+        if( yawKir < 10.0 ) yawKi += 0.05;
+        Send_To_Arduino2(8.0, yawKi);
+        break;
+      case '.':
+        if( yawKir > 0.0 ) yawKi -= 0.05;
+        Send_To_Arduino2(8.0, yawKi);      
+        break;      
+
+      case ';':
+        if( yawKdr < 10.0 ) yawKd += 0.05;
+        Send_To_Arduino2(9.0, yawKd);
+        break;
+      case '/':
+        if( yawKdr > 0.0 ) yawKd -= 0.05;
+        Send_To_Arduino2(9.0, yawKd);      
+        break;      
+
+////
       
       case 'a':
         if(cur_throttle < 900.0) cur_throttle += 10.0;
@@ -564,6 +595,7 @@ void keyPressed() {
         if(cur_throttle > 0.0) cur_throttle -= 20.0;
         Send_To_Arduino2(0.0, cur_throttle);           
         break;
+    
       case '7':
         if( kp < 10.0) kp += 0.005;
         Send_To_Arduino2(1.0, kp);        
@@ -589,27 +621,27 @@ void keyPressed() {
         Send_To_Arduino2(3.0, kd);        
         break;
         
-      case 'j':
+      case 'g':
         if( krp < 10.0 ) krp += 0.005;
         Send_To_Arduino2(4.0, krp);        
         break;
-      case 'k':
+      case 'h':
         if( kri < 10 ) kri += 0.005;
         Send_To_Arduino2(5.0, kri);        
         break;
-      case 'l':
+      case 'j':
         if( krd < 10.0 ) krd += 0.005;
         Send_To_Arduino2(6.0, krd);        
         break;
-      case 'm':
+      case 'b':
         if( krp > 0.0 ) krp  -= 0.005;
         Send_To_Arduino2(4.0, krp);        
         break;
-      case ',':
+      case 'n':
         if( kri > 0.0 ) kri -= 0.005;
         Send_To_Arduino2(5.0, kri);        
         break;
-      case '.':
+      case 'm':
         if( krd > 0.0 ) krd -= 0.005;
         Send_To_Arduino2(6.0, krd);        
         break;

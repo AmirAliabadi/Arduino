@@ -99,9 +99,9 @@ void attitude_process()
     input_gyro[AC] = gyro.x;
     input_gyro[BD] = gyro.y*-1.0;
 
-    yw_pid.Compute(); //yw_rat.Compute();
-    ac_pid.Compute(); bd_pid.Compute(); 
-    ac_rat.Compute(); bd_rat.Compute();   
+    pid_yw_stable.Compute();  pid_yw_rat.Compute();
+    pid_ac_stable.Compute();  pid_bd_stable.Compute(); 
+    pid_ac_rat.Compute();     pid_bd_rat.Compute();   
 
     //////////////////////////////
     // Motor Mix Algorithm       //
