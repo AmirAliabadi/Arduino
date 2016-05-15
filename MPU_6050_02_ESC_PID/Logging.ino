@@ -87,8 +87,8 @@ void SerialSend_YAW()
   if(pid_yw_stable.GetDirection()==DIRECT) Serial.print(F("Dir"));
   else Serial.print(F("Rev"));
   Serial.print(F(" "));
-  if(pid_yw_rat.GetDirection()==DIRECT) Serial.println(F("Dir"));
-  else Serial.println(F("Rev"));  
+  if(pid_yw_rat.GetDirection()==DIRECT) Serial.print(F("Dir"));
+  else Serial.print(F("Rev"));  
 
   Serial.print(F(" "));
   
