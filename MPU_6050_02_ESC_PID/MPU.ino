@@ -5,17 +5,17 @@ void init_mpu()
 {
     system_check &= ~(INIT_MPU_ARMED | INIT_MPU_STABLE);
       
-    Serial.println(F("#Init MPU I2C conne..."));
+    Serial.println(F("#Init MPU I2C"));
     mpu.initialize();
 
     // verify connection
-    Serial.println(F("#Test device conn..."));
+    Serial.println(F("#Test device"));
     Serial.println(mpu.testConnection() ? F("#MPU6050 ok") : F("MPU6050 failed"));
 
     delay(500);
 
     // load and configure the DMP
-    Serial.println(F("#Initializing DMP..."));
+    Serial.println(F("#Init DMP"));
     devStatus = mpu.dmpInitialize();
 
     // make sure it worked (returns 0 if so)
@@ -52,7 +52,7 @@ void init_mpu()
 */
 
       // turn on the DMP, now that it's ready
-      Serial.println(F("#Enabling DMP..."));
+      Serial.println(F("#Enabling DMP"));
       mpu.setDMPEnabled(true);
       
       // enable Arduino interrupt detection
