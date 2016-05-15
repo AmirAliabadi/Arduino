@@ -559,30 +559,30 @@ void keyPressed() {
 /////
 
       case 'k':
-        if( yawKpr < 10.0 ) yawKp += 0.05;
-        Send_To_Arduino2(7.0, yawKp);
+        if( yawKpr < 10.0 ) yawKpr += 0.001;
+        Send_To_Arduino2(10.0, yawKpr);
         break;
       case ',':
-        if( yawKpr > 0.0 ) yawKp -= 0.05;
-        Send_To_Arduino2(7.0, yawKp);      
+        if( yawKpr > 0.0 ) yawKpr -= 0.001;
+        Send_To_Arduino2(10.0, yawKpr);      
         break;
 
       case 'l':
-        if( yawKir < 10.0 ) yawKi += 0.05;
-        Send_To_Arduino2(8.0, yawKi);
+        if( yawKir < 10.0 ) yawKir += 0.001;
+        Send_To_Arduino2(11.0, yawKir);
         break;
       case '.':
-        if( yawKir > 0.0 ) yawKi -= 0.05;
-        Send_To_Arduino2(8.0, yawKi);      
+        if( yawKir > 0.0 ) yawKir -= 0.001;
+        Send_To_Arduino2(11.0, yawKir);      
         break;      
 
       case ';':
-        if( yawKdr < 10.0 ) yawKd += 0.05;
-        Send_To_Arduino2(9.0, yawKd);
+        if( yawKdr < 10.0 ) yawKdr += 0.001;
+        Send_To_Arduino2(12.0, yawKdr);
         break;
       case '/':
-        if( yawKdr > 0.0 ) yawKd -= 0.05;
-        Send_To_Arduino2(9.0, yawKd);      
+        if( yawKdr > 0.0 ) yawKdr -= 0.001;
+        Send_To_Arduino2(12.0, yawKdr);      
         break;      
 
 ////
@@ -622,27 +622,27 @@ void keyPressed() {
         break;
         
       case 'g':
-        if( krp < 10.0 ) krp += 0.005;
+        if( krp < 10.0 ) krp += 0.001;
         Send_To_Arduino2(4.0, krp);        
         break;
       case 'h':
-        if( kri < 10 ) kri += 0.005;
+        if( kri < 10.0 ) kri += 0.001;
         Send_To_Arduino2(5.0, kri);        
         break;
       case 'j':
-        if( krd < 10.0 ) krd += 0.005;
+        if( krd < 10.0 ) krd += 0.001;
         Send_To_Arduino2(6.0, krd);        
         break;
       case 'b':
-        if( krp > 0.0 ) krp  -= 0.005;
+        if( krp > 0.0 ) krp  -= 0.001;
         Send_To_Arduino2(4.0, krp);        
         break;
       case 'n':
-        if( kri > 0.0 ) kri -= 0.005;
+        if( kri > 0.0 ) kri -= 0.001;
         Send_To_Arduino2(5.0, kri);        
         break;
       case 'm':
-        if( krd > 0.0 ) krd -= 0.005;
+        if( krd > 0.0 ) krd -= 0.001;
         Send_To_Arduino2(6.0, krd);        
         break;
         

@@ -14,9 +14,10 @@ from_processing;
 void SerialReceive()
 {
   Serial.readBytes( from_processing.asBytes, 8 );
+  Serial.flush();
 
   int cmd = (int)from_processing.asFloat[0];
-  if( cmd <= 13 ) {
+  if( cmd <= 16 ) {
     input_values[ cmd ] = from_processing.asFloat[1] ;
     
   } else {
@@ -29,8 +30,6 @@ void SerialReceive()
       
     }
   }
-
-  Serial.flush();  
 }
 
 
@@ -66,18 +65,18 @@ void SerialSend_YAW()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(pid_yw_stable.GetKp(), 3);   
+  Serial.print(pid_yw_stable.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_yw_stable.GetKi(), 3);   
+  Serial.print(pid_yw_stable.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_yw_stable.GetKd(), 3);   
+  Serial.print(pid_yw_stable.GetKd(), 4);   
   Serial.print(F(" "));
   
-  Serial.print(pid_yw_rat.GetKp(), 3);   
+  Serial.print(pid_yw_rat.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_yw_rat.GetKi(), 3);   
+  Serial.print(pid_yw_rat.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_yw_rat.GetKd(), 3);   
+  Serial.print(pid_yw_rat.GetKd(), 4);   
   Serial.print(F(" "));
 
   
@@ -136,18 +135,18 @@ void SerialSend_BD()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(pid_bd_stable.GetKp(), 3);   
+  Serial.print(pid_bd_stable.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_bd_stable.GetKi(), 3);   
+  Serial.print(pid_bd_stable.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_bd_stable.GetKd(), 3);   
+  Serial.print(pid_bd_stable.GetKd(), 4);   
   Serial.print(F(" "));
   
-  Serial.print(pid_bd_rat.GetKp(), 3);   
+  Serial.print(pid_bd_rat.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_bd_rat.GetKi(), 3);   
+  Serial.print(pid_bd_rat.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_bd_rat.GetKd(), 3);   
+  Serial.print(pid_bd_rat.GetKd(), 4);   
   Serial.print(F(" "));
 
   
@@ -200,18 +199,18 @@ void SerialSend_AC()
   Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(pid_ac_stable.GetKp(), 3);   
+  Serial.print(pid_ac_stable.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_ac_stable.GetKi(), 3);   
+  Serial.print(pid_ac_stable.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_ac_stable.GetKd(), 3);   
+  Serial.print(pid_ac_stable.GetKd(), 4);   
   Serial.print(F(" "));
    
-  Serial.print(pid_ac_rat.GetKp(), 3);   
+  Serial.print(pid_ac_rat.GetKp(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_ac_rat.GetKi(), 3);   
+  Serial.print(pid_ac_rat.GetKi(), 4);   
   Serial.print(F(" "));
-  Serial.print(pid_ac_rat.GetKd(), 3);   
+  Serial.print(pid_ac_rat.GetKd(), 4);   
   Serial.print(F(" "));
 
   
