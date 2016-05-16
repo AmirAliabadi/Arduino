@@ -508,7 +508,7 @@ void controlEvent(ControlEvent theEvent) {
   }   
 }
 
-float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0,yawKp=0,yawKi=0,yawKd=0,yawKpr=0,yawKir=0,yawKdr=0;
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;//,yawKp=0,yawKi=0,yawKd=0,yawKpr=0,yawKir=0,yawKdr=0;
 
 float cur_throttle ;
 void keyPressed() {
@@ -528,65 +528,6 @@ void keyPressed() {
         outputFileName = "";        
         break;
         
-      case '0':
-        if( yawKp < 10.0 ) yawKp += 0.05;
-        Send_To_Arduino2(7.0, yawKp);
-        break;
-      case 'p':
-        if( yawKp > 0.0 ) yawKp -= 0.05;
-        Send_To_Arduino2(7.0, yawKp);      
-        break;
-
-      case '-':
-        if( yawKi < 10.0 ) yawKi += 0.05;
-        Send_To_Arduino2(8.0, yawKi);
-        break;
-      case '[':
-        if( yawKi > 0.0 ) yawKi -= 0.05;
-        Send_To_Arduino2(8.0, yawKi);      
-        break;      
-
-      case '=':
-        if( yawKd < 10.0 ) yawKd += 0.05;
-        Send_To_Arduino2(9.0, yawKd);
-        break;
-      case ']':
-        if( yawKd > 0.0 ) yawKd -= 0.05;
-        Send_To_Arduino2(9.0, yawKd);      
-        break;      
-      
-
-/////
-
-      case 'k':
-        if( yawKpr < 10.0 ) yawKpr += 0.001;
-        Send_To_Arduino2(10.0, yawKpr);
-        break;
-      case ',':
-        if( yawKpr > 0.0 ) yawKpr -= 0.001;
-        Send_To_Arduino2(10.0, yawKpr);      
-        break;
-
-      case 'l':
-        if( yawKir < 10.0 ) yawKir += 0.001;
-        Send_To_Arduino2(11.0, yawKir);
-        break;
-      case '.':
-        if( yawKir > 0.0 ) yawKir -= 0.001;
-        Send_To_Arduino2(11.0, yawKir);      
-        break;      
-
-      case ';':
-        if( yawKdr < 10.0 ) yawKdr += 0.001;
-        Send_To_Arduino2(12.0, yawKdr);
-        break;
-      case '/':
-        if( yawKdr > 0.0 ) yawKdr -= 0.001;
-        Send_To_Arduino2(12.0, yawKdr);      
-        break;      
-
-////
-      
       case 'a':
         if(cur_throttle < 900.0) cur_throttle += 10.0;
         Send_To_Arduino2(0.0, cur_throttle);        
@@ -594,62 +535,67 @@ void keyPressed() {
       case 'z':
         if(cur_throttle > 0.0) cur_throttle -= 20.0;
         Send_To_Arduino2(0.0, cur_throttle);           
-        break;
-    
+        break;        
+        
+        ///
+        
       case '7':
         if( kp < 10.0) kp += 0.005;
-        Send_To_Arduino2(1.0, kp);        
-        break;
-      case '8':
-        if( ki < 10.0 ) ki += 0.005; 
-        Send_To_Arduino2(2.0, ki);        
-        break;
-      case '9':  
-        if( kd < 10.0 ) kd += 0.005; 
-        Send_To_Arduino2(3.0, kd);        
+        Send_To_Arduino2( (i_serial_data_mode == 2 ? 7.0 : 1.0), kp);        
         break;
       case 'u':
         if( kp > 0.0 ) kp -= 0.005; 
-        Send_To_Arduino2(1.0, kp);        
+        Send_To_Arduino2( (i_serial_data_mode == 2 ? 7.0 : 1.0), kp);        
+        break;        
+        
+      case '8':
+        if( ki < 10.0 ) ki += 0.005; 
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 8.0 : 2.0), ki);        
         break;
       case 'i':
         if( ki > 0.0 ) ki -= 0.005;
-        Send_To_Arduino2(2.0, ki);        
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 8.0 : 2.0), ki);        
+        break;        
+        
+      case '9':  
+        if( kd < 10.0 ) kd += 0.005; 
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 9.0 : 3.0), kd);        
         break;
       case 'o':
         if( kd > 0.0 ) kd -= 0.005;
-        Send_To_Arduino2(3.0, kd);        
-        break;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 9.0 : 3.0), kd);        
+        break;      
         
-      case 'g':
-        if( krp < 10.0 ) krp += 0.001;
-        Send_To_Arduino2(4.0, krp);        
-        break;
-      case 'h':
-        if( kri < 10.0 ) kri += 0.001;
-        Send_To_Arduino2(5.0, kri);        
-        break;
+        ////
+        
       case 'j':
-        if( krd < 10.0 ) krd += 0.001;
-        Send_To_Arduino2(6.0, krd);        
-        break;
-      case 'b':
-        if( krp > 0.0 ) krp  -= 0.001;
-        Send_To_Arduino2(4.0, krp);        
-        break;
-      case 'n':
-        if( kri > 0.0 ) kri -= 0.001;
-        Send_To_Arduino2(5.0, kri);        
+        if( krp < 10.0 ) krp += 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 10.0 : 4.0), krp);        
         break;
       case 'm':
-        if( krd > 0.0 ) krd -= 0.001;
-        Send_To_Arduino2(6.0, krd);        
-        break;
+        if( krp > 0.0 ) krp  -= 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 10.0 : 4.0), krp);        
+        break;        
         
+      case 'k':
+        if( kri < 10.0 ) kri += 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 11.0 : 5.0), kri);        
+        break;
+      case ',':
+        if( kri > 0.0 ) kri -= 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 11.0 : 5.0), kri);        
+        break;        
+        
+      case 'l':
+        if( krd < 10.0 ) krd += 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 12.0 : 6.0), krd);        
+        break;
+      case '.':
+        if( krd > 0.0 ) krd -= 0.001;
+        Send_To_Arduino2((i_serial_data_mode == 2 ? 12.0 : 6.0), krd);        
+        break;
     }
     last_throttle_position = cur_throttle;
-   
-    // Send_To_Arduino();
 }
 
 void Toggle_AM() {
@@ -704,98 +650,6 @@ void Send_To_Arduino2(float command, float value)
   justSent=true;  
 }
 
-void Send_To_Arduino2x(float command, float value)
-{
-  float[] toSend = new float[2]; 
-  toSend[0] = command;
-  toSend[1] = value;
-  
-  byte[] bbb = new byte[toSend.length * 4];
-  byte [] dddd = floatArrayToByteArray(toSend);
-  for(int i=0; i< dddd.length; i++ )
-  {
-    bbb[i] = dddd[i];
-  }
-  if( myPort != null ) {
-    myPort.write(bbb);
-  }  
-  
-  println( bbb );
-  justSent=true;
-}
-
-// Sending Floating point values to the arduino
-// is a huge pain.  if anyone knows an easier
-// way please let know.  the way I'm doing it:
-// - Take the 6 floats we need to send and
-//   put them in a 6 member float array.
-// - using the java ByteBuffer class, convert
-//   that array to a 24 member byte array
-// - send those bytes to the arduino
-/*
-void Send_To_Arduinox()
-{
-  float[] toSend = new float[11];
-
-  toSend[0] = float(SPField.getText());
-  toSend[1] = 0.0; //float(InField.getText());
-  toSend[2] = i_serial_data_mode; //float(OutField.getText());
-  
-  toSend[3] = kp;
-  toSend[4] = ki;
-  toSend[5] = kd;
-  
-  toSend[6] = krp;
-  toSend[7] = kri;
-  toSend[8] = krd;
-  
-  toSend[9] = last_throttle_position;
-  toSend[10] = last_throttle_position;
-  
-  
-  byte a = (AMLabel.get().getText()=="Manual")?(byte)0:(byte)1;
-  byte d = (DRLabel.get().getText()=="Dir")?(byte)0:(byte)1;
-  byte dr = (DRrLabel.get().getText()=="Dir")?(byte)0:(byte)1;
-  
-  //println(i_tuning_mode);
-  //println(i_serial_data_mode);
-  
-  byte pid_tuning = i_tuning_mode ; 
-  
-  byte serial_send_mode = i_serial_data_mode;
-  
-  byte[] bbb = new byte[toSend.length * 4 + 5];
-  
-  bbb[0] = a;
-  bbb[1] = d;
-  bbb[2] = dr;
-  bbb[3] = pid_tuning;
-  bbb[4] = serial_send_mode;
-  
-  byte [] dddd = floatArrayToByteArray(toSend);
-  for(int i=0; i< dddd.length; i++ )
-  {
-    bbb[i+5] = dddd[i];
-  }
-  if( myPort != null ) {
-    myPort.write(bbb);
-  }
-  
-  println( bbb );
-  
-  justSent=true;
-} 
-
-byte[] FloatArray2ByteArray(float[] values)
-{
-  ByteBuffer buffer = ByteBuffer.allocate(4 * values.length);
-  
-  for (float value : values){
-      buffer.putFloat(value);
-  }
-  return buffer.array();
-}
-*/
 byte[] floatArrayToByteArray(float[] input)
 {
   int len = 4*input.length;
