@@ -677,7 +677,7 @@ void serialEvent(Serial myPort)
   
   String read = myPort.readStringUntil(10);
   
-  // print(read);
+  print(read);
   
   if(outputFileName!="") output.print(str(millis())+ " " + read);
   String[] s = split(read, " ");
