@@ -97,7 +97,7 @@ void init_pid()
 
   update_pid_settings();
 
-  for(byte i=YW; i<AC; i++ ) {  
+  for(byte i=YW; i<=AC; i++ ) {  
     pid_stable[i].SetOutputLimits(-300, 300);
     pid_rate[i].SetOutputLimits(-300, 300);
       
@@ -116,7 +116,7 @@ void init_pid()
 
 void pid_off()
 {
-  for(byte i=YW; i<AC; i++ ) {  
+  for(byte i=YW; i<=AC; i++ ) {  
     pid_stable[i].SetMode(MANUAL);
     pid_rate[i].SetMode(MANUAL);
   }  

@@ -84,20 +84,20 @@ void attitude_process()
       return;
   }
 
+  // Update the Stable PID input values
+  input_ypr[YW] = ypr[YW];
+  input_ypr[BD] = ypr[BD];
+  input_ypr[AC] = ypr[AC];
+
+  input_gyro[YW] = gyro.z*-1.0;
+  input_gyro[BD] = gyro.y*-1.0;
+  input_gyro[AC] = gyro.x;
+
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
     // update_pid_settings();
-
-    // Update the Stable PID input values
-    input_ypr[YW] = ypr[YW];
-    input_ypr[AC] = ypr[AC];
-    input_ypr[BD] = ypr[BD];
-
-    input_gyro[YW] = gyro.z*-1.0;
-    input_gyro[BD] = gyro.y*-1.0;
-    input_gyro[AC] = gyro.x;
 
     pid_stable[YW].Compute();  pid_rate[YW].Compute();
     pid_stable[BD].Compute();  pid_rate[BD].Compute();   
