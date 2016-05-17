@@ -94,68 +94,32 @@ with the full quad!
 void init_pid()
 {
   Serial.println("#init pid...");
+
+  update_pid_settings();
+
+  for(byte i=YW; i<AC; i++ ) {  
+    pid_stable[i].SetOutputLimits(-300, 300);
+    pid_rate[i].SetOutputLimits(-300, 300);
+      
+    pid_stable[i].SetOutputLimits(-300, 300);
+    pid_rate[i].SetOutputLimits(-300, 300);
   
-  //turn the PID on
-  pid_yw_stable.SetOutputLimits(-300, 300);
-  pid_yw_rat.SetOutputLimits(-300, 300);
+    pid_stable[i].SetSampleTime(10);
+    pid_rate[i].SetSampleTime(10);
     
-  pid_ac_stable.SetOutputLimits(-300, 300);
-  pid_bd_stable.SetOutputLimits(-300, 300);
-  pid_ac_rat.SetOutputLimits(-300, 300);
-  pid_bd_rat.SetOutputLimits(-300, 300);
-
-  pid_yw_stable.SetSampleTime(10);
-  pid_yw_rat.SetSampleTime(10);
-  
-  pid_ac_stable.SetSampleTime(10);
-  pid_bd_stable.SetSampleTime(10);
-  pid_ac_rat.SetSampleTime(10);
-  pid_bd_rat.SetSampleTime(10);
-
-  output_ypr[YW] = 0;
-  output_ypr[AC] = 0;
-  output_ypr[BD] = 0;
-
-  output_rate[YW] = 0;
-  output_rate[AC] = 0;
-  output_rate[BD] = 0;
-
-  pid_yw_stable.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D); 
-  pid_yw_rat.SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D); 
-  
-  pid_ac_stable.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-  pid_bd_stable.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-  pid_ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-  pid_bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-
-  pid_yw_stable.SetMode(AUTOMATIC);
-  pid_yw_rat.SetMode(AUTOMATIC);
-  pid_ac_stable.SetMode(AUTOMATIC);
-  pid_bd_stable.SetMode(AUTOMATIC);
-  pid_ac_rat.SetMode(AUTOMATIC);
-  pid_bd_rat.SetMode(AUTOMATIC);
+    pid_stable[i].SetMode(AUTOMATIC);
+    pid_rate[i].SetMode(AUTOMATIC);
+  }
 
   system_check |= INIT_PID_ON ;
 }
 
 void pid_off()
 {
-  output_ypr[AC] = 0.0;
-  output_ypr[BD] = 0.0;
-  output_ypr[YW] = 0.0;
-
-  output_rate[YW] = 0.0;
-  output_rate[AC] = 0.0;
-  output_rate[BD] = 0.0;
-
-  //turn the PID off
-  pid_yw_stable.SetMode(MANUAL);
-  pid_ac_stable.SetMode(MANUAL);
-  pid_bd_stable.SetMode(MANUAL);
-  pid_ac_rat.SetMode(MANUAL);
-  pid_bd_rat.SetMode(MANUAL);
-  pid_yw_rat.SetMode(MANUAL);
-  
+  for(byte i=YW; i<AC; i++ ) {  
+    pid_stable[i].SetMode(MANUAL);
+    pid_rate[i].SetMode(MANUAL);
+  }  
 
   system_check &= ~INIT_PID_ON ;
 }
@@ -173,13 +137,13 @@ void update_pid_settings()
 
     ///////////////////////////////////////////////////
     // 
-    pid_ac_stable.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-    pid_bd_stable.SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-    pid_ac_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-    pid_bd_rat.SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+    pid_stable[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
+    pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+    pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
 
-    pid_yw_stable.SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);
-    pid_yw_rat.SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
+    pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
+    pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+    pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     //
     //////////////////////////////////////////////////
 }

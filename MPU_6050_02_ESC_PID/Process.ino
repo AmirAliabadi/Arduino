@@ -88,7 +88,7 @@ void attitude_process()
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
-    update_pid_settings();
+    // update_pid_settings();
 
     // Update the Stable PID input values
     input_ypr[YW] = ypr[YW];
@@ -96,12 +96,12 @@ void attitude_process()
     input_ypr[BD] = ypr[BD];
 
     input_gyro[YW] = gyro.z*-1.0;
-    input_gyro[AC] = gyro.x;
     input_gyro[BD] = gyro.y*-1.0;
+    input_gyro[AC] = gyro.x;
 
-    pid_yw_stable.Compute();  pid_yw_rat.Compute();
-    pid_ac_stable.Compute();  pid_ac_rat.Compute(); 
-    pid_bd_stable.Compute();  pid_bd_rat.Compute();   
+    pid_stable[YW].Compute();  pid_rate[YW].Compute();
+    pid_stable[BD].Compute();  pid_rate[BD].Compute();   
+    pid_stable[AC].Compute();  pid_rate[AC].Compute(); 
 
     //////////////////////////////
     // Motor Mix Algorithm       //

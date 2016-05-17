@@ -33,12 +33,15 @@ float input_values[17] = { 0,                     // thrust
 // 2.681 / 0 / 0 | 0.967 / 0.125 / 0.096                           
 
 #define INPUT_THRUST          input_values[0]
+
 #define INPUT_STB_PID_P       input_values[1]
 #define INPUT_STB_PID_I       input_values[2]
 #define INPUT_STB_PID_D       input_values[3]
+
 #define INPUT_RAT_PID_P       input_values[4]
 #define INPUT_RAT_PID_I       input_values[5]
 #define INPUT_RAT_PID_D       input_values[6]
+
 #define INPUT_YAW_PID_P       input_values[7]
 #define INPUT_YAW_PID_I       input_values[8]
 #define INPUT_YAW_PID_D       input_values[9]
@@ -122,14 +125,18 @@ float output_ypr[3]   = {0.0f, 0.0f, 0.0f};
 float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
 float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 
-// input / output /setpoit
-PID pid_yw_stable(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT);
-PID pid_ac_stable(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT);
-PID pid_bd_stable(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT);
- 
-PID pid_yw_rat(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT);
-PID pid_ac_rat(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT);
-PID pid_bd_rat(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT);
+// input / output /setpoint
+PID pid_stable[3]  = {
+  PID(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT),
+  PID(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT), 
+  PID(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT)
+};
+
+PID pid_rate[3] = {
+  PID(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT),
+  PID(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT),
+  PID(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT)
+};
 
 //
 ////////////////////////////////////////////////////////////////

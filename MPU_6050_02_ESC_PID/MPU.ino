@@ -55,9 +55,6 @@ void init_mpu()
       Serial.println(F("#Enabling DMP"));
       mpu.setDMPEnabled(true);
       
-      // enable Arduino interrupt detection
-      //Serial.println(F("#Enabling int detection"));
-      //attachInterrupt(0, dmpDataReady, RISING);
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -132,8 +129,8 @@ void read_mpu()
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
     ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
-    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
     ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
 
 /*
     if( system_check & INIT_MPU_STABLE )
