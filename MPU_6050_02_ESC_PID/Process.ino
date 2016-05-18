@@ -97,8 +97,6 @@ void attitude_process()
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
-    // update_pid_settings();
-
     pid_stable[YW].Compute();  pid_rate[YW].Compute();
     pid_stable[BD].Compute();  pid_rate[BD].Compute();   
     pid_stable[AC].Compute();  pid_rate[AC].Compute(); 

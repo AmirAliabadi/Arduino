@@ -21,7 +21,7 @@ float input_values[17] = { 0,                     // thrust
                            4.00,  0.00, 0.00,     // Stable Pitch/Role PID P/I/D // .89,0,.23
                            0.162,  0.00, 0.078,   // Rate Pitch/Role PID P/I/D
                            2.00,  0.00, 0.00,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
-                           0.11,  0.00, 0.001,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           0.11,  0.40, 0.001,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
@@ -204,11 +204,7 @@ void loop()
   read_throttle();
   if( aserial_data_mode == 0 ) read_setpoint(AC);
   else if( aserial_data_mode == 1 ) read_setpoint(BD);
-  else if( aserial_data_mode == 2 ) read_setpoint(YW);
-
-  read_pid_tunings(0);
-  //read_pid_tunings(1);
-  
+  else if( aserial_data_mode == 2 ) read_setpoint(YW);  
   read_battery_voltage();
   process();
 
