@@ -138,12 +138,13 @@ void update_pid_settings()
     ///////////////////////////////////////////////////
     // 
     pid_stable[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
-    pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
     pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+    pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+
 
     pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
-    pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+    pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     //
     //////////////////////////////////////////////////
 }
