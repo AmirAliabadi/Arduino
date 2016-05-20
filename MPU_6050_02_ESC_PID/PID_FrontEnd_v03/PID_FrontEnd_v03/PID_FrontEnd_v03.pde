@@ -185,7 +185,7 @@ void setup()
    throttle_slider = controlP5.addSlider("throttle")
      .setPosition(group_x,group_y)
      .setSize(20,100)
-     .setRange(0,800)
+     .setRange(0,1000)
      .setValue(0)
      ;         
          
