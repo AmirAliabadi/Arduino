@@ -93,7 +93,7 @@ with the full quad!
 
 void init_pid()
 {
-  Serial.println("#init pid...");
+  Serial.println("#init pid");
 
   update_pid_settings();
 
@@ -107,21 +107,29 @@ void init_pid()
     pid_stable[i].SetSampleTime(10);
     pid_rate[i].SetSampleTime(10);
     
-    pid_stable[i].SetMode(AUTOMATIC);
-    pid_rate[i].SetMode(AUTOMATIC);
   }
+
+  pid_mode(AUTOMATIC);
 
   system_check |= INIT_PID_ON ;
 }
 
-void pid_off()
+void pid_mode(int m)
 {
   for(byte i=YW; i<=AC; i++ ) {  
-    pid_stable[i].SetMode(MANUAL);
-    pid_rate[i].SetMode(MANUAL);
+    pid_stable[i].SetMode(m);
+    pid_rate[i].SetMode(m);
   }  
 
-  system_check &= ~INIT_PID_ON ;
+  //system_check &= ~INIT_PID_ON ;
+}
+
+void pid_reset() 
+{
+  for(byte i=YW; i<=AC; i++ ) {
+    pid_stable[i].Reset();
+    pid_rate[i].Reset();  
+  }
 }
 
 void update_pid_settings()

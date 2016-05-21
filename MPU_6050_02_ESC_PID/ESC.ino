@@ -5,7 +5,6 @@ void init_esc()
 
     if( system_check & INIT_THROTTLE_ZEROED )
     {
-      Serial.println(F("#Attaching motor pins"));
       esc_a.attach(MOTOR_PIN_A);
       esc_c.attach(MOTOR_PIN_C);
 //      esc_b.attach(MOTOR_PIN_B);

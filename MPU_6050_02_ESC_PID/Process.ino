@@ -120,7 +120,7 @@ void attitude_process()
   {
     va = vb = vc = vd = MIN_ESC_SIGNAL;
     
-    pid_off();
+    pid_reset(); //(MANUAL);
   }
 
   va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);

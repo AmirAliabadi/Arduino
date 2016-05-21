@@ -72,7 +72,7 @@ Serial myPort;
 ControlP5 controlP5;
 controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
 
-RadioButton serial_data_mode, tuning_mode;
+RadioButton serial_data_mode; //, tuning_mode;
 
 float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
 byte i_serial_data_mode, i_tuning_mode;
@@ -152,35 +152,19 @@ void setup()
    
   serial_data_mode = controlP5.addRadioButton("serial_data_mode_event")
          .setPosition(5,25)
-         .setSize(10,10)
+         .setSize(20,20)
          .setColorForeground(color(120))
          .setColorActive(color(255))
          .setColorLabel(color(255))
          .setItemsPerRow(3)
-         .setSpacingColumn(15)
+         .setSpacingColumn(25)
          .addItem("AC",0)
          .addItem("BD",1)
          .addItem("YAW",2)
          ;
          
   serial_data_mode.activate(0);          
-         
-  tuning_mode = controlP5.addRadioButton("tuning_mode_event")
-         .setPosition(5,5)
-         .setSize(10,10)
-         .setColorForeground(color(120))
-         .setColorActive(color(255))
-         .setColorLabel(color(255))
-         .setItemsPerRow(4)
-         .setSpacingColumn(33)
-         .addItem("Flight",0)
-         .addItem("Stable",1)
-         .addItem("Rate",2)
-         .addItem("Yaw",3)
-         ;   
-         
-  tuning_mode.activate(0);         
-         
+    
    group_x = 10; group_y=460;         
    throttle_slider = controlP5.addSlider("throttle")
      .setPosition(group_x,group_y)
@@ -224,8 +208,6 @@ void setup()
   controlP5.getController("vc").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
   controlP5.getController("vd").getValueLabel().align(ControlP5.TOP, ControlP5.TOP).setPaddingX(10);
    
-  controlP5.addButton("Send_To_Arduino",0.0,10,590,120,20);    
-
   AxisFont = loadFont("axis.vlw");
   TitleFont = loadFont("Titles.vlw");
  
@@ -473,42 +455,22 @@ void drawButtonArea()
 }
 
 void controlEvent(ControlEvent theEvent) {
-  
-  if(theEvent.isFrom(tuning_mode)) {
-    if( tuning_mode.getState(0) ) i_tuning_mode = (byte) 0;
-    else if( tuning_mode.getState(1) ) i_tuning_mode = (byte) 1;
-    else if( tuning_mode.getState(2) ) i_tuning_mode = (byte) 2;
-    else if( tuning_mode.getState(3) ) i_tuning_mode = (byte) 3;
-    //else i_tuning_mode = 0;   
     
-    if( tuning_mode.getState(0) ) Send_To_Arduino2(101.0, 0);
-    else if( tuning_mode.getState(1) ) Send_To_Arduino2(101.0, 1);
-    else if( tuning_mode.getState(2) ) Send_To_Arduino2(101.0, 2);
-    else if( tuning_mode.getState(3) ) Send_To_Arduino2(101.0, 3);    
-    
-    //Send_To_Arduino();
-    //Send_To_Arduino2(101.0, (float)i_tuning_mode);
-    
-    return;
-  } 
-  
   if(theEvent.isFrom(serial_data_mode)) {
     if( serial_data_mode.getState(0) ) i_serial_data_mode = (byte) 0;
     else if( serial_data_mode.getState(1) ) i_serial_data_mode = (byte) 1;
     else if( serial_data_mode.getState(2) ) i_serial_data_mode = (byte) 2;
-    //else i_serial_data_mode = 0;
+    else i_serial_data_mode = 0;
     
     if( serial_data_mode.getState(0) ) Send_To_Arduino2(100.0, 0.0);
     else if( serial_data_mode.getState(1) ) Send_To_Arduino2(100.0, 1.0);
     else if( serial_data_mode.getState(2) ) Send_To_Arduino2(100.0, 2.0);    
-    
-    //Send_To_Arduino2(100.0, (float)i_serial_data_mode);
-    
+        
     return;
   }   
 }
 
-float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;//,yawKp=0,yawKi=0,yawKd=0,yawKpr=0,yawKir=0,yawKdr=0;
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 
 float cur_throttle ;
 void keyPressed() {
@@ -642,11 +604,7 @@ void Send_To_Arduino2(float command, float value)
   if( myPort != null ) {
     myPort.write(floatArrayToByteArray(toSend));
   }    
-  
-  //println( FloatArray2ByteArray(toSend) );
-  //println( "----------" );
-  //println( floatArrayToByteArray(toSend) );
-  
+    
   justSent=true;  
 }
 
@@ -737,27 +695,27 @@ void serialEvent(Serial myPort)
     
     if( va > vc )
     {
-      int c = (int)abs(va-vc)*20;
+      int c = (int)abs(va-vc)*10;
       controlP5.getController("va").setColorForeground(color(c, 0, 255));
-      controlP5.getController("vc").setColorForeground(color(0, 0, 255));    
+      controlP5.getController("vc").setColorForeground(color(0, 0, 255-c));    
     }
     else
     {
-      int c = (int)abs(va-vc)*20;
-      controlP5.getController("va").setColorForeground(color(0, 0, 255));
+      int c = (int)abs(va-vc)*10;
+      controlP5.getController("va").setColorForeground(color(0, 0, 255-c));
       controlP5.getController("vc").setColorForeground(color(c, 0, 255));  
     }
     
     if( vb > vd )
     {
-      int c = (int)abs(vb-vd)*20;      
+      int c = (int)abs(vb-vd)*10;      
       controlP5.getController("vb").setColorForeground(color(c, 0, 255));
-      controlP5.getController("vd").setColorForeground(color(0, 0, 255));    
+      controlP5.getController("vd").setColorForeground(color(0, 0, 255-c));    
     }
     else
     {
-      int c = (int)abs(vb-vd)*20;
-      controlP5.getController("vb").setColorForeground(color(0, 0, 255));
+      int c = (int)abs(vb-vd)*10;
+      controlP5.getController("vb").setColorForeground(color(0, 0, 255-c));
       controlP5.getController("vd").setColorForeground(color(c, 0, 255));  
     }    
 
