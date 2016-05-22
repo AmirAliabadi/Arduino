@@ -254,24 +254,26 @@ void Toggle_AM() {
 */
 
 void Toggle_DR() {
-  if(DRLabel.get().getText()=="Dir") 
+  if(DRCurrent.get().getText().equals("D")) 
   {
-    DRLabel.setValue("Rev");
+    Send_To_Arduino2( 101, 1.0);        
   }
   else
   {
-    DRLabel.setValue("Dir");   
+    Send_To_Arduino2( 101, 0.0);
   }
 }
 
 void Toggle_DRR() {
-  if(DRrLabel.get().getText()=="Dir") 
+  println(DRrCurrent.get().getText());    
+
+  if(DRrCurrent.get().getText().equals("D")) 
   {
-    DRrLabel.setValue("Rev");
+    Send_To_Arduino2( 102, 1.0);        
   }
   else
   {
-    DRrLabel.setValue("Dir");   
+    Send_To_Arduino2( 102, 0.0);        
   }
 }
 

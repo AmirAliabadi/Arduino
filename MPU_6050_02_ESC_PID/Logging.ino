@@ -24,9 +24,10 @@ void SerialReceive()
         aserial_data_mode = (int)from_processing.asFloat[1];
               
       } else if (cmd == 101) {
+        pid_stable[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
         
       } else if (cmd == 102) {
-        
+        pid_rate[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
       }
     }
   }
@@ -80,14 +81,14 @@ void SerialSend(byte mode)
   Serial.print(F(" "));
 
   
-  if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("Automatic"));
-  else Serial.print(F("Manual"));  
+  if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
+  else Serial.print(F("M"));  
   Serial.print(F(" "));
-  if(pid_stable[mode].GetDirection()==DIRECT) Serial.print(F("Dir"));
-  else Serial.print(F("Rev"));
+  if(pid_stable[mode].GetDirection()==DIRECT) Serial.print(F("D"));
+  else Serial.print(F("R"));
   Serial.print(F(" "));
-  if(pid_rate[mode].GetDirection()==DIRECT) Serial.print(F("Dir"));
-  else Serial.print(F("Rev"));  
+  if(pid_rate[mode].GetDirection()==DIRECT) Serial.print(F("D"));
+  else Serial.print(F("R"));  
   Serial.print(F(" "));
   
   Serial.print(va); Serial.print(F(" "));
