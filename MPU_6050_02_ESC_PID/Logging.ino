@@ -13,24 +13,24 @@ from_processing;
 
 void SerialReceive()
 {
-  Serial.readBytes( from_processing.asBytes, 8 );
-  Serial.flush();
-
-  int cmd = (int)from_processing.asFloat[0];
-  if( cmd <= 16 ) {
-    input_values[ cmd ] = from_processing.asFloat[1] ;
-    update_pid_settings();
-    
-  } else {
-    if(cmd == 100) {
-      aserial_data_mode = (int)from_processing.asFloat[1];
-            
-    } else if (cmd == 101) {
+  if( Serial.readBytes( from_processing.asBytes, 8 ) == 8 ) {
+    int cmd = (int)from_processing.asFloat[0];
+    if( cmd <= 16 ) {
+      input_values[ cmd ] = from_processing.asFloat[1] ;
+      update_pid_settings();
       
-    } else if (cmd == 102) {
-      
+    } else {
+      if(cmd == 100) {
+        aserial_data_mode = (int)from_processing.asFloat[1];
+              
+      } else if (cmd == 101) {
+        
+      } else if (cmd == 102) {
+        
+      }
     }
   }
+  Serial.flush();
 }
 
 void SerialSend(byte mode)

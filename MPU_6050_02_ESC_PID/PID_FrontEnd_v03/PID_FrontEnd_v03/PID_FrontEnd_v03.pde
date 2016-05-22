@@ -21,6 +21,9 @@ import controlP5.*;
 
 float last_throttle_position = 0;
 
+float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
+float cur_throttle ;
+
 /***********************************************
  * User spcification section
  **********************************************/
@@ -40,8 +43,9 @@ float displayFactor = 1; //display Time as Milliseconds
 //float displayFactor = 1000; //display Time as Seconds
 //float displayFactor = 60000; //display Time as Minutes
 
-String outputFileName = ""; // if you'd like to output data to 
+// if you'd like to output data to 
 // a file, specify the path here
+String outputFileName = ""; 
 
 /***********************************************
  * end user spec
@@ -78,7 +82,8 @@ float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Outpu
 byte i_serial_data_mode, i_tuning_mode;
 float va,vb,vc,vd;
 
-controlP5.Textlabel AMLabel, AMCurrent; 
+// controlP5.Textlabel AMLabel, AMCurrent; 
+
 controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
@@ -103,6 +108,7 @@ void setup()
     myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
     myPort.bufferUntil(10);         //   the Arduino
   }
+  
   controlP5 = new ControlP5(this);                                    // * Initialize the various
   
   SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
@@ -116,9 +122,9 @@ void setup()
   DrField = controlP5.addTextfield("Krd",110,375,60,20);
   
   
-  AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
-  AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
-  AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
+  //AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
+  //AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
+  //AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
   
   group_x = 80; group_y=140;
   controlP5.addTextlabel("t1","Throttle",group_x-80,group_y);
@@ -215,244 +221,6 @@ void setup()
   if (outputFileName!="") output = createWriter(outputFileName);
 }
 
-void draw()
-{
-  background(200);
-  drawGraph();
-  drawButtonArea();
-}
-
-void drawGraph()
-{
-  //draw Base, gridlines
-  stroke(0);
-  fill(230);
-  rect(ioLeft, inputTop,ioWidth-1 , inputHeight);
-  rect(ioLeft, outputTop, ioWidth-1, outputHeight);
-  stroke(210);
-
-  //Section Titles
-  textFont(TitleFont);
-  fill(255);
-  text("PID Input / Setpoint",(int)ioLeft+10,(int)inputTop-5);
-  text("PID Output",(int)ioLeft+10,(int)outputTop-5);
-
-
-//  //GridLines and Titles
-  textFont(AxisFont);
-  
-  //horizontal grid lines
-  int interval = (int)inputHeight/5;
-  for(int i=0;i<6;i++)
-  {
-    if(i>0&&i<5) line(ioLeft+1,inputTop+i*interval,ioRight-2,inputTop+i*interval);
-    text(str((InScaleMax-InScaleMin)/5*(float)(5-i)+InScaleMin),ioRight+5,inputTop+i*interval+4);
-
-  }
- interval = (int)outputHeight/5;
- for(int i=0;i<6;i++)
- {
-   if(i>0&&i<5) line(ioLeft+1,outputTop+i*interval,ioRight-2,outputTop+i*interval);
-   text(str((OutScaleMax-OutScaleMin)/5*(float)(5-i)+OutScaleMin),ioRight+5,outputTop+i*interval+4);
- }
-
-
-//  //vertical grid lines and TimeStamps
-//  int elapsedTime = millis();
-//  interval = (int)ioWidth/vertCount;
-//  int shift = elapsedTime*(int)ioWidth / windowSpan;
-//  shift %=interval;
-
-//  int iTimeInterval = windowSpan/vertCount;
-//  float firstDisplay = (float)(iTimeInterval*(elapsedTime/iTimeInterval))/displayFactor;
-//  float timeInterval = (float)(iTimeInterval)/displayFactor;
-//  for(int i=0;i<vertCount;i++)
-//  {
-//    int x = (int)ioRight-shift-2-i*interval;
-
-//    line(x,inputTop+1,x,inputTop+inputHeight-1);
-//    line(x,outputTop+1,x,outputTop+outputHeight-1);    
-
-//    float t = firstDisplay-(float)i*timeInterval;
-//    if(t>=0)  text(str(t),x,outputTop+outputHeight+10);
-//  }
-
-
-  // add the latest data to the data Arrays.  the values need
-  // to be massaged to get them to graph correctly.  they 
-  // need to be scaled to fit where they're going, and 
-  // because 0, 0 is the top left, we need to flip the values.
-  // this is easier than having the user stand on their head
-  // to read the graph.
-  if(millis() > nextRefresh && madeContact)
-  {
-    nextRefresh += refreshRate;
-
-    for(int i=nPoints-1;i>0;i--)
-    {
-      InputData[0][i]=InputData[0][i-1] ;
-      InputData[1][i]=InputData[1][i-1] ;
-      InputData[2][i]=InputData[2][i-1] ;
-      //SetpointData[i]=SetpointData[i-1] ;
-      OutputData[0][i]=OutputData[0][i-1] ;
-      OutputData[1][i]=OutputData[1][i-1] ;
-    }
-    if (nPoints < arrayLength) nPoints++;
-
-    //InputData[0][0] = int(inputHeight)-int(inputHeight*(Input_Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
-    InputData[0][0] = int(inputHeight)-int(inputHeight*(Output_gyro-InScaleMin)/(InScaleMax-InScaleMin));
-    
-    InputData[1][0] = int(inputHeight)-int(inputHeight*(Input_gyro-InScaleMin)/(InScaleMax-InScaleMin));
-    InputData[2][0] = int(inputHeight)-int(inputHeight*(Input_angle-InScaleMin)/(InScaleMax-InScaleMin));    
-    //SetpointData[0] =int( inputHeight)-int(inputHeight*(Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
-    OutputData[0][0] = int(outputHeight)-int(outputHeight*(Output_angle-OutScaleMin)/(OutScaleMax-OutScaleMin));
-    OutputData[1][0] = int(outputHeight)-int(outputHeight*(Output_gyro-OutScaleMin)/(OutScaleMax-OutScaleMin));
-  }
-  //draw lines for the input, setpoint, and output
-  strokeWeight(2);
-
-  for(int i=0; i<nPoints-2; i++)
-  {
-      int X1 = int(ioRight-2-float(i)*pointWidth);
-      int X2 = int(ioRight-2-float(i+1)*pointWidth);
-      boolean y1Above, y1Below, y2Above, y2Below;
-      boolean drawLine=false;    
-      int Y1, Y2;
-  
-    for( int iii = 0; iii<3; iii ++ ) {  
-      //DRAW THE INPUT
-      drawLine=true;
-      if( iii == 0 )stroke(255, 0, 0 );
-      else if (iii == 1 ) stroke(0,255,255);
-      else stroke(255,0,255);
-      
-      Y1 = InputData[iii][i];
-      Y2 = InputData[iii][i+1];
-  
-      y1Above = (Y1>inputHeight);                     // if both points are outside 
-      y1Below = (Y1<0);                               // the min or max, don't draw the 
-      y2Above = (Y2>inputHeight);                     // line.  if only one point is 
-      y2Below = (Y2<0);                               // outside constrain it to the limit, 
-      if(y1Above)                                     // and leave the other one untouched.
-      {                                               //
-        if(y2Above) drawLine=false;                   //
-        else if(y2Below) {                            //
-          Y1 = (int)inputHeight;                      //
-          Y2 = 0;                                     //
-        }                                             //
-        else Y1 = (int)inputHeight;                   //
-      }                                               //
-      else if(y1Below)                                //
-      {                                               //
-        if(y2Below) drawLine=false;                   //
-        else if(y2Above) {                            //
-          Y1 = 0;                                     //
-          Y2 = (int)inputHeight;                      //
-        }                                             //
-        else Y1 = 0;                                  //
-      }                                               //
-      else                                            //
-      {                                               //
-        if(y2Below) Y2 = 0;                           //
-        else if(y2Above) Y2 = (int)inputHeight;       //
-      }                                               //
-  
-      if(drawLine)
-      {
-        line(X1,Y1+inputTop, X2, Y2+inputTop);
-      }
-    }
-
-/*
-    //DRAW THE SETPOINT
-    drawLine=true;
-    stroke(0,255,0);
-    Y1 = SetpointData[i];
-    Y2 = SetpointData[i+1];
-
-    y1Above = (Y1>(int)inputHeight);                // if both points are outside 
-    y1Below = (Y1<0);                               // the min or max, don't draw the 
-    y2Above = (Y2>(int)inputHeight);                // line.  if only one point is 
-    y2Below = (Y2<0);                               // outside constrain it to the limit, 
-    if(y1Above)                                     // and leave the other one untouched.
-    {                                               //
-      if(y2Above) drawLine=false;                   //
-      else if(y2Below) {                            //
-        Y1 = (int)(inputHeight);                    //
-        Y2 = 0;                                     //
-      }                                             //
-      else Y1 = (int)(inputHeight);                 //
-    }                                               //
-    else if(y1Below)                                //
-    {                                               //
-      if(y2Below) drawLine=false;                   //
-      else if(y2Above) {                            //
-        Y1 = 0;                                     //
-        Y2 = (int)(inputHeight);                    //
-      }                                             //
-      else Y1 = 0;                                  //
-    }                                               //
-    else                                            //
-    {                                               //
-      if(y2Below) Y2 = 0;                           //
-      else if(y2Above) Y2 = (int)(inputHeight);     //
-    }                                               //
-
-    if(drawLine)
-    {
-      line(X1, Y1+inputTop, X2, Y2+inputTop);
-    }
-*/
-    //DRAW THE OUTPUT
-    for( int iii = 0; iii<2; iii ++ ) {
-      drawLine=true;
-      stroke(255*iii,0,255);
-      Y1 = OutputData[iii][i];
-      Y2 = OutputData[iii][i+1];
-  
-      y1Above = (Y1>outputHeight);                   // if both points are outside 
-      y1Below = (Y1<0);                              // the min or max, don't draw the 
-      y2Above = (Y2>outputHeight);                   // line.  if only one point is 
-      y2Below = (Y2<0);                              // outside constrain it to the limit, 
-      if(y1Above)                                    // and leave the other one untouched.
-      {                                              //
-        if(y2Above) drawLine=false;                  //
-        else if(y2Below) {                           //
-          Y1 = (int)outputHeight;                    //
-          Y2 = 0;                                    //
-        }                                            //
-        else Y1 = (int)outputHeight;                 //
-      }                                              //
-      else if(y1Below)                               //
-      {                                              //
-        if(y2Below) drawLine=false;                  //
-        else if(y2Above) {                           //
-          Y1 = 0;                                    //
-          Y2 = (int)outputHeight;                    //
-        }                                            //  
-        else Y1 = 0;                                 //
-      }                                              //
-      else                                           //
-      {                                              //
-        if(y2Below) Y2 = 0;                          //
-        else if(y2Above) Y2 = (int)outputHeight;     //
-      }                                              //
-  
-      if(drawLine)
-      {
-        line(X1, outputTop + Y1, X2, outputTop + Y2);
-      }
-    }
-  }
-  strokeWeight(1);
-}
-
-void drawButtonArea()
-{
-  stroke(0);
-  fill(100);
-  rect(0, 0, ioLeft, windowHeight);
-}
 
 void controlEvent(ControlEvent theEvent) {
     
@@ -470,96 +238,8 @@ void controlEvent(ControlEvent theEvent) {
   }   
 }
 
-float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 
-float cur_throttle ;
-void keyPressed() {
-    switch(key) {
-      case ' ':
-        cur_throttle = 0.0;
-        Send_To_Arduino2(0.0, cur_throttle);         
-        break;
-      case 'w':
-        outputFileName = "c:\\temp\\drone_" + year()+month()+day()+hour()+minute()+second()+".txt";
-        output = createWriter(outputFileName);
-        output.println("t S selected.pot.tuning_serial.data.mode INPUT_THRUST SETPOINT inputgyro inputypr outputypr outputrate kp ki kd rKp rKi rKd A/M D/R rD/R va vb vc vd E");        
-        break;
-      case 'e':
-        output.flush(); // Writes the remaining data to the file
-        output.close(); // Finishes the file
-        outputFileName = "";        
-        break;
-        
-      case 'a':
-        if(cur_throttle < 900.0) cur_throttle += 10.0;
-        Send_To_Arduino2(0.0, cur_throttle);        
-        break;
-      case 'z':
-        if(cur_throttle > 0.0) cur_throttle -= 20.0;
-        Send_To_Arduino2(0.0, cur_throttle);           
-        break;        
-        
-        ///
-        
-      case '7':
-        if( kp < 10.0) kp += 0.005;
-        Send_To_Arduino2( (i_serial_data_mode == 2 ? 7.0 : 1.0), kp);        
-        break;
-      case 'u':
-        if( kp > 0.0 ) kp -= 0.005; 
-        Send_To_Arduino2( (i_serial_data_mode == 2 ? 7.0 : 1.0), kp);        
-        break;        
-        
-      case '8':
-        if( ki < 10.0 ) ki += 0.005; 
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 8.0 : 2.0), ki);        
-        break;
-      case 'i':
-        if( ki > 0.0 ) ki -= 0.005;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 8.0 : 2.0), ki);        
-        break;        
-        
-      case '9':  
-        if( kd < 10.0 ) kd += 0.005; 
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 9.0 : 3.0), kd);        
-        break;
-      case 'o':
-        if( kd > 0.0 ) kd -= 0.005;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 9.0 : 3.0), kd);        
-        break;      
-        
-        ////
-        
-      case 'j':
-        if( krp < 10.0 ) krp += 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 10.0 : 4.0), krp);        
-        break;
-      case 'm':
-        if( krp > 0.0 ) krp  -= 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 10.0 : 4.0), krp);        
-        break;        
-        
-      case 'k':
-        if( kri < 10.0 ) kri += 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 11.0 : 5.0), kri);        
-        break;
-      case ',':
-        if( kri > 0.0 ) kri -= 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 11.0 : 5.0), kri);        
-        break;        
-        
-      case 'l':
-        if( krd < 10.0 ) krd += 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 12.0 : 6.0), krd);        
-        break;
-      case '.':
-        if( krd > 0.0 ) krd -= 0.001;
-        Send_To_Arduino2((i_serial_data_mode == 2 ? 12.0 : 6.0), krd);        
-        break;
-    }
-    last_throttle_position = cur_throttle;
-}
-
+/*
 void Toggle_AM() {
   
   if(AMLabel.get().getText()=="Manual") 
@@ -571,7 +251,7 @@ void Toggle_AM() {
     AMLabel.setValue("Manual");   
   }
 }
-
+*/
 
 void Toggle_DR() {
   if(DRLabel.get().getText()=="Dir") 
@@ -621,131 +301,4 @@ byte[] floatArrayToByteArray(float[] input)
     for(int j=0;j<4;j++) out[j+i*4]=b[3-j];
   }
   return out;
-}
-
-
-//take the string the arduino sends us and parse it
-void serialEvent(Serial myPort)
-{
-// S thrust _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder _ dir/inder E
-// S 0_0 0.00 0.00 0.00 0.15 0.00 0.00 3.000 0.000 0.000 0.960 0.000 0.096 Manual Dir Dir 1100 1100 1100 1100 E
-
-// HEADER
-// t S selected.pot.tuning_serial.data.mode INPUT_THRUST SETPOINT inputgyro inputypr outputypr outputrate kp ki kd rKp rKi rKd A/M D/R rD/R va vb vc vd E
-  
-  String read = myPort.readStringUntil(10);
-  
-  print(read);
-  
-  if(outputFileName!="") output.print(str(millis())+ " " + read);
-  String[] s = split(read, " ");
-
-  if (s.length == 22)
-  {
-    if(! trim(s[0]).equals("S") ) return;
-    if(! trim(s[21]).equals("E") ) return;
-    
-    Input_Thrust = float(trim(s[2])); 
-    Input_Setpoint = float(trim(s[3]));
-    Input_gyro = float(trim(s[4]));
-    Input_angle = float(trim(s[5]));
-    
-    Output_angle = float(trim(s[6]));
-    Output_gyro = float(trim(s[7]));
-    
-    cur_throttle = (int)float(trim(s[2]));
-    InputThrustLabel.setValue(trim(s[2]));
-    throttle_slider.setValue( float(trim(s[2])) );
-    
-    InputSetpointLabel.setValue(trim(s[3]));
-    InputGyroLabel.setValue(trim(s[4])); 
-    InputAngleLabel.setValue(trim(s[5]));
-    
-    AngleOutLabel.setValue(trim(s[6])); 
-    GyroOutLabel.setValue(trim(s[7]));
-    
-    kp = float(trim(s[8]));
-    ki = float(trim(s[9]));
-    kd = float(trim(s[10]));
-    krp = float(trim(s[11]));
-    kri = float(trim(s[12]));
-    krd = float(trim(s[13]));
-
-    PLabel.setValue(Float.toString(kp));
-    ILabel.setValue(Float.toString(ki)); 
-    DLabel.setValue(Float.toString(kd)); 
-    
-    PrLabel.setValue(Float.toString(krp));  
-    IrLabel.setValue(Float.toString(kri));
-    DrLabel.setValue(Float.toString(krd)); 
-    
-    AMCurrent.setValue(trim(s[14]));
-    DRCurrent.setValue(trim(s[15]));
-    DRrCurrent.setValue(trim(s[16]));
-    
-    va = float(trim(s[17]));
-    vb = float(trim(s[18]));
-    vc = float(trim(s[19]));
-    vd = float(trim(s[20]));
-    
-    controlP5.getController("va").setValue(va);
-    controlP5.getController("vb").setValue(vb);
-    controlP5.getController("vc").setValue(vc);
-    controlP5.getController("vd").setValue(vd);
-    
-    if( va > vc )
-    {
-      int c = (int)abs(va-vc)*10;
-      controlP5.getController("va").setColorForeground(color(c, 0, 255));
-      controlP5.getController("vc").setColorForeground(color(0, 0, 255-c));    
-    }
-    else
-    {
-      int c = (int)abs(va-vc)*10;
-      controlP5.getController("va").setColorForeground(color(0, 0, 255-c));
-      controlP5.getController("vc").setColorForeground(color(c, 0, 255));  
-    }
-    
-    if( vb > vd )
-    {
-      int c = (int)abs(vb-vd)*10;      
-      controlP5.getController("vb").setColorForeground(color(c, 0, 255));
-      controlP5.getController("vd").setColorForeground(color(0, 0, 255-c));    
-    }
-    else
-    {
-      int c = (int)abs(vb-vd)*10;
-      controlP5.getController("vb").setColorForeground(color(0, 0, 255-c));
-      controlP5.getController("vd").setColorForeground(color(c, 0, 255));  
-    }    
-
-    if(justSent)                     
-    {                                
-      //SPField.setText(trim(s[2]));
-      //InField.setText(trim(s[2]));
-      //OutField.setText(trim(s[3]));
-      /*
-      PField.setValue(Float.toString(kp));
-      IField.setValue(Float.toString(ki)); 
-      DField.setValue(Float.toString(kd)); 
-      
-      PrField.setValue(Float.toString(krp));  
-      IrField.setValue(Float.toString(kri));
-      DrField.setValue(Float.toString(krd));    
-      */
-      
-      AMLabel.setValue(trim(s[14]));
-
-      DRCurrent.setValue(trim(s[15]));
-      DRrCurrent.setValue(trim(s[16]));
-
-      justSent=false;
-    } 
-
-    if(!madeContact) madeContact=true;
-  }else {
-      
-      print(read);
-      
-    }
 }
