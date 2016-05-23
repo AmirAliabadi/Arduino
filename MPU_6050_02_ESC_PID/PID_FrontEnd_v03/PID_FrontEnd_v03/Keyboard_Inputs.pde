@@ -82,6 +82,16 @@ void keyPressed() {
         if( krd > 0.0 ) krd -= 0.001;
         Send_To_Arduino2((i_serial_data_mode == 2 ? 12.0 : 6.0), krd);        
         break;
+      
+      case '5':
+        alpha += 0.01;
+        Send_To_Arduino2(200.0, alpha);
+        break;
+      case 't':
+        alpha -= 0.01;
+        Send_To_Arduino2(200.0, alpha);
+        break;
+        
     }
     last_throttle_position = cur_throttle;
 }

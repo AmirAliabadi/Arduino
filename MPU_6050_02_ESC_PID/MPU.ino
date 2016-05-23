@@ -120,7 +120,6 @@ void read_mpu()
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
-    #define alpha 0.2
     gyro.x = gyro1.x * alpha + (gyro.x * (1.0 - alpha));
     gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
     gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 

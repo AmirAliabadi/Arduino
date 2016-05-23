@@ -13,6 +13,8 @@
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
+float alpha = 0.8;
+
 #define DEBUG
 
 ///////////////////////////////////

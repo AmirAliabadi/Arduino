@@ -11,11 +11,11 @@ void serialEvent(Serial myPort)
     
   if(outputFileName!="") output.print(str(millis())+ " " + read);
   String[] s = split(read, " ");
-
-  if (s.length == 22)
+  
+  if (s.length == 23)
   {
-    if(! trim(s[0]).equals("S") ) {print(read); return;}
-    if(! trim(s[21]).equals("E") ) {print(read); return;}
+    if(! trim(s[0]).equals("S") )  {print(read); return;}
+    if(! trim(s[22]).equals("E") ) {print(read); return;}
     
     print(read);
     
@@ -61,6 +61,9 @@ void serialEvent(Serial myPort)
     vb = float(trim(s[18]));
     vc = float(trim(s[19]));
     vd = float(trim(s[20]));
+    
+    alpha = float(trim(s[21]));
+    AlphaLable.setValue(trim(s[21]));
     
     controlP5.getController("va").setValue(va);
     controlP5.getController("vb").setValue(vb);

@@ -26,8 +26,12 @@ void SerialReceive()
       } else if (cmd == 101) {
         pid_stable[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
         
-      } else if (cmd == 102) {
+      } else if (cmd == 102) { 
         pid_rate[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
+        
+      } else if (cmd == 200) {
+        alpha = from_processing.asFloat[1];
+        
       }
     }
   }
@@ -36,7 +40,7 @@ void SerialReceive()
 
 void SerialSend(byte mode)
 {
-// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/inder
+// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/r _ va _ vb _ vc _ vd _ alpha
 
   Serial.print(F("S "));
   Serial.print(selected_pot_tuning);
@@ -95,6 +99,8 @@ void SerialSend(byte mode)
   Serial.print(vb); Serial.print(F(" "));
   Serial.print(vc); Serial.print(F(" "));
   Serial.print(vd); Serial.print(F(" "));
+
+  Serial.print(alpha); Serial.print(F(" "));
 
   Serial.println(F("E"));
     

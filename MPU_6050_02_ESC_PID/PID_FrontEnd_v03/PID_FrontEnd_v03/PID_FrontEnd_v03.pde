@@ -23,6 +23,7 @@ float last_throttle_position = 0;
 
 float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 float cur_throttle ;
+float alpha =0.0 ;
 
 /***********************************************
  * User spcification section
@@ -84,7 +85,7 @@ float va,vb,vc,vd;
 
 // controlP5.Textlabel AMLabel, AMCurrent; 
 
-controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel;
+controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel,AlphaLable;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
 controlP5.Textfield SPField, /*InField, OutField,*/ PField, IField, DField, PrField, IrField, DrField;
@@ -139,6 +140,10 @@ void setup()
   AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",group_x,group_y); 
   controlP5.addTextlabel("t6","Out Gyro",group_x-80,group_y+=15);
   GyroOutLabel=controlP5.addTextlabel("GyroOutLabel","",group_x,group_y);
+
+  controlP5.addTextlabel("t7","alpha",group_x-80,group_y+=15);
+  AlphaLable=controlP5.addTextlabel("AlphaLable","",group_x,group_y);
+  
   
   PLabel=controlP5.addTextlabel("Ps","",75,278);                    //
   ILabel=controlP5.addTextlabel("Is","",75,328);                    //
