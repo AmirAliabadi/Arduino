@@ -17,11 +17,21 @@ float alpha = 0.8;
 
 #define DEBUG
 
+/*
+ * Single Boom PID values:
+ * 5.07, 0.00, 0.00
+ * 0.443, 0.034, 0.112
+ * 
+ * Single Boom Quad PID
+ * 6.885  0.00  0.405
+ * 0.551  0.00  0.184
+ */
+
 ///////////////////////////////////
 // user inputs
 float input_values[17] = { 0,                     // thrust
                            4.00,  0.00, 0.00,     // Stable Pitch/Role PID P/I/D // .89,0,.23
-                           0.162,  0.00, 0.00,   // Rate Pitch/Role PID P/I/D
+                           0.596,  0.00, 0.184,   // Rate Pitch/Role PID P/I/D
                            2.00,  0.00, 0.00,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.11,  0.00, 0.000,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
