@@ -19,16 +19,12 @@ void read_throttle()
   }
 }
 
-void read_setpoint(int type)
+void read_setpoint()
 {
 }
 
 void read_battery_voltage() 
 {
   INPUT_VOLTAGE_LEVEL = 12.6;
-}
-
-void read_pid_tunings()
-{  
 }
 ///////////////////////////////////////////////////////////////////////

@@ -114,14 +114,13 @@ void setup()
   
   SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
  
-  PField = controlP5.addTextfield("Kp",10,275,60,20); 
-  IField = controlP5.addTextfield("Ki",10,325,60,20);
-  DField = controlP5.addTextfield("Kd",10,375,60,20); 
+  //PField = controlP5.addTextfield("Kp",10,275,60,20); 
+  //IField = controlP5.addTextfield("Ki",10,325,60,20);
+  //DField = controlP5.addTextfield("Kd",10,375,60,20); 
   
-  PrField = controlP5.addTextfield("Krp",110,275,60,20); 
-  IrField = controlP5.addTextfield("Kri",110,325,60,20);
-  DrField = controlP5.addTextfield("Krd",110,375,60,20);
-  
+  //PrField = controlP5.addTextfield("Krp",110,275,60,20); 
+  //IrField = controlP5.addTextfield("Kri",110,325,60,20);
+  //DrField = controlP5.addTextfield("Krd",110,375,60,20);
   
   //AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
   //AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
@@ -144,14 +143,20 @@ void setup()
   controlP5.addTextlabel("t7","alpha",group_x-80,group_y+=15);
   AlphaLable=controlP5.addTextlabel("AlphaLable","",group_x,group_y);
   
+  controlP5.addTextlabel("t8","Stable",group_x-80,group_y+=35);  
+  controlP5.addTextlabel("t81","Rate",group_x,group_y);    
   
-  PLabel=controlP5.addTextlabel("Ps","",75,278);                    //
-  ILabel=controlP5.addTextlabel("Is","",75,328);                    //
-  DLabel=controlP5.addTextlabel("Ds","",75,378);                    //
+  controlP5.addTextlabel("t9","P: ",group_x-80,group_y+=15);    
+  PLabel=controlP5.addTextlabel("Ps","0.00",group_x-70,group_y);                    //
+  PrLabel=controlP5.addTextlabel("Pr","0.00",group_x,group_y);                    //
+
+  controlP5.addTextlabel("t10","I: ",group_x-80,group_y+=15);    
+  ILabel=controlP5.addTextlabel("Is","0.00",group_x-70,group_y);                    //
+  IrLabel=controlP5.addTextlabel("Ir","0.00",group_x,group_y);                    //
   
-  PrLabel=controlP5.addTextlabel("Pr","",175,278);                    //
-  IrLabel=controlP5.addTextlabel("Ir","",175,328);                    //
-  DrLabel=controlP5.addTextlabel("Dr","",175,378);                    //  
+  controlP5.addTextlabel("t11","D: ",group_x-80,group_y+=15);    
+  DLabel=controlP5.addTextlabel("Ds","0.00",group_x-70,group_y);                    //
+  DrLabel=controlP5.addTextlabel("Dr","0.00",group_x,group_y);                    //  
   
   DRButton = controlP5.addButton("Toggle_DR",0.0,10,425,60,20);      //
   DRLabel = controlP5.addTextlabel("DR","Dir",12,447);            //

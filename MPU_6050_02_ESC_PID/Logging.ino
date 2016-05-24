@@ -53,36 +53,25 @@ void SerialSend(byte mode)
   
 /////////////////////////////
 // INPUTS
-  Serial.print(setpoint[mode]);   
-  Serial.print(F(" "));
-  Serial.print(input_gyro[mode]);   
-  Serial.print(F(" "));
-  Serial.print(input_ypr[mode]);   
-  Serial.print(F(" "));  
+  Serial.print(setpoint[mode]);   Serial.print(F(" "));
+  Serial.print(input_gyro[mode]); Serial.print(F(" "));
+  Serial.print(input_ypr[mode]);  Serial.print(F(" "));  
 //
 /////////////////////////////  
 
 /////////////////////////////  
 /// outputs
-  Serial.print(output_ypr[mode]);   
-  Serial.print(F(" "));  
-  Serial.print(output_rate[mode]);   
-  Serial.print(F(" "));
+  Serial.print(output_ypr[mode]);   Serial.print(F(" "));  
+  Serial.print(output_rate[mode]);  Serial.print(F(" "));
 /////////////////////////////  
 
-  Serial.print(pid_stable[mode].GetKp(), 4);   
-  Serial.print(F(" "));
-  Serial.print(pid_stable[mode].GetKi(), 4);   
-  Serial.print(F(" "));
-  Serial.print(pid_stable[mode].GetKd(), 4);   
-  Serial.print(F(" "));
+  Serial.print(pid_stable[mode].GetKp(), 4);   Serial.print(F(" "));
+  Serial.print(pid_stable[mode].GetKi(), 4);   Serial.print(F(" "));
+  Serial.print(pid_stable[mode].GetKd(), 4);   Serial.print(F(" "));
    
-  Serial.print(pid_rate[mode].GetKp(), 4);   
-  Serial.print(F(" "));
-  Serial.print(pid_rate[mode].GetKi(), 4);   
-  Serial.print(F(" "));
-  Serial.print(pid_rate[mode].GetKd(), 4);   
-  Serial.print(F(" "));
+  Serial.print(pid_rate[mode].GetKp(), 4);   Serial.print(F(" "));
+  Serial.print(pid_rate[mode].GetKi(), 4);   Serial.print(F(" "));
+  Serial.print(pid_rate[mode].GetKd(), 4);   Serial.print(F(" "));
 
   
   if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
@@ -101,7 +90,15 @@ void SerialSend(byte mode)
   Serial.print(vd); Serial.print(F(" "));
 
   Serial.print(alpha); Serial.print(F(" "));
-
+/*
+  Serial.print(pid_stable[mode].pterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_stable[mode].iterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_stable[mode].dterm, 4);   Serial.print(F(" "));
+   
+  Serial.print(pid_rate[mode].pterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_rate[mode].iterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_rate[mode].dterm, 4);   Serial.print(F(" "));
+*/
   Serial.println(F("E"));
     
 }

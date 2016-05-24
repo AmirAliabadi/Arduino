@@ -201,6 +201,9 @@ void setup()
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
+//int cycle_count = 0;
+//long sum_cycle_time_1 = 0;
+//long sum_cycle_time = 0;
 void loop()
 {
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
@@ -212,14 +215,25 @@ void loop()
 
   if (!dmpReady) return;
 
+// sum_cycle_time_1 = millis();
+  
   read_mpu();
   read_throttle();
-  if( aserial_data_mode == 0 ) read_setpoint(AC);
-  else if( aserial_data_mode == 1 ) read_setpoint(BD);
-  else if( aserial_data_mode == 2 ) read_setpoint(YW);  
+  read_setpoint();
   read_battery_voltage();
   process();
 
+/*
+  sum_cycle_time += ( millis() - sum_cycle_time_1 );
+
+  if( ++cycle_count == 1000 ) {
+
+    Serial.print(F("#cycle_time: "));
+    Serial.println( sum_cycle_time / 1000.0 );
+    sum_cycle_time = 0;
+    cycle_count = 0;
+  }
+*/
 }
 
 void serialEvent() {
