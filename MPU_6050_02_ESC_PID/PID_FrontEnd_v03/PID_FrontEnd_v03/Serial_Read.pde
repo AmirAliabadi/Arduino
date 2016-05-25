@@ -11,11 +11,13 @@ void serialEvent(Serial myPort)
     
   if(outputFileName!="") output.print(str(millis())+ " " + read);
   String[] s = split(read, " ");
+
+  int expected_size = 23;
   
-  if (s.length == 23)
+  if (s.length == expected_size)
   {
     if(! trim(s[0]).equals("S") )  {print(read); return;}
-    if(! trim(s[22]).equals("E") ) {print(read); return;}
+    if(! trim(s[expected_size-1]).equals("E") ) {print(read); return;}
     
     //print(read);
     
@@ -53,7 +55,6 @@ void serialEvent(Serial myPort)
     IrLabel.setValue(Float.toString(kri));
     DrLabel.setValue(Float.toString(krd)); 
         
-    //AMCurrent.setValue(trim(s[14]));
     DRCurrent.setValue(trim(s[15]));
     DRrCurrent.setValue(trim(s[16]));
     
@@ -98,24 +99,6 @@ void serialEvent(Serial myPort)
 
     if(justSent)                     
     {                                
-      //SPField.setText(trim(s[2]));
-      //InField.setText(trim(s[2]));
-      //OutField.setText(trim(s[3]));
-      /*
-      PField.setValue(Float.toString(kp));
-      IField.setValue(Float.toString(ki)); 
-      DField.setValue(Float.toString(kd)); 
-      
-      PrField.setValue(Float.toString(krp));  
-      IrField.setValue(Float.toString(kri));
-      DrField.setValue(Float.toString(krd));    
-      */
-      
-      // AMLabel.setValue(trim(s[14]));
-
-      //DRCurrent.setValue(trim(s[15]));
-      //DRrCurrent.setValue(trim(s[16]));
-
       justSent=false;
     } 
 

@@ -75,20 +75,18 @@ boolean justSent = true;
 Serial myPort;
 
 ControlP5 controlP5;
-controlP5.Button AMButton, DRButton, DRrButton, PIDSelector;
+controlP5.Button DRButton, DRrButton;
 
 RadioButton serial_data_mode; //, tuning_mode;
 
 float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
-byte i_serial_data_mode, i_tuning_mode;
+byte i_serial_data_mode; 
 float va,vb,vc,vd;
-
-// controlP5.Textlabel AMLabel, AMCurrent; 
 
 controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel,AlphaLable;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
-controlP5.Textfield SPField, /*InField, OutField,*/ PField, IField, DField, PrField, IrField, DrField;
+controlP5.Textfield SPField; 
 
 controlP5.Slider throttle_slider;
 
@@ -113,19 +111,7 @@ void setup()
   controlP5 = new ControlP5(this);                                    // * Initialize the various
   
   SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
- 
-  //PField = controlP5.addTextfield("Kp",10,275,60,20); 
-  //IField = controlP5.addTextfield("Ki",10,325,60,20);
-  //DField = controlP5.addTextfield("Kd",10,375,60,20); 
-  
-  //PrField = controlP5.addTextfield("Krp",110,275,60,20); 
-  //IrField = controlP5.addTextfield("Kri",110,325,60,20);
-  //DrField = controlP5.addTextfield("Krd",110,375,60,20);
-  
-  //AMButton = controlP5.addButton("Toggle_AM",0.0,10,50,60,20);
-  //AMLabel = controlP5.addTextlabel("AM","Manual",12,72); 
-  //AMCurrent = controlP5.addTextlabel("AMCurrent","Manual",80,55); 
-  
+   
   group_x = 80; group_y=140;
   controlP5.addTextlabel("t1","Throttle",group_x-80,group_y);
   InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);
@@ -247,21 +233,6 @@ void controlEvent(ControlEvent theEvent) {
     return;
   }   
 }
-
-
-/*
-void Toggle_AM() {
-  
-  if(AMLabel.get().getText()=="Manual") 
-  {
-    AMLabel.setValue("Automatic");
-  }
-  else
-  {
-    AMLabel.setValue("Manual");   
-  }
-}
-*/
 
 void Toggle_DR() {
   if(DRCurrent.get().getText().equals("D")) 
