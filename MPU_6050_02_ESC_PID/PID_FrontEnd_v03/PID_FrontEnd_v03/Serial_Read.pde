@@ -17,7 +17,7 @@ void serialEvent(Serial myPort)
     if(! trim(s[0]).equals("S") )  {print(read); return;}
     if(! trim(s[22]).equals("E") ) {print(read); return;}
     
-    print(read);
+    //print(read);
     
     Input_Thrust = float(trim(s[2])); 
     Input_Setpoint = float(trim(s[3]));

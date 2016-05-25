@@ -67,7 +67,8 @@ bool PID::Compute()
 	  dterm = (kd * dInput);
 
 	  /*Compute PID Output*/
-      float output = (kp * error) + ITerm - (kd * dInput);
+     // float output = (kp * error) + ITerm - (kd * dInput);
+      float output = pterm + iterm + dterm ; 
       
 	  if(output > outMax) output = outMax;
       else if(output < outMin) output = outMin;
