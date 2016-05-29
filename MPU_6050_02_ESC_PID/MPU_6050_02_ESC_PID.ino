@@ -105,7 +105,7 @@ VectorInt16 gyro;
 VectorInt16 gyro1;
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
-//float ypr_last[3] = {0.0f, 0.0f, 0.0f};
+float ypr_last[3] = {0.0f, 0.0f, 0.0f};
 float yw_offset   = 0.0;
 float ac_offset   = 0.0;
 float bd_offset   = 0.0;

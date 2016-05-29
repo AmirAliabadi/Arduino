@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -52,7 +52,7 @@ void init_mpu()
 */
 
       // turn on the DMP, now that it's ready
-      Serial.println(F("#Enabling DMP"));
+      Serial.println(F("#Enab DMP"));
       mpu.setDMPEnabled(true);
       
       mpuIntStatus = mpu.getIntStatus();
@@ -72,7 +72,7 @@ void init_mpu()
       // 1 = initial memory load failed
       // 2 = DMP configuration updates failed
       // (if it's going to break, usually the code will be 1)
-      Serial.print(F("#DMP Init failed (cd "));
+      Serial.print(F("#DMP Init fail (cd "));
       Serial.print(devStatus);
       Serial.println(F(")"));
     }
@@ -131,7 +131,7 @@ void read_mpu()
     ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;
     ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
 
-/*
+
     if( system_check & INIT_MPU_STABLE )
     {
       if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
@@ -161,7 +161,6 @@ void read_mpu()
     ypr_last[YW] = ypr[YW];
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
-*/
   
   }
 }

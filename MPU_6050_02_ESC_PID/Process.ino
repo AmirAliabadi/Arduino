@@ -4,19 +4,20 @@ void process_off()
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-//    Serial.print(F("#processing is off: "));    
-//    log_data();
+    log_data();
   }
   #endif    
 }
 
 void wait_for_stable()
 {
+  #ifdef DEBUG        
   if (millis() - last_log > 2000)
   {
     last_log = millis();
     process = &check_if_stable;  
   }
+  #endif    
 }
 
 void check_if_stable()
@@ -24,7 +25,7 @@ void check_if_stable()
   static float last_yw = -333.0;
 
 #ifdef DEBUG    
-  Serial.print(F("#waiting 4 SR "));
+  Serial.print(F("#w 4 SR "));
   Serial.println(abs(ypr[YW] - last_yw),2);
 #endif
 
@@ -38,7 +39,7 @@ void check_if_stable()
     bd_offset = ypr[BD];
     
     ypr[YW] = 0;
-    //ypr_last[YW] = 0;
+    ypr_last[YW] = 0;
     
     process = &attitude_process;
   } else {

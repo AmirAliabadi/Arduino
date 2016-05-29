@@ -109,19 +109,12 @@ void init_pid()
     
   }
 
-  pid_mode(AUTOMATIC);
-
-  system_check |= INIT_PID_ON ;
-}
-
-void pid_mode(int m)
-{
   for(byte i=YW; i<=AC; i++ ) {  
-    pid_stable[i].SetMode(m);
-    pid_rate[i].SetMode(m);
-  }  
-
-  //system_check &= ~INIT_PID_ON ;
+    pid_stable[i].SetMode(AUTOMATIC);
+    pid_rate[i].SetMode(AUTOMATIC);
+  }
+  
+  system_check |= INIT_PID_ON ;
 }
 
 void pid_reset() 
