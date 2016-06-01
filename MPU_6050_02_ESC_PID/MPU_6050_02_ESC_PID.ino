@@ -26,6 +26,10 @@ float alpha = 0.8;
  * 2.49, 0.00, 0.00       works but slugish
  * 0.376, 0.004, 0.004
  * 
+ * found some checkin notes about the d-term causing chatter
+ *                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
+ *                           1.20,  0.0, 0.16,    // Rate P/I/D
+ * 
  * *
  * Single Boom Quad PID
  * ---------------------
