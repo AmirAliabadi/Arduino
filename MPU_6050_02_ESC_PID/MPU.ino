@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_20);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -72,9 +72,8 @@ void init_mpu()
       // 1 = initial memory load failed
       // 2 = DMP configuration updates failed
       // (if it's going to break, usually the code will be 1)
-      Serial.print(F("#DMP Init fail (cd "));
-      Serial.print(devStatus);
-      Serial.println(F(")"));
+      Serial.print(F("#DMP Init fail: "));
+      Serial.println(devStatus);
     }
 }
 

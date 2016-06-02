@@ -116,6 +116,11 @@ void attitude_process()
     vd = MIN_ESC_CUTOFF + (v_bd + output_rate[BD]); // output_ypr
     //
     ////////////////////////////////
+
+    va = constrain(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+    vc = constrain(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+    vb = constrain(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+    vd = constrain(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);    
   }
   else 
   {
@@ -123,11 +128,6 @@ void attitude_process()
     
     pid_reset(); //(MANUAL);
   }
-
-  va = constrain(va, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vc = constrain(vc, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vb = constrain(vb, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vd = constrain(vd, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
 
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);

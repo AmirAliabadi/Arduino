@@ -40,8 +40,8 @@ float alpha = 0.8;
 ///////////////////////////////////`
 // user inputs
 float input_values[17] = { 0,                     // thrust
-                           2.50,  0.00, 0.00,     // Stable Pitch/Role PID P/I/D // .89,0,.23
-                           0.376,  0.004, 0.004,   // Rate Pitch/Role PID P/I/D
+                           3.080,  0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89,0,.23
+                           0.475,  0.000, 0.004,   // Rate Pitch/Role PID P/I/D
                            2.00,  0.00, 0.00,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.11,  0.00, 0.000,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
