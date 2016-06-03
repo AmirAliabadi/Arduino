@@ -11,7 +11,7 @@ union _from_processing {
 from_processing; 
 
 
-void SerialReceive()
+void serialEvent() 
 {
   if( Serial.readBytes( from_processing.asBytes, 8 ) == 8 ) {
     int cmd = (int)from_processing.asFloat[0];
@@ -31,6 +31,10 @@ void SerialReceive()
         
       } else if (cmd == 200) {
         alpha = from_processing.asFloat[1];
+        
+      } else if (cmd == 201) {
+        pid_refresh_rate = (int)from_processing.asFloat[1];
+        set_pid_refresh_rate();
         
       }
     }

@@ -37,9 +37,13 @@ void check_if_stable()
     yw_offset = yw_reading;
     ac_offset = ypr[AC];
     bd_offset = ypr[BD];
-    
-    ypr[YW] = 0;
-    ypr_last[YW] = 0;
+
+    Serial.print(F("#stable: "));
+    Serial.print(yw_offset);
+    Serial.print(F(" "));
+    Serial.print(ac_offset);
+    Serial.print(F(" "));
+    Serial.println(bd_offset);
     
     process = &attitude_process;
   } else {
@@ -55,7 +59,7 @@ void arm_esc_process()
     init_esc();
       
     if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) {
-      process = &wait_for_stable;    
+      process = &wait_for_stable; //attitude_process; //wait_for_stable;    
     }
 }
 

@@ -92,6 +92,19 @@ void keyPressed() {
         Send_To_Arduino2(200.0, alpha);
         break;
         
+      case '4':
+        pid_refresh_rate += 1.0;
+        PidRefreshIntervalLabel.setValue(Float.toString(pid_refresh_rate));
+        Send_To_Arduino2(201.0, pid_refresh_rate);
+        break;
+        
+      case 'r':
+        pid_refresh_rate -= 1.0;
+        PidRefreshIntervalLabel.setValue(Float.toString(pid_refresh_rate));        
+        Send_To_Arduino2(201.0, pid_refresh_rate);
+        break;        
+        
+        
     }
     last_throttle_position = cur_throttle;
 }

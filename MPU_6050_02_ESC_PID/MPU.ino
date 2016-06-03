@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_20);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -127,8 +127,8 @@ void read_mpu()
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
     ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
-    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;
-    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
+    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ); //- bd_offset ) ;
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ); //- ac_offset ) ;
 
 
     if( system_check & INIT_MPU_STABLE )

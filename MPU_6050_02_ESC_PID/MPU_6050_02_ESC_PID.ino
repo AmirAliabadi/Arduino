@@ -14,6 +14,7 @@ byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
 float alpha = 0.8;
+int pid_refresh_rate = 10;
 
 #define DEBUG
 
@@ -25,6 +26,10 @@ float alpha = 0.8;
  * 
  * 2.49, 0.00, 0.00       works but slugish
  * 0.376, 0.004, 0.004
+ * 
+ * alpha 0.02, pid rate 20
+ * 2.615, 0.085, 0.065
+ * 0.41, 0, 0.004
  * 
  * found some checkin notes about the d-term causing chatter
  *                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
@@ -40,10 +45,10 @@ float alpha = 0.8;
 ///////////////////////////////////`
 // user inputs
 float input_values[17] = { 0,                     // thrust
-                           3.080,  0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89,0,.23
-                           0.475,  0.000, 0.004,   // Rate Pitch/Role PID P/I/D
-                           2.00,  0.00, 0.00,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
-                           0.11,  0.00, 0.000,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           2.490, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89,0,.23
+                           0.376, 0.000, 0.004,   // Rate Pitch/Role PID P/I/D
+                           2.000,  0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           0.110,  0.000, 0.000,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
@@ -211,9 +216,9 @@ void setup()
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
-//int cycle_count = 0;
-//long sum_cycle_time_1 = 0;
-//long sum_cycle_time = 0;
+int cycle_count = 0;
+long sum_cycle_time_1 = 0;
+long sum_cycle_time = 0;
 void loop()
 {
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
@@ -225,7 +230,7 @@ void loop()
 
   if (!dmpReady) return;
 
-  //sum_cycle_time_1 = millis();
+  sum_cycle_time_1 = millis();
   
   read_mpu();
   read_throttle();
@@ -233,7 +238,7 @@ void loop()
   read_battery_voltage();
   process();
 
-/*
+
   sum_cycle_time += ( millis() - sum_cycle_time_1 );
 
   if( ++cycle_count == 1000 ) {
@@ -243,10 +248,7 @@ void loop()
     sum_cycle_time = 0;
     cycle_count = 0;
   }
-*/
+
 }
 
-void serialEvent() {
-  SerialReceive();
-}
 

@@ -103,11 +103,10 @@ void init_pid()
       
     pid_stable[i].SetOutputLimits(-300, 300);
     pid_rate[i].SetOutputLimits(-300, 300);
-  
-    pid_stable[i].SetSampleTime(10);
-    pid_rate[i].SetSampleTime(10);
     
   }
+
+  set_pid_refresh_rate();
 
   for(byte i=YW; i<=AC; i++ ) {  
     pid_stable[i].SetMode(AUTOMATIC);
@@ -115,6 +114,14 @@ void init_pid()
   }
   
   system_check |= INIT_PID_ON ;
+}
+
+void set_pid_refresh_rate()
+{
+  for(byte i=YW; i<=AC; i++ ) {  
+    pid_stable[i].SetSampleTime(pid_refresh_rate);
+    pid_rate[i].SetSampleTime(pid_refresh_rate);      
+  }
 }
 
 void pid_reset() 

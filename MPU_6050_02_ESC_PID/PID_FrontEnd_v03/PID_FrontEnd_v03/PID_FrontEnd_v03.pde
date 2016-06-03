@@ -24,6 +24,7 @@ float last_throttle_position = 0;
 float kp=0,ki=0,kd=0,krp=0,kri=0,krd=0;
 float cur_throttle ;
 float alpha =0.0 ;
+float pid_refresh_rate=10.0 ;
 
 /***********************************************
  * User spcification section
@@ -83,7 +84,7 @@ float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Outpu
 byte i_serial_data_mode; 
 float va,vb,vc,vd;
 
-controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel,AlphaLable;
+controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel, AlphaLable, PidRefreshIntervalLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
 controlP5.Textfield SPField; 
@@ -128,6 +129,9 @@ void setup()
 
   controlP5.addTextlabel("t7","alpha",group_x-80,group_y+=15);
   AlphaLable=controlP5.addTextlabel("AlphaLable","",group_x,group_y);
+
+  controlP5.addTextlabel("t71","PID Refresh",group_x-80,group_y+=15);
+  PidRefreshIntervalLabel=controlP5.addTextlabel("PidRefreshIntervalLabel","10",group_x,group_y);
   
   controlP5.addTextlabel("t8","Stable",group_x-80,group_y+=35);  
   controlP5.addTextlabel("t81","Rate",group_x,group_y);    
