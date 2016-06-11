@@ -76,20 +76,29 @@ void drawGraph()
       InputData[0][i]=InputData[0][i-1] ;
       InputData[1][i]=InputData[1][i-1] ;
       InputData[2][i]=InputData[2][i-1] ;
-      //SetpointData[i]=SetpointData[i-1] ;
+      
       OutputData[0][i]=OutputData[0][i-1] ;
       OutputData[1][i]=OutputData[1][i-1] ;
+
+      OutputData[2][i]=OutputData[2][i-1] ;
+      OutputData[3][i]=OutputData[3][i-1] ;
+      OutputData[4][i]=OutputData[4][i-1] ;      
+
+      
     }
     if (nPoints < arrayLength) nPoints++;
 
     //InputData[0][0] = int(inputHeight)-int(inputHeight*(Input_Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
     InputData[0][0] = int(inputHeight)-int(inputHeight*(Output_gyro-InScaleMin)/(InScaleMax-InScaleMin));
-    
     InputData[1][0] = int(inputHeight)-int(inputHeight*(Input_gyro-InScaleMin)/(InScaleMax-InScaleMin));
     InputData[2][0] = int(inputHeight)-int(inputHeight*(Input_angle-InScaleMin)/(InScaleMax-InScaleMin));    
-    //SetpointData[0] =int( inputHeight)-int(inputHeight*(Setpoint-InScaleMin)/(InScaleMax-InScaleMin));
+
     OutputData[0][0] = int(outputHeight)-int(outputHeight*(Output_angle-OutScaleMin)/(OutScaleMax-OutScaleMin));
     OutputData[1][0] = int(outputHeight)-int(outputHeight*(Output_gyro-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    
+    OutputData[2][0] = int(outputHeight)-int(outputHeight*(pterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    OutputData[3][0] = int(outputHeight)-int(outputHeight*(iterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    OutputData[4][0] = int(outputHeight)-int(outputHeight*(dterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
   }
   //draw lines for the input, setpoint, and output
   strokeWeight(2);
@@ -187,9 +196,9 @@ void drawGraph()
     }
 */
     //DRAW THE OUTPUT
-    for( int iii = 0; iii<2; iii ++ ) {
+    for( int iii = 0; iii<5; iii ++ ) {
       drawLine=true;
-      stroke(255*iii,0,255);
+      stroke(iii*42,0,255);
       Y1 = OutputData[iii][i];
       Y2 = OutputData[iii][i+1];
   

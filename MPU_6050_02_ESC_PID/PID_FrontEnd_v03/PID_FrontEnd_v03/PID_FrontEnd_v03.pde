@@ -56,7 +56,7 @@ String outputFileName = "";
 int nextRefresh;
 int arrayLength = windowSpan / refreshRate+1;
 int[][] InputData = new int[3][arrayLength];
-int[][] OutputData = new int[2][arrayLength];
+int[][] OutputData = new int[5][arrayLength];
 
 float inputTop = 25;
 float inputHeight = (windowHeight-70)*2/3;
@@ -83,6 +83,8 @@ RadioButton serial_data_mode; //, tuning_mode;
 float Input_Thrust, Input_Setpoint, Input_gyro, Input_angle, Output_angle, Output_gyro ;
 byte i_serial_data_mode; 
 float va,vb,vc,vd;
+float pterm_stable, iterm_stable, dterm_stable;
+float pterm_rate, iterm_rate, dterm_rate;
 
 controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel, AlphaLable, PidRefreshIntervalLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
