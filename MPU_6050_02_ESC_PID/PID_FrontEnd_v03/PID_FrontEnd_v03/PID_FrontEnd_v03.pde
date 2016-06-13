@@ -87,6 +87,7 @@ float pterm_stable, iterm_stable, dterm_stable;
 float pterm_rate, iterm_rate, dterm_rate;
 
 controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputAngleLabel, AngleOutLabel, GyroOutLabel, AlphaLable, PidRefreshIntervalLabel;
+controlP5.Textlabel PTermRateLabel, ITermRateLabel, DTermRateLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
 controlP5.Textfield SPField; 
@@ -134,6 +135,13 @@ void setup()
 
   controlP5.addTextlabel("t71","PID Refresh",group_x-80,group_y+=15);
   PidRefreshIntervalLabel=controlP5.addTextlabel("PidRefreshIntervalLabel","10",group_x,group_y);
+  
+  controlP5.addTextlabel("t72","PTerm Rate",group_x-80,group_y+=15);
+  PTermRateLabel=controlP5.addTextlabel("PTermRateLabel","10",group_x,group_y);
+  controlP5.addTextlabel("t73","ITerm Rate",group_x-80,group_y+=15);
+  ITermRateLabel=controlP5.addTextlabel("ITermRateLabel","10",group_x,group_y);
+  controlP5.addTextlabel("t74","DTerm Rate",group_x-80,group_y+=15);
+  DTermRateLabel=controlP5.addTextlabel("DTermRateLabel","10",group_x,group_y);
   
   controlP5.addTextlabel("t8","Stable",group_x-80,group_y+=35);  
   controlP5.addTextlabel("t81","Rate",group_x,group_y);    

@@ -96,9 +96,9 @@ void drawGraph()
     OutputData[0][0] = int(outputHeight)-int(outputHeight*(Output_angle-OutScaleMin)/(OutScaleMax-OutScaleMin));
     OutputData[1][0] = int(outputHeight)-int(outputHeight*(Output_gyro-OutScaleMin)/(OutScaleMax-OutScaleMin));
     
-    OutputData[2][0] = int(outputHeight)-int(outputHeight*(pterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
-    OutputData[3][0] = int(outputHeight)-int(outputHeight*(iterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
-    OutputData[4][0] = int(outputHeight)-int(outputHeight*(dterm_rate-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    OutputData[2][0] = int(outputHeight)-int(outputHeight*(pterm_rate+50.0-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    OutputData[3][0] = int(outputHeight)-int(outputHeight*(iterm_rate+60.0-OutScaleMin)/(OutScaleMax-OutScaleMin));
+    OutputData[4][0] = int(outputHeight)-int(outputHeight*(dterm_rate+70.0-OutScaleMin)/(OutScaleMax-OutScaleMin));
   }
   //draw lines for the input, setpoint, and output
   strokeWeight(2);
@@ -195,10 +195,20 @@ void drawGraph()
       line(X1, Y1+inputTop, X2, Y2+inputTop);
     }
 */
+    String[] out_color_names = {"angle","gyro","pterm","iterm","dterm"};
+    int[] out_colors = {0, 250, 190, 125, 200};
+    int[] out_colors1 = {0, 50, 90, 90, 255};
+    int[] out_colors2 = {0, 150, 190, 125, 200};
+    
     //DRAW THE OUTPUT
     for( int iii = 0; iii<5; iii ++ ) {
       drawLine=true;
-      stroke(iii*42,0,255);
+      
+      fill(out_colors[iii], out_colors1[iii], out_colors2[iii]); 
+      text(out_color_names[iii], width/2, 500 + (20*iii));       
+      
+      stroke(out_colors[iii], out_colors1[iii], out_colors2[iii]);
+      
       Y1 = OutputData[iii][i];
       Y2 = OutputData[iii][i+1];
   

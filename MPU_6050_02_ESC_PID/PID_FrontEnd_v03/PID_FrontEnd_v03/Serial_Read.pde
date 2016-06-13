@@ -89,6 +89,11 @@ void parseA(String[] s ) {
     pterm_rate  = float(trim(s[13]));
     iterm_rate  = float(trim(s[14]));
     dterm_rate  = float(trim(s[15]));
+
+    PTermRateLabel.setValue(Float.toString(pterm_rate) );
+    ITermRateLabel.setValue(Float.toString(iterm_rate) );
+    DTermRateLabel.setValue(Float.toString(dterm_rate) );
+    
     
     AngleOutLabel.setValue(Float.toString(Output_angle)); 
     GyroOutLabel.setValue(Float.toString(Output_gyro));    
