@@ -13,8 +13,8 @@
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
-float alpha = 0.8;
-int pid_refresh_rate = 10;
+float alpha = 0.2;
+int pid_refresh_rate = 5;
 
 #define DEBUG
 
@@ -34,6 +34,10 @@ int pid_refresh_rate = 10;
  * found some checkin notes about the d-term causing chatter
  *                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
  *                           1.20,  0.0, 0.16,    // Rate P/I/D
+ *                           
+ *  3.135, 0.0, 0.0
+ *  0.672, 0.01, 0.013
+ *  alpha 0.2, PID Refresh 5.0
  * 
  * *
  * Single Boom Quad PID
@@ -44,15 +48,15 @@ int pid_refresh_rate = 10;
 
 ///////////////////////////////////`
 // user inputs
-float input_values[17] = { 0,                     // thrust
-                           2.490, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89,0,.23
-                           0.376, 0.000, 0.004,   // Rate Pitch/Role PID P/I/D
-                           2.000,  0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
-                           0.110,  0.000, 0.000,   // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+float input_values[17] = { 0,                       // thrust
+                           3.135, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
+                           0.672, 0.010, 0.013,     // Rate Pitch/Role PID P/I/D
+                           2.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           0.110, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
-                           12.6                   // battery voltage level
+                           12.6                     // battery voltage level
                            };
 
 // PID values:
