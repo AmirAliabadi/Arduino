@@ -109,10 +109,16 @@ Your offsets: -62 366 1416  161 145 -19
 #define MAX_ESC_SIGNAL    2000    // This is the max output that will be sent to ESC.
 #define MIN_ESC_SIGNAL    1000    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MIN_ESC_CUTOFF    1200    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
-#define MOTOR_PIN_A       5       // ESC signal wire conected to pin 3
-#define MOTOR_PIN_B       3       // ESC signal wire conected to pin 5
-#define MOTOR_PIN_C       6       // ESC signal wire conected to pin 6
-#define MOTOR_PIN_D       10      // ESC signal wire conected to pin 10
+#define MOTOR_PIN_A       3       // setup with 500hz PWM pins
+#define MOTOR_PIN_B       9       
+#define MOTOR_PIN_C       11       
+#define MOTOR_PIN_D       10      
+/*
+ * pin pairs:
+ * 3 - 11 : default PWM frequency: 490.20 Hz
+ * 9 - 10 : default PWM frequency: 490.20 Hz
+ * 5 - 6  : default PWM frequency: 976.56 Hz
+ */
 
 /*
  * 
