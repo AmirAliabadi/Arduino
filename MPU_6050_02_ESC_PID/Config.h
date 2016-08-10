@@ -83,7 +83,7 @@ Your offsets: -62 366 1416  161 145 -19
                 !
                 C Pitch -
 
-                USB
+                USBaz
 */
 #define YW 0
 #define YAW 0

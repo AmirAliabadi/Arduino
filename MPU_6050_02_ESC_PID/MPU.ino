@@ -127,8 +127,8 @@ void read_mpu()
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
     ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
-    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ); //- bd_offset ) ;
-    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ); //- ac_offset ) ;
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
+    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;    
 
 
     if( system_check & INIT_MPU_STABLE )
@@ -152,8 +152,8 @@ void read_mpu()
       }      
 
       if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
+      if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
       if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-      if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];
      
     }
     

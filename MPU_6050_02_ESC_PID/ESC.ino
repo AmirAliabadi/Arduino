@@ -7,8 +7,8 @@ void init_esc()
     {
       esc_a.attach(MOTOR_PIN_A);
       esc_c.attach(MOTOR_PIN_C);
-//      esc_b.attach(MOTOR_PIN_B);
-//      esc_d.attach(MOTOR_PIN_D);
+      esc_b.attach(MOTOR_PIN_B);
+      esc_d.attach(MOTOR_PIN_D);
   
       system_check |= INIT_ESC_ATTACHED;
   

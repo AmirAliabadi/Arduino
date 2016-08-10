@@ -131,6 +131,8 @@ void parseB(String[] s ) {
     Input_gyro     = float(trim(s[4]));
     Input_angle    = float(trim(s[5]));
     
+    SPField.setValue( Float.toString(Input_Setpoint) );
+    
     cur_throttle = (int)Input_Thrust; 
     InputThrustLabel.setValue( Float.toString(Input_Thrust) );
     throttle_slider.setValue( Input_Thrust );

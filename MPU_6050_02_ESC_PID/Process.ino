@@ -38,6 +38,10 @@ void check_if_stable()
     ac_offset = ypr[AC];
     bd_offset = ypr[BD];
 
+    ypr_last[YW] = 0.0;
+    ypr_last[AC] = 0.0;
+    ypr_last[BD] = 0.0;
+
     Serial.print(F("#stable: "));
     Serial.print(yw_offset);
     Serial.print(F(" "));
@@ -91,27 +95,27 @@ void attitude_process()
 
   // Update the Stable PID input values
   input_ypr[YW] = ypr[YW];
-  input_ypr[BD] = ypr[BD];
   input_ypr[AC] = ypr[AC];
+  input_ypr[BD] = ypr[BD];  
 
   input_gyro[YW] = gyro.z*-1.0;
-  input_gyro[BD] = gyro.y*-1.0;
   input_gyro[AC] = gyro.x;
+  input_gyro[BD] = gyro.y*-1.0;  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
     pid_stable[YW].Compute();  pid_rate[YW].Compute();
-    pid_stable[BD].Compute();  pid_rate[BD].Compute();   
     pid_stable[AC].Compute();  pid_rate[AC].Compute(); 
+    pid_stable[BD].Compute();  pid_rate[BD].Compute();       
 
     //////////////////////////////
     // Motor Mix Algorithm       //
     //////////////////////////////
     // compute the boom thrust  //
-    v_ac = INPUT_THRUST - output_ypr[YW];
-    v_bd = INPUT_THRUST + output_ypr[YW];
+    v_ac = INPUT_THRUST - output_ypr[YW]; // output_rate[YW];
+    v_bd = INPUT_THRUST + output_ypr[YW]; // output_rate[YW];
 
     // compute motor speeds
     va = MIN_ESC_CUTOFF + (v_ac - output_rate[AC]); // output_ypr output_rate

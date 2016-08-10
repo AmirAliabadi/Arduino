@@ -265,6 +265,17 @@ void loop()
 {
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
   {
+/*    
+    Serial.print(F("#sizeof pid: "));
+    Serial.println( sizeof(pid_stable[0]) );
+
+    Serial.print(F("#sizeof servo: "));
+    Serial.println( sizeof(esc_a) );   
+
+    Serial.print(F("#sizeof mpu: "));
+    Serial.println( sizeof(mpu) );  
+*/
+    
     last_blink = millis();
 
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));
@@ -279,7 +290,6 @@ void loop()
   read_setpoint();
   read_battery_voltage();
   process();
-
 
   sum_cycle_time += ( millis() - sum_cycle_time_1 );
 

@@ -8,7 +8,7 @@
  * arduino running the PID Library.  From this Control
  * Panel you can observe & adjust PID performance in 
  * real time
- *
+ *a
  * The ControlP5 library is required to run this sketch.
  * files and install instructions can be found at
  * http://www.sojamo.de/libraries/controlP5/
@@ -90,7 +90,7 @@ controlP5.Textlabel InputThrustLabel, InputSetpointLabel, InputGyroLabel, InputA
 controlP5.Textlabel PTermRateLabel, ITermRateLabel, DTermRateLabel;
 controlP5.Textlabel PLabel, ILabel, DLabel, DRLabel, DRCurrent, DRrLabel, DRrCurrent, PrLabel, IrLabel, DrLabel ;
 
-controlP5.Textfield SPField; 
+controlP5.Textlabel SPField; 
 
 controlP5.Slider throttle_slider;
 
@@ -114,10 +114,10 @@ void setup()
   
   controlP5 = new ControlP5(this);                                    // * Initialize the various
   
-  SPField= controlP5.addTextfield("Setpoint",10,100,60,20);           //   Buttons, Labels, and
-   
   group_x = 80; group_y=140;
-  controlP5.addTextlabel("t1","Throttle",group_x-80,group_y);
+  controlP5.addTextlabel("t-1","Setpoint",group_x-80,group_y);  
+  SPField= controlP5.addTextlabel("Setpoint","", group_x, group_y);
+  controlP5.addTextlabel("t1","Throttle",group_x-80,group_y+=15);
   InputThrustLabel=controlP5.addTextlabel("InputThrustLabel","", group_x, group_y);
   controlP5.addTextlabel("t2","Setpoint",group_x-80,group_y+=15);
   InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",group_x,group_y);
