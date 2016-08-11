@@ -10,6 +10,7 @@
 //#include "MPU6050_9Axis_MotionApps41.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
+byte update_pid_settings_needed = 0;
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
@@ -258,9 +259,9 @@ void setup()
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
-int cycle_count = 0;
-long sum_cycle_time_1 = 0;
-long sum_cycle_time = 0;
+//int cycle_count = 0;
+//long sum_cycle_time_1 = 0;
+//long sum_cycle_time = 0;
 void loop()
 {
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
@@ -283,14 +284,24 @@ void loop()
 
   if (!dmpReady) return;
 
-  sum_cycle_time_1 = millis();
-  
+  //sum_cycle_time_1 = millis();
+
   read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
+  if( update_pid_settings_needed == 1 ) update_pid_settings();
   process();
 
+#ifdef DEBUG   
+  if (millis() - last_log > LOG_FREQUENCY)
+  {
+    last_log = millis();
+    log_data();
+  }
+#endif  
+
+/*
   sum_cycle_time += ( millis() - sum_cycle_time_1 );
 
   if( ++cycle_count == 1000 ) {
@@ -300,6 +311,7 @@ void loop()
     sum_cycle_time = 0;
     cycle_count = 0;
   }
+*/
 
 }
 

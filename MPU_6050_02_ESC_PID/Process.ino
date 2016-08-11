@@ -141,15 +141,6 @@ void attitude_process()
   esc_c.writeMicroseconds(vc);
   esc_b.writeMicroseconds(vb);
   esc_d.writeMicroseconds(vd);
-
-
-#ifdef DEBUG   
-  if (millis() - last_log > LOG_FREQUENCY)
-  {
-    last_log = millis();
-    log_data();
-  }
-#endif
   
 }
 

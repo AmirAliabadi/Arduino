@@ -21,6 +21,17 @@ void read_throttle()
 
 void read_setpoint()
 {
+  if( system_check & INIT_ESC_ARMED ) {  
+    setpoint[YW] = INPUT_SETPOINT_YAW ;
+    setpoint[AC] = INPUT_SETPOINT_ROLL ;
+    setpoint[BD] = INPUT_SETPOINT_PITCH ;  
+    
+  } else {
+    setpoint[YW] = 0.0 ;
+    setpoint[AC] = 0.0 ;
+    setpoint[BD] = 0.0 ;  
+    
+  }
 }
 
 void read_battery_voltage() 

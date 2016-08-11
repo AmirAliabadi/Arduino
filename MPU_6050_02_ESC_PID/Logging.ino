@@ -10,22 +10,13 @@ union _from_processing {
 }                    
 from_processing; 
 
-union _to_processing { 
-//  uint8_t asBytes[4];
-  byte asBytes[4];  
-//  char asBytes[4];      
-  float asFloat[1];     
-}                    
-to_processing; 
-
 void serialEvent() 
 {
   if( Serial.readBytes( from_processing.asBytes, 8 ) == 8 ) {
     int cmd = (int)from_processing.asFloat[0];
     if( cmd <= 16 ) {
       input_values[ cmd ] = from_processing.asFloat[1] ;
-      update_pid_settings();
-      
+      if( cmd > 0 and cmd < 13 ) update_pid_settings_needed = 1;
     } else {
       if(cmd == 100) {
         aserial_data_mode = (int)from_processing.asFloat[1];
@@ -46,8 +37,16 @@ void serialEvent()
       }
     }
   }
-  Serial.flush();
 }
+
+/*
+union _to_processing { 
+//  uint8_t asBytes[4];
+  byte asBytes[4];  
+//  char asBytes[4];      
+  float asFloat[1];     
+}                    
+to_processing; */
 
 /*
 void SerialSend(byte mode)

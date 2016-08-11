@@ -155,5 +155,7 @@ void update_pid_settings()
     pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     //
     //////////////////////////////////////////////////
+    
+    update_pid_settings_needed = 0;
 }
 
