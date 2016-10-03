@@ -6,7 +6,7 @@ http://www.thorlabs.com/tutorials.cfm?tabID=5dfca308-d07e-46c9-baa0-4defc5c40c3e
 
 While manual tuning can be very effective at setting a PID circuit for your specific system, it does require some amount of 
 experience and understanding of PID circuits and response. The Ziegler-Nichols method for PID tuning offers a bit more 
-structured guide to setting PID values. Again, you’ll want to set the integral and derivative gain to zero. Increase the 
+structured guide to setting PID values. Again, youâ€™ll want to set the integral and derivative gain to zero. Increase the 
 proportional gain until the circuit starts to oscillate. We will call this gain level Ku. The oscillation will have a 
 period of Pu. Gains are for various control circuits are then given below in the chart.
 
@@ -158,4 +158,5 @@ void update_pid_settings()
     
     update_pid_settings_needed = 0;
 }
+
 

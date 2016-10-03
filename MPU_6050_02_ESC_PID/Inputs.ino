@@ -11,9 +11,10 @@ void read_throttle()
   else
   {
     INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming 
-  
+
     if( INPUT_THRUST == 0.0 )
     {
+      Serial.println("throttle_zeroed");
       system_check |= INIT_THROTTLE_ZEROED ;
     }
   }
@@ -39,3 +40,4 @@ void read_battery_voltage()
   INPUT_VOLTAGE_LEVEL = 12.6;
 }
 ///////////////////////////////////////////////////////////////////////
+

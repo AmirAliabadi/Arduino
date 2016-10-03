@@ -1,8 +1,6 @@
 
 void init_esc()
 {
-    disarm_esc();
-
     if( system_check & INIT_THROTTLE_ZEROED )
     {
       esc_a.attach(MOTOR_PIN_A);
@@ -53,6 +51,6 @@ void disarm_esc()
         
     // delay(3000); 
 
-    system_check &= ~(INIT_ESC_ATTACHED | INIT_ESC_ARMED );
+    system_check &= ~(INIT_ESC_ATTACHED | INIT_ESC_ARMED | INIT_THROTTLE_ZEROED );
 }
 

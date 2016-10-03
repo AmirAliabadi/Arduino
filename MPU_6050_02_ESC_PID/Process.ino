@@ -1,33 +1,27 @@
 void process_off()
 {
-  #ifdef DEBUG      
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
     log_data();
   }
-  #endif    
 }
 
-void wait_for_stable()
+void wait_for_stable_process()
 {
-  #ifdef DEBUG        
   if (millis() - last_log > 2000)
   {
     last_log = millis();
-    process = &check_if_stable;  
+    process = &check_if_stable_process;  
   }
-  #endif    
 }
 
-void check_if_stable()
+void check_if_stable_process()
 {
   static float last_yw = -333.0;
 
-#ifdef DEBUG    
   Serial.print(F("#w 4 SR "));
   Serial.println(abs(ypr[YW] - last_yw),2);
-#endif
 
   float yw_reading = (int)(ypr[YW]*10.0 + .5)/10.0;
 
@@ -52,18 +46,16 @@ void check_if_stable()
     process = &attitude_process;
   } else {
     last_yw = yw_reading;
-    process = &wait_for_stable;
+    process = &wait_for_stable_process;
     
   }
 }
 
 void arm_esc_process()
 {
-    read_throttle();
     init_esc();
-      
     if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) {
-      process = &wait_for_stable; //attitude_process; //wait_for_stable;    
+      process = &wait_for_stable_process; //attitude_process; //wait_for_stable;    
     }
 }
 
@@ -79,17 +71,15 @@ void attitude_process()
       process = &process_off;
       return;
     }
+    
   }
   else 
   {
-
-#ifdef DEBUG         
+      // ESC is not armed
       if (millis() - last_log > LOG_FREQUENCY)
       {   
         last_log = millis();       
       }     
-#endif      
-
       return;
   }
 
@@ -141,7 +131,12 @@ void attitude_process()
   esc_c.writeMicroseconds(vc);
   esc_b.writeMicroseconds(vb);
   esc_d.writeMicroseconds(vd);
-  
+
+  if (millis() - last_log > LOG_FREQUENCY)
+  {
+    last_log = millis();
+    log_data();
+  }
 }
 
 //////////////////////////////////////////////////////////////////////

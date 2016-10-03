@@ -11,3 +11,4 @@ void init_i2c()
   Fastwire::setup(400, true);
 #endif
 }
+

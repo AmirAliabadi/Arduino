@@ -243,7 +243,7 @@ void setup()
 //TCCR2B = TCCR2B & B11111000 | B00000111;    // set timer 2 divisor to  1024 for PWM frequency of    30.64 Hz
 */
   
-
+  disarm_esc();
   init_i2c();
   init_mpu();
   init_pid();
@@ -291,15 +291,9 @@ void loop()
   read_setpoint();
   read_battery_voltage();
   if( update_pid_settings_needed == 1 ) update_pid_settings();
+  
   process();
 
-#ifdef DEBUG   
-  if (millis() - last_log > LOG_FREQUENCY)
-  {
-    last_log = millis();
-    log_data();
-  }
-#endif  
 
 /*
   sum_cycle_time += ( millis() - sum_cycle_time_1 );
