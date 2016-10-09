@@ -127,8 +127,16 @@ void read_mpu()
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
     ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
-    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) - ac_offset ) ;
-    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) - bd_offset ) ;    
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ); //- ac_offset ) ;
+    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ); //- bd_offset ) ;   
+
+    gyro.x = (gyro.x * 10.0 + 0.5)/10.0;
+    gyro.y = (gyro.y * 10.0 + 0.5)/10.0;
+    gyro.z = (gyro.z * 10.0 + 0.5)/10.0;
+
+    ypr[YW] = (ypr[YW] * 10.0 + 0.5)/10.0;
+    ypr[AC] = (ypr[AC] * 10.0 + 0.5)/10.0;
+    ypr[BD] = (ypr[BD] * 10.0 + 0.5)/10.0;    
 
 
     if( system_check & INIT_MPU_STABLE )

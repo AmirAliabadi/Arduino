@@ -14,8 +14,8 @@ byte update_pid_settings_needed = 0;
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
-float alpha = 0.2;
-int pid_refresh_rate = 5;
+float alpha = 0.88;
+int pid_refresh_rate = 25;
 
 #define DEBUG
 
@@ -45,6 +45,9 @@ int pid_refresh_rate = 5;
  * ---------------------
  * 6.885  0.00  0.405
  * 0.551  0.00  0.184
+ * 
+ * * 2.865 0.00 0.00
+ * * 0.429 0.005 0.038
  */
 
 ///////////////////////////////////`

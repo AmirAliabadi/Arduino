@@ -12,6 +12,7 @@ void wait_for_stable_process()
   if (millis() - last_log > 2000)
   {
     last_log = millis();
+    log_data();    
     process = &check_if_stable_process;  
   }
 }
@@ -29,8 +30,8 @@ void check_if_stable_process()
     system_check |= INIT_MPU_STABLE;
     
     yw_offset = yw_reading;
-    ac_offset = ypr[AC];
-    bd_offset = ypr[BD];
+    ac_offset = 0.0; //ypr[AC];
+    bd_offset = 0.0; //ypr[BD];
 
     ypr_last[YW] = 0.0;
     ypr_last[AC] = 0.0;
@@ -78,7 +79,8 @@ void attitude_process()
       // ESC is not armed
       if (millis() - last_log > LOG_FREQUENCY)
       {   
-        last_log = millis();       
+        last_log = millis(); 
+        log_data();
       }     
       return;
   }

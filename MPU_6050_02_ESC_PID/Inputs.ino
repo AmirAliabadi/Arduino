@@ -4,7 +4,7 @@
 //////////////////////////////////////////////////////////////////////
 void read_throttle()
 {
-  if( system_check & INIT_ESC_ARMED ) 
+  if( system_check & INIT_THROTTLE_ZEROED ) 
   {
     INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
   }
@@ -14,7 +14,6 @@ void read_throttle()
 
     if( INPUT_THRUST == 0.0 )
     {
-      Serial.println("throttle_zeroed");
       system_check |= INIT_THROTTLE_ZEROED ;
     }
   }
