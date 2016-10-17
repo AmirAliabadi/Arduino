@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+//      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -58,7 +58,7 @@ void init_mpu()
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
-      Serial.println(F("#DMP ready!"));
+      Serial.println(F("#DMP rdy"));
       dmpReady = true;
 
       // get expected DMP packet size for later comparison
@@ -126,24 +126,34 @@ void read_mpu()
 
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
-    ypr[YW] = ((ypr[YW] * A_180_DIV_PI) - yw_offset ) ;
-    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ); //- ac_offset ) ;
-    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ); //- bd_offset ) ;   
+    ypr[YW] = ((ypr[YW] * A_180_DIV_PI) ) ;
+    ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ) ;
+    ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ) ;   
 
+    ////////////////////////////////////////////////
+    // round off the data
+    // this might *help* will small-small gittery 
+    // movements. 
     gyro.x = (gyro.x * 10.0 + 0.5)/10.0;
     gyro.y = (gyro.y * 10.0 + 0.5)/10.0;
     gyro.z = (gyro.z * 10.0 + 0.5)/10.0;
 
     ypr[YW] = (ypr[YW] * 10.0 + 0.5)/10.0;
     ypr[AC] = (ypr[AC] * 10.0 + 0.5)/10.0;
-    ypr[BD] = (ypr[BD] * 10.0 + 0.5)/10.0;    
+    ypr[BD] = (ypr[BD] * 10.0 + 0.5)/10.0;  
+    // round off the data
+    ////////////////////////////////////////////////
 
 
     if( system_check & INIT_MPU_STABLE )
     {
+      ypr[YW] = ypr[YW] - yw_offset;
+      ypr[AC] = ypr[AC] - ac_offset;
+      ypr[BD] = ypr[BD] - bd_offset;
+      
       if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
       {
-        Serial.print(F("#bg chng"));
+        Serial.print(F("#bg chng ac"));
         Serial.print("\t");
         Serial.print(ypr_last[AC]);
         Serial.print("\t");
@@ -152,7 +162,7 @@ void read_mpu()
 
       if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
       {
-        Serial.print(F("#bg chng"));
+        Serial.print(F("#bg chng bd"));
         Serial.print("\t");
         Serial.print(ypr_last[BD]);
         Serial.print("\t");

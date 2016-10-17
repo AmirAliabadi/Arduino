@@ -7,7 +7,7 @@ void init_esc()
       esc_c.attach(MOTOR_PIN_C);
       esc_b.attach(MOTOR_PIN_B);
       esc_d.attach(MOTOR_PIN_D);
-  
+
       system_check |= INIT_ESC_ATTACHED;
   
       arm_esc();
@@ -20,25 +20,11 @@ void init_esc()
 
 void arm_esc()
 {
-//  esc_a.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST); 
-//  esc_c.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST); 
-//  esc_b.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST);
-//  esc_d.writeMicroseconds(MIN_ESC_SIGNAL + INPUT_THRUST);
-
-//  delay(ESC_ARM_DELAY);
-
   system_check |= INIT_ESC_ARMED;
 }
 
 void disarm_esc()
 {
-#ifdef DEBUG  
-    if( system_check & INIT_ESC_ATTACHED ) 
-    {
-      Serial.println(F("#Detaching motor pins"));
-    }
-#endif
-
     esc_a.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_c.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_b.writeMicroseconds(MIN_ESC_SIGNAL);

@@ -25,7 +25,9 @@ void serialEvent()
         pid_stable[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
         
       } else if (cmd == 102) { 
+#ifdef CASCADE_PIDS         
         pid_rate[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
+#endif        
         
       } else if (cmd == 200) {
         alpha = from_processing.asFloat[1];
@@ -38,38 +40,6 @@ void serialEvent()
     }
   }
 }
-
-/*
-union _to_processing { 
-//  uint8_t asBytes[4];
-  byte asBytes[4];  
-//  char asBytes[4];      
-  float asFloat[1];     
-}                    
-to_processing; */
-
-/*
-void SerialSend(byte mode)
-{
-  to_processing.asFloat[0] = 1.234; //INPUT_THRUST *1000.0;
-  //to_processing.asFloat[1] = setpoint[mode];
-  //to_processing.asFloat[2] = input_gyro[mode];
-  //to_processing.asFloat[3] = input_ypr[mode];
-
-  Serial.write( to_processing.asBytes, 4 );
-  
-//  Serial.print( to_processing.asBytes[0], HEX );
-//    Serial.print(F(" "));
-//  Serial.print( to_processing.asBytes[1], HEX );
-//    Serial.print(F(" "));
-//  Serial.print( to_processing.asBytes[2], HEX );
-//    Serial.print(F(" "));
-//  Serial.print( to_processing.asBytes[3], HEX );
-//    Serial.print(F(" "));
-//  Serial.print( to_processing.asFloat[0] );
-//    Serial.println(F(" "));
-}
-*/
 
 void SerialSend_A(byte mode)
 {
@@ -87,18 +57,30 @@ void SerialSend_A(byte mode)
   Serial.print(pid_stable[mode].GetKp(), 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].GetKi(), 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].GetKd(), 4);   Serial.print(F(" "));
-   
+
+#ifdef CASCADE_PIDS    
   Serial.print(pid_rate[mode].GetKp(), 4);   Serial.print(F(" "));
   Serial.print(pid_rate[mode].GetKi(), 4);   Serial.print(F(" "));
   Serial.print(pid_rate[mode].GetKd(), 4);   Serial.print(F(" "));
+#else
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+#endif
 
   Serial.print(pid_stable[mode].pterm, 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].iterm, 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].dterm, 4);   Serial.print(F(" "));
-   
+
+#ifdef CASCADE_PIDS    
   Serial.print(pid_rate[mode].pterm, 4);   Serial.print(F(" "));
   Serial.print(pid_rate[mode].iterm, 4);   Serial.print(F(" "));
   Serial.print(pid_rate[mode].dterm, 4);   Serial.print(F(" "));
+#else  
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+  Serial.print(0.0000, 4);   Serial.print(F(" "));
+#endif
 
   Serial.println(F("E"));
 
@@ -130,8 +112,14 @@ void SerialSend_B(byte mode)
   if(pid_stable[mode].GetDirection()==DIRECT) Serial.print(F("D"));
   else Serial.print(F("R"));
   Serial.print(F(" "));
+
+#ifdef CASCADE_PIDS 
   if(pid_rate[mode].GetDirection()==DIRECT) Serial.print(F("D"));
   else Serial.print(F("R"));  
+#else  
+  Serial.print(F("D"));  
+#endif  
+
   Serial.print(F(" "));
   
   Serial.print(va); Serial.print(F(" "));

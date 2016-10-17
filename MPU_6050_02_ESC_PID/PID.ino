@@ -87,6 +87,13 @@ with the full quad!
 // stable + rate pid
 // -45 - 45 and -200 to 200 / p=1.2 , i=.44
 
+
+
+commit ce763f1b34255f81bee1bf61d10230a3393655f2
+Author: AmirAliabadi <amiraliabadi@gmail.com>
+Date:   Tue May 31 22:07:55 2016 -0700
+
+    added a comment with old pid setting where I first observed the d-term chatter
 /////////////////////////////////////////////
 */
 
@@ -97,20 +104,17 @@ void init_pid()
 
   update_pid_settings();
 
-  for(byte i=YW; i<=AC; i++ ) {  
-    pid_stable[i].SetOutputLimits(-300, 300);
-    pid_rate[i].SetOutputLimits(-300, 300);
-      
-    pid_stable[i].SetOutputLimits(-300, 300);
-    pid_rate[i].SetOutputLimits(-300, 300);
-    
-  }
-
   set_pid_refresh_rate();
-
+  
   for(byte i=YW; i<=AC; i++ ) {  
+    pid_stable[i].SetOutputLimits(-300, 300);
     pid_stable[i].SetMode(AUTOMATIC);
+
+#ifdef CASCADE_PIDS    
+    pid_rate[i].SetOutputLimits(-300, 300);    
     pid_rate[i].SetMode(AUTOMATIC);
+#endif
+      
   }
   
   system_check |= INIT_PID_ON ;
@@ -120,7 +124,9 @@ void set_pid_refresh_rate()
 {
   for(byte i=YW; i<=AC; i++ ) {  
     pid_stable[i].SetSampleTime(pid_refresh_rate);
+#ifdef CASCADE_PIDS    
     pid_rate[i].SetSampleTime(pid_refresh_rate);      
+#endif
   }
 }
 
@@ -128,7 +134,9 @@ void pid_reset()
 {
   for(byte i=YW; i<=AC; i++ ) {
     pid_stable[i].Reset();
+#ifdef CASCADE_PIDS    
     pid_rate[i].Reset();  
+#endif
   }
 }
 
@@ -149,10 +157,11 @@ void update_pid_settings()
     pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
     pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
 
-
+#ifdef CASCADE_PIDS
     pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
     pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
     pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+#endif
     //
     //////////////////////////////////////////////////
     
