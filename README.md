@@ -21,3 +21,9 @@ Alpha: 0.92
 Stable: 3.11, 0.0, 0.00
 Rate: 0.515, 0.0, 0.08
 Alpha: 0.80
+
+
+
+-----
+For the threaded brushless motors:
+The direction you want the motor to spin is the direction that causes the nut to get tighter if you hold the nut still with your fingers.
