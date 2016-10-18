@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-//      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -54,7 +54,12 @@ void init_mpu()
       // turn on the DMP, now that it's ready
       Serial.println(F("#Enab DMP"));
       mpu.setDMPEnabled(true);
-      
+
+#ifdef USE_INTERRUPTS
+      Serial.println(F("#Enabling int detection (external interrupt 0)..."));
+      attachInterrupt(0, dmpDataReady, RISING);    
+#endif      
+        
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -82,8 +87,12 @@ void init_mpu()
 //
 void read_mpu()
 {
-  // reset interrupt flag and get INT_STATUS byte
-  // mpuInterrupt = false;
+#ifdef USE_INTERRUPTS  
+  // reset interrupt flag 
+  mpuInterrupt = false;
+#endif
+
+  // get INT_STATUS byte
   mpuIntStatus = mpu.getIntStatus();
 
   // get current FIFO count
@@ -116,6 +125,7 @@ void read_mpu()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
 
+#ifdef CASCADE_PIDS
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
@@ -123,6 +133,8 @@ void read_mpu()
     gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
     gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 
     // low pass filter on the gyro data   
+    
+#endif
 
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
@@ -134,9 +146,11 @@ void read_mpu()
     // round off the data
     // this might *help* will small-small gittery 
     // movements. 
+#ifdef CASCADE_PIDS    
     gyro.x = (gyro.x * 10.0 + 0.5)/10.0;
     gyro.y = (gyro.y * 10.0 + 0.5)/10.0;
     gyro.z = (gyro.z * 10.0 + 0.5)/10.0;
+#endif    
 
     ypr[YW] = (ypr[YW] * 10.0 + 0.5)/10.0;
     ypr[AC] = (ypr[AC] * 10.0 + 0.5)/10.0;

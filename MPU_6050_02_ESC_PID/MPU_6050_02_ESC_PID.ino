@@ -10,14 +10,16 @@
 //#include "MPU6050_9Axis_MotionApps41.h"
 //#include "MPU6050.h" // not necessary if using MotionApps include file
 
-byte update_pid_settings_needed = 0;
+byte update_pid_settings_needed = 1;
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
 float alpha = 0.88;
-int pid_refresh_rate = 20;
+int pid_refresh_rate = 10;
 
 #define DEBUG
+#define USE_INTERRUPTS
+#define CASCADE_PIDS
 
 /*
  * Single Boom PID values
@@ -125,8 +127,11 @@ VectorInt16 aa;         			// [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor measurements
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
+
+#ifdef CASCADE_PIDS    
 VectorInt16 gyro;
 VectorInt16 gyro1;
+#endif
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};
@@ -192,68 +197,44 @@ long last_blink = 0;
 ////////////////////////////////////////////////////////////////
 
 
-// ================================================================
-// ===               INTERRUPT DETECTION ROUTINE                ===
-// ================================================================
+//// ================================================================
+//// ===               INTERRUPT DETECTION ROUTINE                ===
+//// ================================================================
+//
+#ifdef USE_INTERRUPTS
+volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+void dmpDataReady()
+{
+  mpuInterrupt = true;
 
-//volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
-//void dmpDataReady()
-//{
-//  mpuInterrupt = true;
-//}
+//  read_mpu();
+//  read_throttle();
+//  read_setpoint();
+//  read_battery_voltage();
+//  update_pid_settings();
+//  
+//  process();  
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////
 // setup
 void setup()
 {
 #ifdef DEBUG
-  Serial.begin(115200); //115200
+  Serial.begin(115200); 
   while (!Serial);
 #endif
 
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
-
-/*
- * you can change the PWM frequencys as describe below
- * https://arduino-info.wikispaces.com/Arduino-PWM-Frequency
- *
-// For Arduino Uno, Nano, Micro Magician, Mini Driver, Lilly Pad and any other board using ATmega 8, 168 or 328**
- 
-//---------------------------------------------- Set PWM frequency for D5 & D6 -------------------------------
- 
-//TCCR0B = TCCR0B & B11111000 | B00000001;    // set timer 0 divisor to     1 for PWM frequency of 62500.00 Hz
-//TCCR0B = TCCR0B & B11111000 | B00000010;    // set timer 0 divisor to     8 for PWM frequency of  7812.50 Hz
-  TCCR0B = TCCR0B & B11111000 | B00000011;    // set timer 0 divisor to    64 for PWM frequency of   976.56 Hz (The DEFAULT)
-//TCCR0B = TCCR0B & B11111000 | B00000100;    // set timer 0 divisor to   256 for PWM frequency of   244.14 Hz
-//TCCR0B = TCCR0B & B11111000 | B00000101;    // set timer 0 divisor to  1024 for PWM frequency of    61.04 Hz
- 
- 
-//---------------------------------------------- Set PWM frequency for D9 & D10 ------------------------------
- 
-//TCCR1B = TCCR1B & B11111000 | B00000001;    // set timer 1 divisor to     1 for PWM frequency of 31372.55 Hz
-//TCCR1B = TCCR1B & B11111000 | B00000010;    // set timer 1 divisor to     8 for PWM frequency of  3921.16 Hz
-  TCCR1B = TCCR1B & B11111000 | B00000011;    // set timer 1 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-//TCCR1B = TCCR1B & B11111000 | B00000100;    // set timer 1 divisor to   256 for PWM frequency of   122.55 Hz
-//TCCR1B = TCCR1B & B11111000 | B00000101;    // set timer 1 divisor to  1024 for PWM frequency of    30.64 Hz
- 
-//---------------------------------------------- Set PWM frequency for D3 & D11 ------------------------------
- 
-//TCCR2B = TCCR2B & B11111000 | B00000001;    // set timer 2 divisor to     1 for PWM frequency of 31372.55 Hz
-//TCCR2B = TCCR2B & B11111000 | B00000010;    // set timer 2 divisor to     8 for PWM frequency of  3921.16 Hz
-//TCCR2B = TCCR2B & B11111000 | B00000011;    // set timer 2 divisor to    32 for PWM frequency of   980.39 Hz
-  TCCR2B = TCCR2B & B11111000 | B00000100;    // set timer 2 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
-//TCCR2B = TCCR2B & B11111000 | B00000101;    // set timer 2 divisor to   128 for PWM frequency of   245.10 Hz
-//TCCR2B = TCCR2B & B11111000 | B00000110;    // set timer 2 divisor to   256 for PWM frequency of   122.55 Hz
-//TCCR2B = TCCR2B & B11111000 | B00000111;    // set timer 2 divisor to  1024 for PWM frequency of    30.64 Hz
-*/
   
   disarm_esc();
   init_i2c();
-  init_mpu();
   init_pid();
+  init_mpu();
 
-  process = &check_if_stable_process; //arm_esc_process;
+  process = &wait_for_stable_process; //check_if_stable_process; //arm_esc_process;
 
   send_serial = &SerialSend_A;
 }
@@ -263,24 +244,10 @@ void setup()
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
-int cycle_count = 0;
-long sum_cycle_time_1 = 0;
-long sum_cycle_time = 0;
 void loop()
 {
   if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
   {
-/*    
-    Serial.print(F("#sizeof pid: "));
-    Serial.println( sizeof(pid_stable[0]) );
-
-    Serial.print(F("#sizeof servo: "));
-    Serial.println( sizeof(esc_a) );   
-
-    Serial.print(F("#sizeof mpu: "));
-    Serial.println( sizeof(mpu) );  
-*/
-    
     last_blink = millis();
 
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));
@@ -288,29 +255,26 @@ void loop()
 
   if (!dmpReady) return;
 
-  sum_cycle_time_1 = millis();
+#ifdef USE_INTERRUPTS
+  // wait for MPU interrupt or extra packet(s) available
+  while (!mpuInterrupt) // && fifoCount < packetSize)
+  {
+    read_throttle();        if (mpuInterrupt) break;
+    read_setpoint();        if (mpuInterrupt) break;
+    read_battery_voltage(); if (mpuInterrupt) break;
+    update_pid_settings();  if (mpuInterrupt) break;
+
+    process();
+  }  
+#endif
 
   read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
-  
-  if( update_pid_settings_needed == 1 ) update_pid_settings();
+  update_pid_settings();
   
   process();
-
-
-  // with throttle, 1.22ms cycle time
-  
-  sum_cycle_time += ( millis() - sum_cycle_time_1 );
-
-  if( ++cycle_count == 1000 ) {
-
-    Serial.print(F("#cycle_time: "));
-    Serial.println( sum_cycle_time / 1000.0 );
-    sum_cycle_time = 0;
-    cycle_count = 0;
-  }
 
 }
 

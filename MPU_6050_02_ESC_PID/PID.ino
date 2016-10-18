@@ -142,30 +142,32 @@ void pid_reset()
 
 void update_pid_settings()
 {
-    ////////////////////////////////////////////////////
-    // Reset of PID when setpoint changes
-    //if( setpoint_changed & SETPOINT_CHANGED_AC ) {pid_ac_stable.Reset(); ac_rat.Reset(); }
-    //if( setpoint_changed & SETPOINT_CHANGED_BD ) {pid_bd_stable.Reset(); bd_rat.Reset(); }
-    //if( setpoint_changed & SETPOINT_CHANGED_YW ) {pid_yw_stable.Reset(); }
-    setpoint_changed = SETPOINT_UNCHANGED;
-    //
-    ///////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////
-    // 
-    pid_stable[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
-    pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-    pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-
+    if( update_pid_settings_needed == 1 ) {  
+      ////////////////////////////////////////////////////
+      // Reset of PID when setpoint changes
+      //if( setpoint_changed & SETPOINT_CHANGED_AC ) {pid_ac_stable.Reset(); ac_rat.Reset(); }
+      //if( setpoint_changed & SETPOINT_CHANGED_BD ) {pid_bd_stable.Reset(); bd_rat.Reset(); }
+      //if( setpoint_changed & SETPOINT_CHANGED_YW ) {pid_yw_stable.Reset(); }
+      setpoint_changed = SETPOINT_UNCHANGED;
+      //
+      ///////////////////////////////////////////////////
+  
+      ///////////////////////////////////////////////////
+      // 
+      pid_stable[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
+      pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+      pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);      
+  
 #ifdef CASCADE_PIDS
-    pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
-    pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-    pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+      pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
+      pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
+      pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);      
 #endif
-    //
-    //////////////////////////////////////////////////
-    
-    update_pid_settings_needed = 0;
+      //
+      //////////////////////////////////////////////////
+      
+      update_pid_settings_needed = 0;
+    }
 }
 
 

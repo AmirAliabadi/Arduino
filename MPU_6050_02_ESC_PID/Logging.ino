@@ -43,16 +43,14 @@ void serialEvent()
 
 void SerialSend_A(byte mode)
 {
-// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/r _ va _ vb _ vc _ vd _ alpha
-
   Serial.print(F("A "));
   Serial.print(selected_pot_tuning);
   Serial.print(F("_"));
   Serial.print(aserial_data_mode);
   Serial.print(F(" "));
 
-  Serial.print(output_ypr[mode]);   Serial.print(F(" "));  
-  Serial.print(output_rate[mode]);  Serial.print(F(" "));
+  Serial.print(output_ypr[mode]);   Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
+  Serial.print(output_rate[mode]);  Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
 
   Serial.print(pid_stable[mode].GetKp(), 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].GetKi(), 4);   Serial.print(F(" "));
@@ -90,8 +88,6 @@ void SerialSend_A(byte mode)
 
 void SerialSend_B(byte mode)
 {
-// PID _ setpoint _ input_gyro _ input_angle  _ output_angle _ output_gyro _ pid.p _ pid.i _ pid.d _ rat.p _ rat.i _ rat.d _ man/auto _ dir/r _ va _ vb _ vc _ vd _ alpha
-
   Serial.print(F("B "));
   Serial.print(selected_pot_tuning);
   Serial.print(F("_"));
@@ -103,8 +99,8 @@ void SerialSend_B(byte mode)
   
   Serial.print(setpoint[mode]);   Serial.print(F(" "));  
 
-  Serial.print(input_gyro[mode]); Serial.print(F(" "));
-  Serial.print(input_ypr[mode]);  Serial.print(F(" "));    
+  Serial.print(input_gyro[mode]); Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
+  Serial.print(input_ypr[mode]);  Serial.print(F(" "));  // this is the actual angle being read by the MPU  
 
   if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
   else Serial.print(F("M"));  
@@ -128,6 +124,8 @@ void SerialSend_B(byte mode)
   Serial.print(vd); Serial.print(F(" "));
 
   Serial.print(alpha); Serial.print(F(" "));  
+
+  Serial.print(pid_refresh_rate); Serial.print(F(" "));  
   
   Serial.println(F("E"));
 

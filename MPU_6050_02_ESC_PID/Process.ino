@@ -139,9 +139,11 @@ void attitude_process()
   input_ypr[AC] = ypr[AC];
   input_ypr[BD] = ypr[BD];  
 
+#ifdef CASCADE_PIDS    
   input_gyro[YW] = gyro.z*-1.0;
   input_gyro[AC] = gyro.x;
   input_gyro[BD] = gyro.y*-1.0;  
+#endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
@@ -214,12 +216,12 @@ void attitude_process()
    *         20ms (50hz)
    *         
    *       _
-   *      | |  
+   *      | |  5% duty cycle = Min ESC Signal
    *   ---` '-----------
    *       1ms
    *       
    *       __
-   *      |  |  
+   *      |  |  10% duty cycle = Max ESC Signal (Full throttle)
    *   ---`  '-----------
    *       2ms
    *

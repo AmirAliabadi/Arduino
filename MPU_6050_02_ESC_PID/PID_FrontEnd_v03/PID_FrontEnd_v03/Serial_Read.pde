@@ -72,8 +72,8 @@ void parseA(String[] s ) {
   {
     if(! trim(s[expected_size-1]).equals("E") ) {print(s.length); return;}
 
-    Output_angle = float(trim(s[2]));
-    Output_gyro = float(trim(s[3]));
+    Output_angle = float(trim(s[2]));  // stable pid output (current angle - setpoint) => desired acceleration
+    Output_gyro = float(trim(s[3]));   // this is the rate pid output (desired acceleration - current acceleration) => motor inputs
     
     kp = float(trim(s[4]));
     ki = float(trim(s[5]));
@@ -120,7 +120,7 @@ void parseB(String[] s ) {
   // B 0_0 0.00 0.00 0.00 -34.45 A D D 1000 1000 1000 1000 0.80 E
   // 0 1   2    3    4    5      6 7 8 9    10   11   12   13   14
   
-  int expected_size = 15; 
+  int expected_size = 16; 
   
   if (s.length == expected_size)
   {
@@ -150,7 +150,10 @@ void parseB(String[] s ) {
     vd = float(trim(s[12]));
     
     alpha = float(trim(s[13]));
-    AlphaLable.setValue(Float.toString(alpha));    
+    AlphaLable.setValue(Float.toString(alpha));
+    
+    pid_refresh_rate = float(trim(s[14]));
+    PidRefreshIntervalLabel.setValue(Float.toString(pid_refresh_rate));    
     
     controlP5.getController("va").setValue(va);
     controlP5.getController("vb").setValue(vb);

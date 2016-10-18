@@ -134,7 +134,7 @@ void setup()
   AlphaLable=controlP5.addTextlabel("AlphaLable","",group_x,group_y);
 
   controlP5.addTextlabel("t71","PID Refresh",group_x-80,group_y+=15);
-  PidRefreshIntervalLabel=controlP5.addTextlabel("PidRefreshIntervalLabel","10",group_x,group_y);
+  PidRefreshIntervalLabel=controlP5.addTextlabel("PidRefreshIntervalLabel","",group_x,group_y);
   
   controlP5.addTextlabel("t72","PTerm Rate",group_x-80,group_y+=15);
   PTermRateLabel=controlP5.addTextlabel("PTermRateLabel","10",group_x,group_y);
