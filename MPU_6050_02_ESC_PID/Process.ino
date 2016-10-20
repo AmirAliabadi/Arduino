@@ -72,7 +72,7 @@ void check_if_stable_process()
   static float last_yw = -333.0;
   static float stable_read_count = 0.0;
 
-  Serial.print(F("#w 4 SR "));
+  Serial.print(F("#SR "));
   Serial.println(abs(ypr[YW] - last_yw),2);
 
   float yw_reading = (float)((int)(ypr[YW]*10.0 + .5))/10.0;
@@ -87,7 +87,7 @@ void check_if_stable_process()
     ypr_last[AC] = 0.0;
     ypr_last[BD] = 0.0;
 
-    Serial.print(F("#stbl: "));
+    Serial.print(F("#stb: "));
     Serial.print(yw_offset);
     Serial.print(F(" "));
     Serial.print(ac_offset);

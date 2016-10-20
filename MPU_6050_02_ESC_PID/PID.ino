@@ -65,6 +65,12 @@ These pids tunings are even better, now that I have upped the PID compute cycle
  * this is what I'm going to start with:
  * .8 .4 .3
 
+// more sample of pid values that work ok
+2.245 0.0 0.0
+0.499 0.017 0.056
+alpha 0.44
+pid refresh of 5
+using the ESC library
 
 /////////////////////////////////////
 // bad values:

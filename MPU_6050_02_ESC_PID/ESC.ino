@@ -20,6 +20,11 @@ void init_esc()
 
 void arm_esc()
 {
+  esc_a.arm();
+  esc_c.arm();
+  esc_b.arm();
+  esc_d.arm();
+  
   system_check |= INIT_ESC_ARMED;
 }
 
@@ -29,6 +34,13 @@ void disarm_esc()
     esc_c.writeMicroseconds(MIN_ESC_SIGNAL); 
     esc_b.writeMicroseconds(MIN_ESC_SIGNAL);
     esc_d.writeMicroseconds(MIN_ESC_SIGNAL);
+    
+#ifdef ARMED_PULSE_WIDTH
+    esc_a.disarm();
+    esc_c.disarm();
+    esc_b.disarm();
+    esc_d.disarm();
+#endif    
     
     esc_a.detach();
     esc_c.detach();

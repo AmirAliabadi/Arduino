@@ -27,3 +27,13 @@ Alpha: 0.80
 -----
 For the threaded brushless motors:
 The direction you want the motor to spin is the direction that causes the nut to get tighter if you hold the nut still with your fingers.
+
+
+ESC motor pairs
+attach sync noise not in sync
+001 paired with 001
+xxx paired with 002
+
+attach sync noise in sync 
+001 paired with 003
+xxx paired with 002

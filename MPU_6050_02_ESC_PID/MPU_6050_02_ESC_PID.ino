@@ -1,6 +1,12 @@
 #include "Config.h"
 
-#include <Servo.h>
+//#include "MyServo.h"
+//#define _ESC_ MyServo
+
+#include "ESC.h"
+#define _ESC_ ESC
+
+
 #include <PID_v1.h>
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 #include "Wire.h"
@@ -18,7 +24,7 @@ float alpha = 0.88;
 int pid_refresh_rate = 10;
 
 #define DEBUG
-#define USE_INTERRUPTS
+//#define USE_INTERRUPTS
 #define CASCADE_PIDS
 
 /*
@@ -144,10 +150,10 @@ float bd_offset   = 0.0;
 
 ////////////////////////////////////////////////////////////////
 // ESC
-Servo esc_a;
-Servo esc_b;
-Servo esc_c;
-Servo esc_d;
+_ESC_ esc_a;
+_ESC_ esc_b;
+_ESC_ esc_c;
+_ESC_ esc_d;
 
 uint16_t va = MIN_ESC_SIGNAL;
 uint16_t vb = MIN_ESC_SIGNAL;

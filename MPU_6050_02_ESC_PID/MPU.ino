@@ -124,8 +124,11 @@ void read_mpu()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
+                                               // this give you the angle the chip is sat
 
 #ifdef CASCADE_PIDS
+    // dmpGetGryo returns the Accelration data ??
+    // I thought gyro data give you angular reading and accelerator data gave you acceleration in deg/sec ??
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
