@@ -94,12 +94,13 @@ with the full quad!
 // -45 - 45 and -200 to 200 / p=1.2 , i=.44
 
 
+-- switched out a spider ztw esc.
+-- way better performance and pid tuning has changed.
 
-commit ce763f1b34255f81bee1bf61d10230a3393655f2
-Author: AmirAliabadi <amiraliabadi@gmail.com>
-Date:   Tue May 31 22:07:55 2016 -0700
-
-    added a comment with old pid setting where I first observed the d-term chatter
+-- with spider ztw ESC
+0.71  0.0   0.0
+0.509 0.007 0.024
+    
 /////////////////////////////////////////////
 */
 
