@@ -55,11 +55,6 @@ void init_mpu()
       Serial.println(F("#Enab DMP"));
       mpu.setDMPEnabled(true);
 
-#ifdef USE_INTERRUPTS
-      Serial.println(F("#Enabling int detection (external interrupt 0)..."));
-      attachInterrupt(0, dmpDataReady, RISING);    
-#endif      
-        
       mpuIntStatus = mpu.getIntStatus();
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
@@ -87,11 +82,6 @@ void init_mpu()
 //
 void read_mpu()
 {
-#ifdef USE_INTERRUPTS  
-  // reset interrupt flag 
-  mpuInterrupt = false;
-#endif
-
   // get INT_STATUS byte
   mpuIntStatus = mpu.getIntStatus();
 

@@ -17,7 +17,7 @@ void keyPressed() {
         break;
         
       case 'a':
-        if(cur_throttle < 900.0) cur_throttle += 10.0;
+        if(cur_throttle <= 1000.0) cur_throttle += 10.0;
         Send_To_Arduino2(0.0, cur_throttle);        
         break;
       case 'z':
@@ -88,7 +88,7 @@ void keyPressed() {
         Send_To_Arduino2(200.0, alpha);
         break;
       case 't':
-        alpha -= 0.01;
+        if( alpha > 0 ) alpha -= 0.01;
         Send_To_Arduino2(200.0, alpha);
         break;
         
@@ -99,7 +99,7 @@ void keyPressed() {
         break;
         
       case 'r':
-        pid_refresh_rate -= 1.0;
+        if( pid_refresh_rate > 0 ) pid_refresh_rate -= 1.0;
         PidRefreshIntervalLabel.setValue(Float.toString(pid_refresh_rate));        
         Send_To_Arduino2(201.0, pid_refresh_rate);
         break;        

@@ -12,8 +12,6 @@
 #define INIT_MPU_ARMED        0b00010000
 #define INIT_MPU_STABLE       0b00100000
 #define INIT_PID_ON           0b01000000
-#define INIT_THROTTLE_ZEROED  0b10000000
-
 
 #define SETPOINT_UNCHANGED    0b000
 #define SETPOINT_CHANGED_AC   0b001
@@ -108,7 +106,7 @@ Your offsets: -62 366 1416  161 145 -19
 #define ESC_ARM_DELAY     3000
 #define MAX_ESC_SIGNAL    2000    // This is the max output that will be sent to ESC.
 #define MIN_ESC_SIGNAL    1000    // Minimum ESC signal
-#define MIN_ESC_CUTOFF    1200    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
+#define MIN_ESC_CUTOFF    1000    // Minimum ESC signal to ARM less than or equal to this should turn off motor completely
 #define MOTOR_PIN_A       3       // setup with 500hz PWM pins
 #define MOTOR_PIN_B       9       
 #define MOTOR_PIN_C       11       

@@ -24,7 +24,6 @@ float alpha = 0.88;
 int pid_refresh_rate = 10;
 
 #define DEBUG
-//#define USE_INTERRUPTS
 #define CASCADE_PIDS
 
 /*
@@ -61,10 +60,10 @@ int pid_refresh_rate = 10;
 ///////////////////////////////////`
 // user inputs
 float input_values[17] = { 0,                       // thrust
-                           3.135, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
-                           0.672, 0.010, 0.013,     // Rate Pitch/Role PID P/I/D
-                           2.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
-                           0.110, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           1.9,   0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
+                           0.55,  0.010, 0.013,     // Rate Pitch/Role PID P/I/D
+                           2.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
+                           0.110, 0.000, 0.000,     // Rate Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
@@ -200,29 +199,6 @@ long last_log = 0;
 #endif
 long last_blink = 0;
 
-////////////////////////////////////////////////////////////////
-
-
-//// ================================================================
-//// ===               INTERRUPT DETECTION ROUTINE                ===
-//// ================================================================
-//
-#ifdef USE_INTERRUPTS
-volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
-void dmpDataReady()
-{
-  mpuInterrupt = true;
-
-//  read_mpu();
-//  read_throttle();
-//  read_setpoint();
-//  read_battery_voltage();
-//  update_pid_settings();
-//  
-//  process();  
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////
 // setup
 void setup()
@@ -240,7 +216,7 @@ void setup()
   init_pid();
   init_mpu();
 
-  process = &wait_for_stable_process; //check_if_stable_process; //arm_esc_process;
+  process = &wait_for_stable_process;
 
   send_serial = &SerialSend_A;
 }
@@ -260,19 +236,6 @@ void loop()
   }
 
   if (!dmpReady) return;
-
-#ifdef USE_INTERRUPTS
-  // wait for MPU interrupt or extra packet(s) available
-  while (!mpuInterrupt) // && fifoCount < packetSize)
-  {
-    read_throttle();        if (mpuInterrupt) break;
-    read_setpoint();        if (mpuInterrupt) break;
-    read_battery_voltage(); if (mpuInterrupt) break;
-    update_pid_settings();  if (mpuInterrupt) break;
-
-    process();
-  }  
-#endif
 
   read_mpu();
   read_throttle();

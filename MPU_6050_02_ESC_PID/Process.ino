@@ -1,7 +1,3 @@
-void process_off()
-{
-  do_log(); 
-}
 
 void wait_for_stable_process()
 {
@@ -122,7 +118,7 @@ void attitude_process()
     if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
       disarm_esc();
-      process = &process_off;
+      process = &do_log;
       return;
     }
     
@@ -235,7 +231,10 @@ void attitude_process()
    *    0 throttle = 5% of 2.5ms = 125 microseconds
    *    100 throt = 10% of 2.5ms = 250 microseconds
    *    
-   *    loop cycle time is 1.22ms
+   *    My Loop loop cycle time is 1.22ms
+   *    this is the time is take to do all reads and calculations
+   *    This is ~ 890hz 
+   *    
    */
 
   esc_a.writeMicroseconds(va);

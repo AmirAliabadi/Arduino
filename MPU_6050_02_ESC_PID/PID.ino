@@ -107,7 +107,7 @@ with the full quad!
 
 void init_pid()
 {
-  Serial.println("#init pid");
+  Serial.println("#pid");
 
   update_pid_settings();
 
