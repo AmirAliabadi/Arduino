@@ -74,14 +74,6 @@ void check_if_stable_process()
   float yw_reading = (float)((int)(ypr[YW]*10.0 + .5))/10.0;
   
   if(last_yw == yw_reading) {
-    
-    yw_offset = yw_reading;
-    ac_offset = 0.0; //ypr[AC];
-    bd_offset = 0.0; //ypr[BD];
-
-    ypr_last[YW] = 0.0;
-    ypr_last[AC] = 0.0;
-    ypr_last[BD] = 0.0;
 
     Serial.print(F("#stb: "));
     Serial.print(yw_offset);
@@ -89,6 +81,14 @@ void check_if_stable_process()
     Serial.print(ac_offset);
     Serial.print(F(" "));
     Serial.println(bd_offset);
+
+    yw_offset = yw_reading;
+    ac_offset = 0.0; //ypr[AC];
+    bd_offset = 0.0; //ypr[BD];
+
+    ypr_last[YW] = 0.0;
+    ypr_last[AC] = 0.0;
+    ypr_last[BD] = 0.0;    
 
     system_check |= INIT_MPU_STABLE;
     

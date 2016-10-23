@@ -95,7 +95,7 @@ void read_mpu()
     mpu.resetFIFO();
 
 #ifdef DEBUG
-    Serial.println(F("#FIFO overflow!"));
+    Serial.println(F("#Foflw"));
 #endif
 
   } // otherwise, check for DMP data ready interrupt (this should happen frequently)
@@ -179,13 +179,13 @@ void read_mpu()
       if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
       if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
       if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-     
+
     }
-    
+
     ypr_last[YW] = ypr[YW];
     ypr_last[AC] = ypr[AC];
     ypr_last[BD] = ypr[BD];
-  
+    
   }
 }
 
