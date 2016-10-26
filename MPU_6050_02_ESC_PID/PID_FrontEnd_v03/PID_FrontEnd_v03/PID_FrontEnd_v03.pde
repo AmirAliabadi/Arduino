@@ -125,15 +125,19 @@ void setup()
   controlP5.addTextlabel("t2","Setpoint",group_x-80,group_y+=15);
   InputSetpointLabel=controlP5.addTextlabel("InputSetpointLabel","",group_x,group_y);
 
+////////////////////
   controlP5.addTextlabel("t4","Input Angle",group_x-80,group_y+=15);
   InputAngleLabel=controlP5.addTextlabel("InputAngleLabel","",group_x,group_y); 
+  
   controlP5.addTextlabel("t3","Input Gyro",group_x-80,group_y+=15);
   InputGyroLabel=controlP5.addTextlabel("InputGyroLabel","",group_x,group_y);
 
   controlP5.addTextlabel("t5","Out Angle",group_x-80,group_y+=15);
   AngleOutLabel=controlP5.addTextlabel("AngleOutLabel","",group_x,group_y); 
+  
   controlP5.addTextlabel("t6","Out Gyro",group_x-80,group_y+=15);
   GyroOutLabel=controlP5.addTextlabel("GyroOutLabel","",group_x,group_y);
+////////////////////
 
   controlP5.addTextlabel("t7","Alpha",group_x-80,group_y+=15);
   AlphaLable=controlP5.addTextlabel("AlphaLable","",group_x,group_y);

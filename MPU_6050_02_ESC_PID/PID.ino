@@ -100,6 +100,14 @@ with the full quad!
 -- with spider ztw ESC
 0.71  0.0   0.0
 0.509 0.007 0.024
+
+-- some real nice performance finally, still cannot get the DTerm chatter
+2.0     0.0 0.0
+0.496   0.0 0.019
+alpha .9
+PID Refresh rate 26 -  Setting the pid refresh rate to high (like 1 or 5) make things worse
+This is the angle reading rounding to the 1s place
+MPU motian fusion of MPU6050_DLPF_BW_98
     
 /////////////////////////////////////////////
 */

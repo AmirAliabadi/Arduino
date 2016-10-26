@@ -21,7 +21,7 @@ byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
 float alpha = 0.88;
-int pid_refresh_rate = 10;
+int pid_refresh_rate = 25;
 
 #define DEBUG
 #define CASCADE_PIDS
@@ -109,6 +109,8 @@ float last_setpoint[3] = {0, 0, 0};
 //////////////////////////////////////////////////////////////////
 // function pointer to what should be happing in the loop()
 void (*process)(void);
+void (*do_blink)(void);
+void (*read_mpu)(void);
 void (*send_serial)(byte mode);
 //
 //////////////////////////////////////////////////////////////////
@@ -118,7 +120,6 @@ void (*send_serial)(byte mode);
 MPU6050 mpu;
 
 // MPU control/status vars
-bool dmpReady = false;  // set true if DMP init was successful
 uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
 uint8_t devStatus;      // return status after each device operation (0 = success, !0 = error)
 uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
@@ -174,15 +175,15 @@ float output_rate[3]  = {0.0f, 0.0f, 0.0f};
 // input / output /setpoint
 PID pid_stable[3]  = {
   PID(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT),
-  PID(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT), 
-  PID(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT)
+  PID(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT),
+  PID(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT)  
 };
 
 #ifdef CASCADE_PIDS
 PID pid_rate[3] = {
   PID(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT),
   PID(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT),
-  PID(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT)
+  PID(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT)  
 };
 #endif
 
@@ -210,32 +211,63 @@ void setup()
 
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
+
+  read_mpu = &do_blink_wait_for_stable;
   
   disarm_esc();
   init_i2c();
   init_pid();
   init_mpu();
 
-  process = &wait_for_stable_process;
+  do_blink    = &do_blink_wait_for_stable;
+  process     = &wait_for_stable_process;
 
   send_serial = &SerialSend_A;
 }
 //////////////////////////////////////////////////////////////////////
 
+void do_blink_disarm_error()
+{
+  if( millis() - last_blink > 100 )
+  {
+    last_blink = millis();     
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN)); 
+  }
+}
+
+void do_blink_wait_for_stable()
+{
+  if( millis() - last_blink > 300 )
+  {
+    last_blink = millis();     
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN)); 
+  }
+}
+
+void do_blink_attitude_process()
+{
+  if( millis() - last_blink > 1000)
+  {
+    last_blink = millis();    
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
+  }
+}
+
+void do_blink_arm_esc_process()
+{
+  if( millis() - last_blink > 700 )
+  {
+    last_blink = millis();
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
+  }
+}
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 void loop()
 {
-  if ( millis() - last_blink > (system_check & INIT_ESC_ARMED == INIT_ESC_ARMED ? (INPUT_THRUST == 0 ? BLINK_FREQUENCY : BLINK_FREQUENCY / 2) : BLINK_FREQUENCY / 16) )
-  {
-    last_blink = millis();
-
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
-  }
-
-  if (!dmpReady) return;
+  do_blink();
 
   read_mpu();
   read_throttle();
@@ -244,6 +276,8 @@ void loop()
   update_pid_settings();
   
   process();
+
+  do_log();
 
 }
 

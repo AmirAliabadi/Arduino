@@ -1,72 +1,15 @@
 
 void wait_for_stable_process()
 {
-  if (millis() - last_log > 2000)
+  if (millis() % 2000 == 0 ) //0 - last_log > 2000)
   {
-    last_log = millis();
-    log_data();    
     process = &check_if_stable_process;  
   }
 }
 
 void check_if_stable_process()
 {
-
-// tried to use the average readers as the calibaration
-// doesn't seem to work.  getting strange readings and it
-// seems to be influenced by setXAccelOffset() settings
-//
-//  static float stable_read_count = 0.0;
-//
-//  // skip the first 100 readyings
-//  if( ++stable_read_count >= 100 ) 
-//  {
-//    yw_offset += ypr[YW];
-//    ac_offset += ypr[AC];
-//    bd_offset += ypr[BD];
-//
-//    // wait for 2000 readings
-//    if( stable_read_count >= 1100 ) {
-//      
-//      yw_offset = yw_offset/1000.0;
-//      ac_offset = ac_offset/1000.0;
-//      bd_offset = bd_offset/1000.0;
-//
-//      // #stable: -0.37 -64.47 -4.07
-//      // #stable: -14.67 -25.51 2.90
-//      // #stable: -17.42 -25.29 2.46
-//      // #stable: -15.09 -25.08 2.88
-//      // #stable: 8.80 -24.75 4.47
-//      // #stable: 2.35 -51.79 6.76
-//
-//
-//      Serial.print(F("#stable: "));
-//      Serial.print(yw_offset);
-//      Serial.print(F(" "));
-//      Serial.print(ac_offset);
-//      Serial.print(F(" "));
-//      Serial.println(bd_offset);      
-//
-//      system_check |= INIT_MPU_STABLE;
-//
-//      ypr_last[YW] = 0.0;
-//      ypr_last[AC] = 0.0;
-//      ypr_last[BD] = 0.0;
-//      
-//      process = &arm_esc_process;
-//      
-//    } else {
-//      // process = &wait_for_stable_process;
-//      
-//    }
-//  } 
-
-
-// wait for stable yaw readings and then
-// assume we are stable at that point.
-
   static float last_yw = -333.0;
-  static float stable_read_count = 0.0;
 
   Serial.print(F("#SR "));
   Serial.println(abs(ypr[YW] - last_yw),2);
@@ -91,7 +34,8 @@ void check_if_stable_process()
     ypr_last[BD] = 0.0;    
 
     system_check |= INIT_MPU_STABLE;
-    
+
+    do_blink = &do_blink_arm_esc_process;
     process = &arm_esc_process;
     
   } else {
@@ -105,6 +49,7 @@ void arm_esc_process()
 {
     init_esc();
     if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) {
+      do_blink = &do_blink_attitude_process;
       process = &attitude_process; //wait_for_stable_process; //attitude_process;
     }
 }
@@ -118,27 +63,23 @@ void attitude_process()
     if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
       disarm_esc();
+      do_blink = &do_blink_disarm_error;
       process = &do_log;
       return;
     }
-    
-  }
-  else 
-  {
-      // ESC is not armed
-      do_log(); 
-      return;
   }
 
   // Update the Stable PID input values
+  // Angle reading
   input_ypr[YW] = ypr[YW];
+  input_ypr[BD] = ypr[BD];
   input_ypr[AC] = ypr[AC];
-  input_ypr[BD] = ypr[BD];  
 
 #ifdef CASCADE_PIDS    
+  // acceleration rate reading
   input_gyro[YW] = gyro.z*-1.0;
-  input_gyro[AC] = gyro.x;
   input_gyro[BD] = gyro.y*-1.0;  
+  input_gyro[AC] = gyro.x;  
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
@@ -146,13 +87,13 @@ void attitude_process()
     if( !(system_check & INIT_PID_ON) ) init_pid();        
 
     pid_stable[YW].Compute();  
-    pid_stable[AC].Compute();  
     pid_stable[BD].Compute();  
+    pid_stable[AC].Compute();      
 
 #ifdef CASCADE_PIDS
     pid_rate[YW].Compute();
-    pid_rate[AC].Compute(); 
     pid_rate[BD].Compute();       
+    pid_rate[AC].Compute();     
 #endif
 
     //////////////////////////////
@@ -160,11 +101,11 @@ void attitude_process()
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = INPUT_THRUST - output_ypr[YW]; 
-    v_bd = INPUT_THRUST + output_ypr[YW]; 
-#else
     v_ac = INPUT_THRUST - output_rate[YW];
     v_bd = INPUT_THRUST + output_rate[YW];
+#else
+    v_ac = INPUT_THRUST - output_ypr[YW]; 
+    v_bd = INPUT_THRUST + output_ypr[YW]; 
 #endif
 
     // compute motor speeds
@@ -231,7 +172,7 @@ void attitude_process()
    *    0 throttle = 5% of 2.5ms = 125 microseconds
    *    100 throt = 10% of 2.5ms = 250 microseconds
    *    
-   *    My Loop loop cycle time is 1.22ms
+   *    My Loop cycle time is 1.22ms
    *    this is the time is take to do all reads and calculations
    *    This is ~ 890hz 
    *    
@@ -241,9 +182,7 @@ void attitude_process()
   esc_c.writeMicroseconds(vc);
   esc_b.writeMicroseconds(vb);
   esc_d.writeMicroseconds(vd);
-
-  do_log();
-  
+ 
 }
 
 //////////////////////////////////////////////////////////////////////

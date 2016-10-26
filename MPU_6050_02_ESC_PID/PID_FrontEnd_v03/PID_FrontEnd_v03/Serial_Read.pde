@@ -94,7 +94,6 @@ void parseA(String[] s ) {
     ITermRateLabel.setValue(Float.toString(iterm_rate) );
     DTermRateLabel.setValue(Float.toString(dterm_rate) );
     
-    
     AngleOutLabel.setValue(Float.toString(Output_angle)); 
     GyroOutLabel.setValue(Float.toString(Output_gyro));    
 
@@ -131,28 +130,31 @@ void parseB(String[] s ) {
     Input_gyro     = float(trim(s[4]));
     Input_angle    = float(trim(s[5]));
     
+    // 6,7,8 are the Auto/Manual and Direct/Indirect
+    
+    va = float(trim(s[ 9]));
+    vb = float(trim(s[10]));
+    vc = float(trim(s[11]));
+    vd = float(trim(s[12]));
+    alpha = float(trim(s[13]));
+    pid_refresh_rate = float(trim(s[14]));    
+    
     SPField.setValue( Float.toString(Input_Setpoint) );
     
     cur_throttle = (int)Input_Thrust; 
     InputThrustLabel.setValue( Float.toString(Input_Thrust) );
     throttle_slider.setValue( Input_Thrust );
     
-    InputSetpointLabel.setValue(trim(s[3]));
-    InputGyroLabel.setValue(trim(s[4])); 
-    InputAngleLabel.setValue(trim(s[5]));
+    InputSetpointLabel.setValue( Float.toString(Input_Setpoint) );
+    
+    InputGyroLabel.setValue( Float.toString(Input_gyro) ); 
+    InputAngleLabel.setValue( Float.toString(Input_angle) );
     
     DRCurrent.setValue(trim(s[7]));
     DRrCurrent.setValue(trim(s[8]));
     
-    va = float(trim(s[ 9]));
-    vb = float(trim(s[10]));
-    vc = float(trim(s[11]));
-    vd = float(trim(s[12]));
-    
-    alpha = float(trim(s[13]));
     AlphaLable.setValue(Float.toString(alpha));
-    
-    pid_refresh_rate = float(trim(s[14]));
+
     PidRefreshIntervalLabel.setValue(Float.toString(pid_refresh_rate));    
     
     controlP5.getController("va").setValue(va);

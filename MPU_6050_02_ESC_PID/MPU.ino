@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_98);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -59,7 +59,7 @@ void init_mpu()
 
       // set our DMP Ready flag so the main loop() function knows it's okay to use it
       Serial.println(F("#DMP rdy"));
-      dmpReady = true;
+      read_mpu = &read_mpu_process;
 
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
@@ -73,14 +73,14 @@ void init_mpu()
       // 2 = DMP configuration updates failed
       // (if it's going to break, usually the code will be 1)
       Serial.print(F("#DMP Init fail: "));
-      Serial.println(devStatus);
+      Serial.println(devStatus);      
     }
 }
 
 ////////////////////////////////////////////////////////////////
 // read_mpu
 //
-void read_mpu()
+void read_mpu_process()
 {
   // get INT_STATUS byte
   mpuIntStatus = mpu.getIntStatus();
@@ -139,15 +139,15 @@ void read_mpu()
     // round off the data
     // this might *help* will small-small gittery 
     // movements. 
-#ifdef CASCADE_PIDS    
-    gyro.x = (gyro.x * 10.0 + 0.5)/10.0;
-    gyro.y = (gyro.y * 10.0 + 0.5)/10.0;
-    gyro.z = (gyro.z * 10.0 + 0.5)/10.0;
-#endif    
-
-    ypr[YW] = (ypr[YW] * 10.0 + 0.5)/10.0;
-    ypr[AC] = (ypr[AC] * 10.0 + 0.5)/10.0;
-    ypr[BD] = (ypr[BD] * 10.0 + 0.5)/10.0;  
+//    ypr[YW] = ((int)(ypr[YW] * 1.0 + 0.5))/1.0;
+//    ypr[AC] = ((int)(ypr[AC] * 1.0 + 0.5))/1.0;
+//    ypr[BD] = ((int)(ypr[BD] * 1.0 + 0.5))/1.0;
+//
+//#ifdef CASCADE_PIDS    
+//    gyro.x = ((int)(gyro.x * 10.0 + 0.5))/10.0;
+//    gyro.y = ((int)(gyro.y * 10.0 + 0.5))/10.0;
+//    gyro.z = ((int)(gyro.z * 10.0 + 0.5))/10.0;
+//#endif         
     // round off the data
     ////////////////////////////////////////////////
 
