@@ -20,7 +20,7 @@
 PID::PID(float* Input, float* Output, float* Setpoint,
         float Kp, float Ki, float Kd, int ControllerDirection)
 {
-	
+
     myOutput = Output;
     myInput = Input;
     mySetpoint = Setpoint;
@@ -64,7 +64,7 @@ bool PID::Compute()
  
 	  pterm = (kp * error);
 	  iterm = (ITerm);
-	  dterm = (kd * dInput);
+      dterm = (kd * dInput);
 
 	  /*Compute PID Output*/
      // float output = (kp * error) + ITerm - (kd * dInput);

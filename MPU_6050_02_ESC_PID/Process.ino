@@ -35,7 +35,7 @@ void check_if_stable_process()
 
     system_check |= INIT_MPU_STABLE;
 
-    do_blink = &do_blink_arm_esc_process;
+    blink_pattern_3
     process = &arm_esc_process;
     
   } else {
@@ -49,7 +49,7 @@ void arm_esc_process()
 {
     init_esc();
     if( system_check & (INIT_ESC_ATTACHED | INIT_ESC_ARMED) ) {
-      do_blink = &do_blink_attitude_process;
+      blink_pattern_1      
       process = &attitude_process; //wait_for_stable_process; //attitude_process;
     }
 }
@@ -62,8 +62,8 @@ void attitude_process()
   {
     if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
     {
+      blink_pattern_5      
       disarm_esc();
-      do_blink = &do_blink_disarm_error;
       process = &do_log;
       return;
     }
@@ -71,15 +71,15 @@ void attitude_process()
 
   // Update the Stable PID input values
   // Angle reading
-  input_ypr[YW] = ypr[YW];
-  input_ypr[BD] = ypr[BD];
-  input_ypr[AC] = ypr[AC];
+  current_attitude[YW] = ypr[YW];
+  current_attitude[BD] = ypr[BD];
+  current_attitude[AC] = ypr[AC];
 
 #ifdef CASCADE_PIDS    
   // acceleration rate reading
-  input_gyro[YW] = gyro.z*-1.0;
-  input_gyro[BD] = gyro.y*-1.0;  
-  input_gyro[AC] = gyro.x;  
+  current_acceleration[YW] = gyro.z*-1.0;
+  current_acceleration[BD] = gyro.y*-1.0;  
+  current_acceleration[AC] = gyro.x;  
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
@@ -101,24 +101,24 @@ void attitude_process()
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = INPUT_THRUST - output_rate[YW];
-    v_bd = INPUT_THRUST + output_rate[YW];
+    v_ac = INPUT_THRUST - acceleration_correction[YW];
+    v_bd = INPUT_THRUST + acceleration_correction[YW];
 #else
-    v_ac = INPUT_THRUST - output_ypr[YW]; 
-    v_bd = INPUT_THRUST + output_ypr[YW]; 
+    v_ac = INPUT_THRUST - attitude_correction[YW]; 
+    v_bd = INPUT_THRUST + attitude_correction[YW]; 
 #endif
 
     // compute motor speeds
 #ifdef CASCADE_PIDS
-    va = MIN_ESC_CUTOFF + (v_ac - output_rate[AC]); 
-    vc = MIN_ESC_CUTOFF + (v_ac + output_rate[AC]); 
-    vb = MIN_ESC_CUTOFF + (v_bd - output_rate[BD]); 
-    vd = MIN_ESC_CUTOFF + (v_bd + output_rate[BD]); 
+    va = MIN_ESC_CUTOFF + (v_ac - acceleration_correction[AC]); 
+    vc = MIN_ESC_CUTOFF + (v_ac + acceleration_correction[AC]); 
+    vb = MIN_ESC_CUTOFF + (v_bd - acceleration_correction[BD]); 
+    vd = MIN_ESC_CUTOFF + (v_bd + acceleration_correction[BD]); 
 #else
-    va = MIN_ESC_CUTOFF + (v_ac - output_ypr[AC]); 
-    vc = MIN_ESC_CUTOFF + (v_ac + output_ypr[AC]); 
-    vb = MIN_ESC_CUTOFF + (v_bd - output_ypr[BD]); 
-    vd = MIN_ESC_CUTOFF + (v_bd + output_ypr[BD]); 
+    va = MIN_ESC_CUTOFF + (v_ac - attitude_correction[AC]); 
+    vc = MIN_ESC_CUTOFF + (v_ac + attitude_correction[AC]); 
+    vb = MIN_ESC_CUTOFF + (v_bd - attitude_correction[BD]); 
+    vd = MIN_ESC_CUTOFF + (v_bd + attitude_correction[BD]); 
 #endif
     //
     ////////////////////////////////

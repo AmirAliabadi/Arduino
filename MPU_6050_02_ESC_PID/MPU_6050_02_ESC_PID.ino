@@ -20,11 +20,21 @@ byte update_pid_settings_needed = 1;
 byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
-float alpha = 0.88;
+float alpha = 0.44;
 int pid_refresh_rate = 25;
 
 #define DEBUG
 #define CASCADE_PIDS
+
+long last_blink = 0;
+int blink_point = 0;
+int blink_pattern[4] = {1000,1000,1000,1000};
+#define blink_reset last_blink = millis(); digitalWrite(LED_PIN, LOW); 
+#define blink_pattern_1 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 1000;  blink_pattern[2] = 1000;  blink_pattern[3] = 1000;
+#define blink_pattern_2 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 1000;  blink_pattern[3] = 500;
+#define blink_pattern_3 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 1000;
+#define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 500;
+#define blink_pattern_5 blink_reset blink_pattern[0] = 500;  blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 500;
 
 /*
  * Single Boom PID values
@@ -109,7 +119,6 @@ float last_setpoint[3] = {0, 0, 0};
 //////////////////////////////////////////////////////////////////
 // function pointer to what should be happing in the loop()
 void (*process)(void);
-void (*do_blink)(void);
 void (*read_mpu)(void);
 void (*send_serial)(byte mode);
 //
@@ -155,10 +164,10 @@ _ESC_ esc_b;
 _ESC_ esc_c;
 _ESC_ esc_d;
 
-uint16_t va = MIN_ESC_SIGNAL;
-uint16_t vb = MIN_ESC_SIGNAL;
-uint16_t vc = MIN_ESC_SIGNAL;
-uint16_t vd = MIN_ESC_SIGNAL;
+uint16_t va = 0;
+uint16_t vb = 0;
+uint16_t vc = 0;
+uint16_t vd = 0;
 
 uint16_t v_ac = 0;
 uint16_t v_bd = 0;
@@ -167,23 +176,23 @@ uint16_t v_bd = 0;
 
 ////////////////////////////////////////////////////////////////
 // PID settings
-float input_ypr[3]    = {0.0f, 0.0f, 0.0f};
-float output_ypr[3]   = {0.0f, 0.0f, 0.0f};
-float input_gyro[3]   = {0.0f, 0.0f, 0.0f};
-float output_rate[3]  = {0.0f, 0.0f, 0.0f};
+float current_attitude[3]       = {0.0f, 0.0f, 0.0f};
+float attitude_correction[3]    = {0.0f, 0.0f, 0.0f}; 
+float current_acceleration[3]   = {0.0f, 0.0f, 0.0f}; 
+float acceleration_correction[3]= {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoint
 PID pid_stable[3]  = {
-  PID(&input_ypr[YW], &output_ypr[YW], &setpoint[YW], 0, 0, 0, DIRECT),
-  PID(&input_ypr[BD], &output_ypr[BD], &setpoint[BD], 0, 0, 0, DIRECT),
-  PID(&input_ypr[AC], &output_ypr[AC], &setpoint[AC], 0, 0, 0, DIRECT)  
+  PID(&current_attitude[YW], &attitude_correction[YW], &setpoint[YW], 0, 0, 0, DIRECT),
+  PID(&current_attitude[BD], &attitude_correction[BD], &setpoint[BD], 0, 0, 0, DIRECT),
+  PID(&current_attitude[AC], &attitude_correction[AC], &setpoint[AC], 0, 0, 0, DIRECT)  
 };
 
 #ifdef CASCADE_PIDS
 PID pid_rate[3] = {
-  PID(&input_gyro[YW], &output_rate[YW], &output_ypr[YW], 0, 0, 0, DIRECT),
-  PID(&input_gyro[BD], &output_rate[BD], &output_ypr[BD], 0, 0, 0, DIRECT),
-  PID(&input_gyro[AC], &output_rate[AC], &output_ypr[AC], 0, 0, 0, DIRECT)  
+  PID(&current_acceleration[YW], &acceleration_correction[YW], &attitude_correction[YW], 0, 0, 0, DIRECT),
+  PID(&current_acceleration[BD], &acceleration_correction[BD], &attitude_correction[BD], 0, 0, 0, DIRECT),
+  PID(&current_acceleration[AC], &acceleration_correction[AC], &attitude_correction[AC], 0, 0, 0, DIRECT)  
 };
 #endif
 
@@ -198,7 +207,6 @@ uint16_t system_check = INIT_CLEARED;
 long log_line = 0;
 long last_log = 0;
 #endif
-long last_blink = 0;
 
 //////////////////////////////////////////////////////////////////////
 // setup
@@ -212,59 +220,31 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  read_mpu = &do_blink_wait_for_stable;
+  read_mpu = &do_blink;
   
   disarm_esc();
   init_i2c();
   init_pid();
   init_mpu();
 
-  do_blink    = &do_blink_wait_for_stable;
+  blink_pattern_4  
   process     = &wait_for_stable_process;
 
   send_serial = &SerialSend_A;
 }
 //////////////////////////////////////////////////////////////////////
 
-void do_blink_disarm_error()
+void do_blink()
 {
-  if( millis() - last_blink > 100 )
+  if( millis() - last_blink > blink_pattern[blink_point] )
   {
-    last_blink = millis();     
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN)); 
-  }
-}
-
-void do_blink_wait_for_stable()
-{
-  if( millis() - last_blink > 300 )
-  {
-    last_blink = millis();     
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN)); 
-  }
-}
-
-void do_blink_attitude_process()
-{
-  if( millis() - last_blink > 1000)
-  {
-    last_blink = millis();    
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
-  }
-}
-
-void do_blink_arm_esc_process()
-{
-  if( millis() - last_blink > 700 )
-  {
+    if(++blink_point > 3) blink_point = 0;
+    
     last_blink = millis();
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
   }
 }
 
-// ================================================================
-// ===                    MAIN PROGRAM LOOP                     ===
-// ================================================================
 void loop()
 {
   do_blink();

@@ -7,8 +7,8 @@ void SerialSend_A(byte mode)
   Serial.print(aserial_data_mode);
   Serial.print(F(" "));
 
-  Serial.print(output_ypr[mode]);   Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
-  Serial.print(output_rate[mode]);  Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
+  Serial.print(attitude_correction[mode]);   Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
+  Serial.print(acceleration_correction[mode]);  Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
 
   Serial.print(pid_stable[mode].GetKp(), 4);   Serial.print(F(" "));
   Serial.print(pid_stable[mode].GetKi(), 4);   Serial.print(F(" "));
@@ -57,8 +57,8 @@ void SerialSend_B(byte mode)
   
   Serial.print(setpoint[mode]);   Serial.print(F(" "));  
 
-  Serial.print(input_gyro[mode]); Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
-  Serial.print(input_ypr[mode]);  Serial.print(F(" "));  // this is the actual angle being read by the MPU  
+  Serial.print(current_acceleration[mode]); Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
+  Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU  
 
   if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
   else Serial.print(F("M"));  
