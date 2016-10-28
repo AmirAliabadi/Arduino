@@ -33,13 +33,15 @@
 
 // I2Cdev and MPU6050 must be installed as libraries
 #include "I2Cdev.h"
-#include "MPU6050.h"
+#include "MPU6050_6Axis_MotionApps20.h"
+//#include "MPU6050.h"
 #include "Wire.h"
+#include <EEPROM.h>
 
 ///////////////////////////////////   CONFIGURATION   /////////////////////////////
 //Change this 3 variables if you want to fine tune the skecth to your needs.
-int buffersize=1000;     //Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)
-int acel_deadzone=8;     //Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)
+int buffersize=10000;     //Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)
+int acel_deadzone=7;     //Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)
 int giro_deadzone=1;     //Giro error allowed, make it lower to get more precision, but sketch may not converge  (default:1)
 
 // default I2C address is 0x68
@@ -53,6 +55,19 @@ int16_t ax, ay, az,gx, gy, gz;
 
 int mean_ax,mean_ay,mean_az,mean_gx,mean_gy,mean_gz,state=0;
 int ax_offset,ay_offset,az_offset,gx_offset,gy_offset,gz_offset;
+
+struct EEPROMData {
+  float ax_offset;
+  float ay_offset;
+  float az_offset;
+  float gx_offset;
+  float gy_offset;
+  float gz_offset;
+  char id[3];
+} eeprom_data;  
+
+
+void (*process)(void);
 
 ///////////////////////////////////   SETUP   ////////////////////////////////////
 void setup() {
@@ -90,11 +105,98 @@ void setup() {
   accelgyro.setXGyroOffset(0);
   accelgyro.setYGyroOffset(0);
   accelgyro.setZGyroOffset(0);
+
+  process = &calibrate;
 }
 
+
 ///////////////////////////////////   LOOP   ////////////////////////////////////
-void loop() {
-  if (state==0){
+void loop() 
+{
+  process(); 
+}
+
+
+void calibrate_done()
+{
+    Serial.println("\nFINISHED!");
+    Serial.print("\nSensor readings with offsets:\t");
+    Serial.print(mean_ax); 
+    Serial.print("\t");
+    Serial.print(mean_ay); 
+    Serial.print("\t");
+    Serial.print(mean_az); 
+    Serial.print("\t");
+    Serial.print(mean_gx); 
+    Serial.print("\t");
+    Serial.print(mean_gy); 
+    Serial.print("\t");
+    Serial.println(mean_gz);
+    
+    Serial.print("Your offsets:\t");
+    Serial.print(ax_offset); 
+    Serial.print("\t");
+    Serial.print(ay_offset); 
+    Serial.print("\t");
+    Serial.print(az_offset); 
+    Serial.print("\t");
+    Serial.print(gx_offset); 
+    Serial.print("\t");
+    Serial.print(gy_offset); 
+    Serial.print("\t");
+    Serial.println(gz_offset); 
+
+    Serial.println("\nData is printed as: acelX acelY acelZ giroX giroY giroZ");
+    Serial.println("Check that your sensor readings are close to 0 0 16384 0 0 0");
+    Serial.println("If calibration was succesful write down your offsets so you can set them in your projects using something similar to mpu.setXAccelOffset(youroffset)");
+    
+    while (Serial.available() && Serial.read()); // empty buffer
+    Serial.println(F("Press any key to store in EEPROM\n"));    
+    while (!Serial.available()){
+        delay(1500);
+    }                
+    while (Serial.available() && Serial.read()); // empty buffer again
+
+    store_in_eeprom();
+
+    while(1);
+
+    process = &test_results;    
+}
+
+void store_in_eeprom()
+{
+    EEPROMData data_to_put = {
+      ax_offset,
+      ay_offset,
+      az_offset,
+      gx_offset,
+      gy_offset,
+      gz_offset,
+      "AA" };
+    
+    int eeAddress = 0;   //Location we want the data to be put
+    //EEPROM.put(eeAddress, data_to_put);
+
+    EEPROMData data_valid ;
+    EEPROM.get(eeAddress, data_valid);
+    Serial.print("EEPROM Updated:\t");
+    Serial.print(data_valid.ax_offset); 
+    Serial.print("\t");
+    Serial.print(data_valid.ay_offset); 
+    Serial.print("\t");
+    Serial.print(data_valid.az_offset); 
+    Serial.print("\t");
+    Serial.print(data_valid.gx_offset); 
+    Serial.print("\t");
+    Serial.print(data_valid.gy_offset); 
+    Serial.print("\t");
+    Serial.println(data_valid.gz_offset);   
+}
+
+void calibrate()
+{
+ if (state==0){
     Serial.println("\nReading sensors for first time...");
     meansensors();
     state++;
@@ -110,35 +212,38 @@ void loop() {
 
   if (state==2) {
     meansensors();
-    Serial.println("\nFINISHED!");
-    Serial.print("\nSensor readings with offsets:\t");
-    Serial.print(mean_ax); 
+
+    process = &calibrate_done;
+    
+  }  
+}
+
+void test_results()
+{
+  accelgyro.setXAccelOffset(ax_offset);
+  accelgyro.setYAccelOffset(ay_offset);
+  accelgyro.setZAccelOffset(az_offset);
+  
+  accelgyro.setXGyroOffset(gx_offset);
+  accelgyro.setYGyroOffset(gy_offset);
+  accelgyro.setZGyroOffset(gz_offset);
+
+  while(1) 
+  {
+    accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    Serial.print(ax); 
     Serial.print("\t");
-    Serial.print(mean_ay); 
+    Serial.print(ay); 
     Serial.print("\t");
-    Serial.print(mean_az); 
+    Serial.print(az); 
     Serial.print("\t");
-    Serial.print(mean_gx); 
+    Serial.print(gx); 
     Serial.print("\t");
-    Serial.print(mean_gy); 
+    Serial.print(gy); 
     Serial.print("\t");
-    Serial.println(mean_gz);
-    Serial.print("Your offsets:\t");
-    Serial.print(ax_offset); 
-    Serial.print("\t");
-    Serial.print(ay_offset); 
-    Serial.print("\t");
-    Serial.print(az_offset); 
-    Serial.print("\t");
-    Serial.print(gx_offset); 
-    Serial.print("\t");
-    Serial.print(gy_offset); 
-    Serial.print("\t");
-    Serial.println(gz_offset); 
-    Serial.println("\nData is printed as: acelX acelY acelZ giroX giroY giroZ");
-    Serial.println("Check that your sensor readings are close to 0 0 16384 0 0 0");
-    Serial.println("If calibration was succesful write down your offsets so you can set them in your projects using something similar to mpu.setXAccelOffset(youroffset)");
-    while (1);
+    Serial.println(gz);   
+
+    delay(50);
   }
 }
 

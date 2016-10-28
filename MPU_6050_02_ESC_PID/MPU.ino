@@ -22,12 +22,12 @@ void init_mpu()
     if (devStatus == 0)
     {
       // Supply your own gyro offsets here, scaled for min sensitivity
-      mpu.setXAccelOffset(MPU6050_ACCEL_OFFSET_X);
-      mpu.setYAccelOffset(MPU6050_ACCEL_OFFSET_Y);
-      mpu.setZAccelOffset(MPU6050_ACCEL_OFFSET_Z);
-      mpu.setXGyroOffset(MPU6050_GYRO_OFFSET_X);
-      mpu.setYGyroOffset(MPU6050_GYRO_OFFSET_Y);
-      mpu.setZGyroOffset(MPU6050_GYRO_OFFSET_Z);
+      mpu.setXAccelOffset(eeprom_data.ax_offset);
+      mpu.setYAccelOffset(eeprom_data.ay_offset);
+      mpu.setZAccelOffset(eeprom_data.az_offset);
+      mpu.setXGyroOffset(eeprom_data.gx_offset);
+      mpu.setYGyroOffset(eeprom_data.gy_offset);
+      mpu.setZGyroOffset(eeprom_data.gz_offset);
 
 ///////////////////////////////////////////////////////////////////
       mpu.setDLPFMode(MPU6050_DLPF_BW_98);
@@ -180,12 +180,12 @@ void read_mpu_process()
       if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
       if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
 
-    }
+      ypr_last[YW] = ypr[YW];
+      ypr_last[AC] = ypr[AC];
+      ypr_last[BD] = ypr[BD];
 
-    ypr_last[YW] = ypr[YW];
-    ypr_last[AC] = ypr[AC];
-    ypr_last[BD] = ypr[BD];
-    
+    }
+   
   }
 }
 

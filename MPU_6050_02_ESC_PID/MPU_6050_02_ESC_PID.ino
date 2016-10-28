@@ -6,6 +6,7 @@
 #include "ESC.h"
 #define _ESC_ ESC
 
+#include <EEPROM.h>             //Include the EEPROM.h library so we can store information onto the EEPROM
 
 #include <PID_v1.h>
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -108,8 +109,6 @@ float input_values[17] = { 0,                       // thrust
 #define INPUT_VOLTAGE_LEVEL   input_values[16]
 
 uint8_t setpoint_changed = SETPOINT_UNCHANGED;
-
-
 float setpoint[3] = {0, 0, 0};
 float last_setpoint[3] = {0, 0, 0};
 
@@ -207,6 +206,17 @@ uint16_t system_check = INIT_CLEARED;
 long log_line = 0;
 long last_log = 0;
 #endif
+long stable_check_loop = 0;
+
+struct EEPROMData {
+  float ax_offset;
+  float ay_offset;
+  float az_offset;
+  float gx_offset;
+  float gy_offset;
+  float gz_offset;
+  char id[3];
+} eeprom_data;  
 
 //////////////////////////////////////////////////////////////////////
 // setup
@@ -220,17 +230,26 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
+  process = &do_blink;
   read_mpu = &do_blink;
-  
   disarm_esc();
-  init_i2c();
-  init_pid();
-  init_mpu();
 
-  blink_pattern_4  
-  process     = &wait_for_stable_process;
+  EEPROM.get(0, eeprom_data);
+  if(eeprom_data.id[0] == 'A' && eeprom_data.id[1] == 'A') {
 
-  send_serial = &SerialSend_A;
+    init_i2c();
+    init_pid();
+    init_mpu();
+  
+    blink_pattern_4  
+    process     = &wait_for_stable_process;
+  
+    send_serial = &SerialSend_A;    
+  } else {
+    blink_pattern_5
+    Serial.println("#Please run calibaration");
+  }
+
 }
 //////////////////////////////////////////////////////////////////////
 
