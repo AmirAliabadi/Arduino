@@ -209,14 +209,14 @@ long last_log = 0;
 long stable_check_loop = 0;
 
 struct EEPROMData {
-  float ax_offset;
-  float ay_offset;
-  float az_offset;
-  float gx_offset;
-  float gy_offset;
-  float gz_offset;
   char id[3];
-} eeprom_data;  
+  int ax_offset;
+  int ay_offset;
+  int az_offset;
+  int gx_offset;
+  int gy_offset;
+  int gz_offset;
+} eeprom_data;
 
 //////////////////////////////////////////////////////////////////////
 // setup

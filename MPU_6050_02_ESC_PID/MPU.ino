@@ -57,14 +57,14 @@ void init_mpu()
 
       mpuIntStatus = mpu.getIntStatus();
 
-      // set our DMP Ready flag so the main loop() function knows it's okay to use it
-      Serial.println(F("#DMP rdy"));
-      read_mpu = &read_mpu_process;
-
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
 
+      read_mpu = &read_mpu_process;
+
       system_check |= INIT_MPU_ARMED;
+
+      Serial.println(F("#DMP rdy"));      
     }
     else
     {
