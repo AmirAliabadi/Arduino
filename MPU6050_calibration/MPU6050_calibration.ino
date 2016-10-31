@@ -91,7 +91,7 @@ void setup() {
   // initialize serial communication
   Serial.begin(115200);
 
-  process = &run_mpu_loop; //&calibrate; //run_mpu_loop; //calibrate;
+  process = &calibrate; //&calibrate; //run_mpu_loop; //calibrate;
 }
 
 

@@ -71,10 +71,10 @@ int blink_pattern[4] = {1000,1000,1000,1000};
 ///////////////////////////////////`
 // user inputs
 float input_values[17] = { 0,                       // thrust
-                           1.9,   0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
-                           0.55,  0.010, 0.013,     // Rate Pitch/Role PID P/I/D
-                           2.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
-                           0.110, 0.000, 0.000,     // Rate Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           3.25,   0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
+                           1.12,  0.146, 0.037,     // Rate Pitch/Role PID P/I/D
+                           3.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
+                           0.810, 0.000, 0.000,     // Rate Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
                            0.0, // setpoint pitch
