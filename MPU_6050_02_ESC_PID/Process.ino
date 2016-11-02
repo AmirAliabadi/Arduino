@@ -77,18 +77,20 @@ void attitude_process()
 
 #ifdef CASCADE_PIDS    
   // acceleration rate reading
-  current_acceleration[YW] = gyro.z*-1.0;
-  current_acceleration[BD] = gyro.y*-1.0;  
-  current_acceleration[AC] = gyro.x;  
+  current_rate[YW] = gyro.z*-1.0;
+  current_rate[BD] = gyro.y*-1.0;  
+  current_rate[AC] = gyro.x;  
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
-    if( !(system_check & INIT_PID_ON) ) init_pid();        
+    if( !(system_check & INIT_PID_ON) ) init_pid();    
 
-    pid_stable[YW].Compute();  
-    pid_stable[BD].Compute();  
-    pid_stable[AC].Compute();      
+    if( INPUT_THRUST > 350 ) {
+
+    pid_attitude[YW].Compute();  
+    pid_attitude[BD].Compute();  
+    pid_attitude[AC].Compute();      
 
 #ifdef CASCADE_PIDS
     pid_rate[YW].Compute();
@@ -96,13 +98,16 @@ void attitude_process()
     pid_rate[AC].Compute();     
 #endif
 
+    }
+
+
     //////////////////////////////
     // Motor Mix Algorithm      //
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = INPUT_THRUST - acceleration_correction[YW];
-    v_bd = INPUT_THRUST + acceleration_correction[YW];
+    v_ac = INPUT_THRUST - rate_correction[YW];
+    v_bd = INPUT_THRUST + rate_correction[YW];
 #else
     v_ac = INPUT_THRUST - attitude_correction[YW]; 
     v_bd = INPUT_THRUST + attitude_correction[YW]; 
@@ -110,10 +115,10 @@ void attitude_process()
 
     // compute motor speeds
 #ifdef CASCADE_PIDS
-    va = MIN_ESC_CUTOFF + (v_ac - acceleration_correction[AC]); 
-    vc = MIN_ESC_CUTOFF + (v_ac + acceleration_correction[AC]); 
-    vb = MIN_ESC_CUTOFF + (v_bd - acceleration_correction[BD]); 
-    vd = MIN_ESC_CUTOFF + (v_bd + acceleration_correction[BD]); 
+    va = MIN_ESC_CUTOFF + (v_ac - rate_correction[AC]); 
+    vc = MIN_ESC_CUTOFF + (v_ac + rate_correction[AC]); 
+    vb = MIN_ESC_CUTOFF + (v_bd - rate_correction[BD]); 
+    vd = MIN_ESC_CUTOFF + (v_bd + rate_correction[BD]); 
 #else
     va = MIN_ESC_CUTOFF + (v_ac - attitude_correction[AC]); 
     vc = MIN_ESC_CUTOFF + (v_ac + attitude_correction[AC]); 

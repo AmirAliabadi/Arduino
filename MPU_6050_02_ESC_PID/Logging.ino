@@ -8,11 +8,11 @@ void SerialSend_A(byte mode)
   Serial.print(F(" "));
 
   Serial.print(attitude_correction[mode]);   Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
-  Serial.print(acceleration_correction[mode]);  Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
+  Serial.print(rate_correction[mode]);  Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
 
-  Serial.print(pid_stable[mode].GetKp(), 4);   Serial.print(F(" "));
-  Serial.print(pid_stable[mode].GetKi(), 4);   Serial.print(F(" "));
-  Serial.print(pid_stable[mode].GetKd(), 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].GetKp(), 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].GetKi(), 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].GetKd(), 4);   Serial.print(F(" "));
 
 #ifdef CASCADE_PIDS    
   Serial.print(pid_rate[mode].GetKp(), 4);   Serial.print(F(" "));
@@ -24,9 +24,9 @@ void SerialSend_A(byte mode)
   Serial.print(0.0000, 4);   Serial.print(F(" "));
 #endif
 
-  Serial.print(pid_stable[mode].pterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_stable[mode].iterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_stable[mode].dterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].pterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].iterm, 4);   Serial.print(F(" "));
+  Serial.print(pid_attitude[mode].dterm, 4);   Serial.print(F(" "));
 
 #ifdef CASCADE_PIDS    
   Serial.print(pid_rate[mode].pterm, 4);   Serial.print(F(" "));
@@ -57,13 +57,15 @@ void SerialSend_B(byte mode)
   
   Serial.print(setpoint[mode]);   Serial.print(F(" "));  
 
-  Serial.print(current_acceleration[mode]); Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
+  Serial.print(current_rate[mode]); Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
   Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU  
 
-  if(pid_stable[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
+  if(pid_attitude[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
   else Serial.print(F("M"));  
   Serial.print(F(" "));
-  if(pid_stable[mode].GetDirection()==DIRECT) Serial.print(F("D"));
+
+  
+  if(pid_attitude[mode].GetDirection()==DIRECT) Serial.print(F("D"));
   else Serial.print(F("R"));
   Serial.print(F(" "));
 

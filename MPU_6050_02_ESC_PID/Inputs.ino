@@ -16,7 +16,7 @@ void serialEvent()
         aserial_data_mode = (int)from_processing.asFloat[1];
               
       } else if (cmd == 101) {
-        pid_stable[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
+        pid_attitude[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
         
       } else if (cmd == 102) { 
 #ifdef CASCADE_PIDS         

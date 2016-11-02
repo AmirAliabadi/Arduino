@@ -177,11 +177,11 @@ uint16_t v_bd = 0;
 // PID settings
 float current_attitude[3]       = {0.0f, 0.0f, 0.0f};
 float attitude_correction[3]    = {0.0f, 0.0f, 0.0f}; 
-float current_acceleration[3]   = {0.0f, 0.0f, 0.0f}; 
-float acceleration_correction[3]= {0.0f, 0.0f, 0.0f};
+float current_rate[3]   = {0.0f, 0.0f, 0.0f}; 
+float rate_correction[3]= {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoint
-PID pid_stable[3]  = {
+PID pid_attitude[3]  = {
   PID(&current_attitude[YW], &attitude_correction[YW], &setpoint[YW], 0, 0, 0, DIRECT),
   PID(&current_attitude[BD], &attitude_correction[BD], &setpoint[BD], 0, 0, 0, DIRECT),
   PID(&current_attitude[AC], &attitude_correction[AC], &setpoint[AC], 0, 0, 0, DIRECT)  
@@ -189,9 +189,9 @@ PID pid_stable[3]  = {
 
 #ifdef CASCADE_PIDS
 PID pid_rate[3] = {
-  PID(&current_acceleration[YW], &acceleration_correction[YW], &attitude_correction[YW], 0, 0, 0, DIRECT),
-  PID(&current_acceleration[BD], &acceleration_correction[BD], &attitude_correction[BD], 0, 0, 0, DIRECT),
-  PID(&current_acceleration[AC], &acceleration_correction[AC], &attitude_correction[AC], 0, 0, 0, DIRECT)  
+  PID(&current_rate[YW], &rate_correction[YW], &attitude_correction[YW], 0, 0, 0, DIRECT),
+  PID(&current_rate[BD], &rate_correction[BD], &attitude_correction[BD], 0, 0, 0, DIRECT),
+  PID(&current_rate[AC], &rate_correction[AC], &attitude_correction[AC], 0, 0, 0, DIRECT)  
 };
 #endif
 

@@ -122,8 +122,8 @@ void init_pid()
   set_pid_refresh_rate();
   
   for(byte i=YW; i<=AC; i++ ) {  
-    pid_stable[i].SetOutputLimits(-300, 300);
-    pid_stable[i].SetMode(AUTOMATIC);
+    pid_attitude[i].SetOutputLimits(-300, 300);
+    pid_attitude[i].SetMode(AUTOMATIC);
 
 #ifdef CASCADE_PIDS    
     pid_rate[i].SetOutputLimits(-300, 300);    
@@ -138,7 +138,7 @@ void init_pid()
 void set_pid_refresh_rate()
 {
   for(byte i=YW; i<=AC; i++ ) {  
-    pid_stable[i].SetSampleTime(pid_refresh_rate);
+    pid_attitude[i].SetSampleTime(pid_refresh_rate);
 #ifdef CASCADE_PIDS    
     pid_rate[i].SetSampleTime(pid_refresh_rate);      
 #endif
@@ -148,7 +148,7 @@ void set_pid_refresh_rate()
 void pid_reset() 
 {
   for(byte i=YW; i<=AC; i++ ) {
-    pid_stable[i].Reset();
+    pid_attitude[i].Reset();
 #ifdef CASCADE_PIDS    
     pid_rate[i].Reset();  
 #endif
@@ -163,15 +163,15 @@ void update_pid_settings()
       //if( setpoint_changed & SETPOINT_CHANGED_AC ) {pid_ac_stable.Reset(); ac_rat.Reset(); }
       //if( setpoint_changed & SETPOINT_CHANGED_BD ) {pid_bd_stable.Reset(); bd_rat.Reset(); }
       //if( setpoint_changed & SETPOINT_CHANGED_YW ) {pid_yw_stable.Reset(); }
-      setpoint_changed = SETPOINT_UNCHANGED;
+      // setpoint_changed = SETPOINT_UNCHANGED;
       //
       ///////////////////////////////////////////////////
   
       ///////////////////////////////////////////////////
       // 
-      pid_stable[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
-      pid_stable[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-      pid_stable[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);      
+      pid_attitude[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
+      pid_attitude[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
+      pid_attitude[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);      
   
 #ifdef CASCADE_PIDS
       pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
