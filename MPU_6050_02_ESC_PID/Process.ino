@@ -30,8 +30,8 @@ void check_if_stable_process()
     Serial.print(F(" "));
     Serial.println(bd_offset);
 
-    ac_offset = 0;
-    bd_offset = 0;
+    //ac_offset = 0;
+    //bd_offset = 0;
 
     system_check |= INIT_MPU_STABLE;
 
@@ -72,14 +72,14 @@ void attitude_process()
   // Update the Stable PID input values
   // Angle reading
   current_attitude[YW] = ypr[YW];
-  current_attitude[BD] = ypr[BD];
   current_attitude[AC] = ypr[AC];
+  current_attitude[BD] = ypr[BD];  
 
 #ifdef CASCADE_PIDS    
   // acceleration rate reading
   current_rate[YW] = gyro.z*-1.0;
-  current_rate[BD] = gyro.y*-1.0;  
   current_rate[AC] = gyro.x;  
+  current_rate[BD] = gyro.y*-1.0;    
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
@@ -89,13 +89,13 @@ void attitude_process()
     if( INPUT_THRUST > 350 ) {
 
     pid_attitude[YW].Compute();  
-    pid_attitude[BD].Compute();  
     pid_attitude[AC].Compute();      
+    pid_attitude[BD].Compute();     
 
 #ifdef CASCADE_PIDS
     pid_rate[YW].Compute();
-    pid_rate[BD].Compute();       
     pid_rate[AC].Compute();     
+    pid_rate[BD].Compute();         
 #endif
 
     }
@@ -136,6 +136,8 @@ void attitude_process()
   else 
   {
     va = vb = vc = vd = MIN_ESC_SIGNAL;
+
+    yw_offset = (float)((int)(ypr[YW]*10.0 + .5))/10.0;
     
     pid_reset(); //(MANUAL);
   }

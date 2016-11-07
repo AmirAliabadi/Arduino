@@ -30,12 +30,12 @@ int pid_refresh_rate = 25;
 long last_blink = 0;
 int blink_point = 0;
 int blink_pattern[4] = {1000,1000,1000,1000};
-#define blink_reset last_blink = millis(); digitalWrite(LED_PIN, LOW); 
+#define blink_reset blink_point = 0; last_blink = millis(); digitalWrite(LED_PIN, LOW); 
 #define blink_pattern_1 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 1000;  blink_pattern[2] = 1000;  blink_pattern[3] = 1000;
-#define blink_pattern_2 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 1000;  blink_pattern[3] = 500;
-#define blink_pattern_3 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 1000;
-#define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 500;
-#define blink_pattern_5 blink_reset blink_pattern[0] = 500;  blink_pattern[1] = 500;   blink_pattern[2] = 500;   blink_pattern[3] = 500;
+#define blink_pattern_2 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 1000;  blink_pattern[3] = 200;
+#define blink_pattern_3 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 1000;
+#define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 200;
+#define blink_pattern_5 blink_reset blink_pattern[0] = 100;  blink_pattern[1] = 100;   blink_pattern[2] = 100;   blink_pattern[3] = 100;
 
 /*
  * Single Boom PID values
@@ -71,9 +71,9 @@ int blink_pattern[4] = {1000,1000,1000,1000};
 ///////////////////////////////////`
 // user inputs
 float input_values[17] = { 0,                       // thrust
-                           3.25,   0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
-                           1.12,  0.146, 0.037,     // Rate Pitch/Role PID P/I/D
-                           3.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
+                           0.355, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
+                           0.897, 0.146, 0.030,     // Rate Pitch/Role PID P/I/D
+                           0.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
                            0.810, 0.000, 0.000,     // Rate Yaw 1.0, 0, 0.2,                 // YAW P/I/D
                            0.0, // setpoint yaw
                            0.0, // setpoint roll
@@ -177,8 +177,8 @@ uint16_t v_bd = 0;
 // PID settings
 float current_attitude[3]       = {0.0f, 0.0f, 0.0f};
 float attitude_correction[3]    = {0.0f, 0.0f, 0.0f}; 
-float current_rate[3]   = {0.0f, 0.0f, 0.0f}; 
-float rate_correction[3]= {0.0f, 0.0f, 0.0f};
+float current_rate[3]           = {0.0f, 0.0f, 0.0f}; 
+float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoint
 PID pid_attitude[3]  = {

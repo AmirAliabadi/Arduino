@@ -30,7 +30,7 @@ void init_mpu()
       mpu.setZGyroOffset(eeprom_data.gz_offset);
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_98);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -114,11 +114,12 @@ void read_mpu_process()
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
-                                               // this give you the angle the chip is sat
+                                               // this give you the angle the MPU is at, the attitude
 
 #ifdef CASCADE_PIDS
     // dmpGetGryo returns the Accelration data ??
-    // I thought gyro data give you angular reading and accelerator data gave you acceleration in deg/sec ??
+    // I thought gyro data gives you angular reading and accelerator data gave you acceleration in deg/sec ??
+    // this is the current acceleration rate
     mpu.dmpGetGyro(&gyro1, fifoBuffer); // this is in degrees/s?  I'm certain deg/sec
 
     // low pass filter on the gyro data
@@ -151,39 +152,40 @@ void read_mpu_process()
     // round off the data
     ////////////////////////////////////////////////
 
-
-    if( system_check & INIT_MPU_STABLE )
-    {
-      ypr[YW] = ypr[YW] - yw_offset;
-      ypr[AC] = ypr[AC] - ac_offset;
-      ypr[BD] = ypr[BD] - bd_offset;
-      
-      if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
+    if( INPUT_THRUST > MIN_INPUT_THRUST ) {
+      if( system_check & INIT_MPU_STABLE )
       {
-        Serial.print(F("#bg chng ac"));
-        Serial.print("\t");
-        Serial.print(ypr_last[AC]);
-        Serial.print("\t");
-        Serial.println(ypr[AC]);
+        ypr[YW] = ypr[YW] - yw_offset;
+        ypr[AC] = ypr[AC] - ac_offset;
+        ypr[BD] = ypr[BD] - bd_offset;
+        
+        if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
+        {
+          Serial.print(F("#bg chng ac"));
+          Serial.print("\t");
+          Serial.print(ypr_last[AC]);
+          Serial.print("\t");
+          Serial.println(ypr[AC]);
+        }
+  
+        if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
+        {
+          Serial.print(F("#bg chng bd"));
+          Serial.print("\t");
+          Serial.print(ypr_last[BD]);
+          Serial.print("\t");
+          Serial.println(ypr[BD]);
+        }      
+  
+        if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
+        if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
+        if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
+  
+        ypr_last[YW] = ypr[YW];
+        ypr_last[AC] = ypr[AC];
+        ypr_last[BD] = ypr[BD];
+  
       }
-
-      if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
-      {
-        Serial.print(F("#bg chng bd"));
-        Serial.print("\t");
-        Serial.print(ypr_last[BD]);
-        Serial.print("\t");
-        Serial.println(ypr[BD]);
-      }      
-
-      if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
-      if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
-      if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-
-      ypr_last[YW] = ypr[YW];
-      ypr_last[AC] = ypr[AC];
-      ypr_last[BD] = ypr[BD];
-
     }
    
   }

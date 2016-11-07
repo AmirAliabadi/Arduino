@@ -5,6 +5,10 @@ void keyPressed() {
         cur_throttle = 0.0;
         Send_To_Arduino2(0.0, cur_throttle);         
         break;
+      case '`':
+        cur_throttle = cur_throttle/2.0;
+        Send_To_Arduino2(0.0, cur_throttle);         
+        break;        
       case 'w':
         outputFileName = "c:\\temp\\drone_" + year()+month()+day()+hour()+minute()+second()+".txt";
         output = createWriter(outputFileName);

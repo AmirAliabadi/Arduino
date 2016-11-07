@@ -5,15 +5,15 @@
    *    10% duty cycle = 100 throttle
    *    
    *    a 50hz signal
-   *    each period will be 1/50 = 20ms long
+   *    each rising edge will be 1/50 = 20ms 
    *    0 throttle = 5% of 20ms = 1ms
    *    100 throt = 10% of 200m = 2ms
    *    
    *    PWM signals for 50hz
-   *      _________
+   *      .........    
    *      |       |
    *    --'       '----- 
-   *         20ms (50hz)
+   *      20ms (50hz)
    *         
    *       _
    *      | |  5% duty cycle = Min ESC Signal
@@ -31,7 +31,7 @@
    *    100 throt = 10% of 5ms = 500 microseconds
    *
    * a 400hz signal
-   *  each period will be 2.5 ms
+   *  each rising edge will at 2.5 ms intervals
    *    0 throttle = 5% of 2.5ms = 125 microseconds
    *    100 throt = 10% of 2.5ms = 250 microseconds
    *    
