@@ -46,6 +46,8 @@ void setup()
 
   Serial.println("motors attached");
 
+  Serial.println(sizeof(esc1));
+
   last = millis();
 }
 
