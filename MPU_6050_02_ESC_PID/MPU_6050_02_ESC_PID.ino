@@ -25,7 +25,7 @@ float alpha = 0.44;
 int pid_refresh_rate = 25;
 
 #define DEBUG
-#define CASCADE_PIDS
+//#define CASCADE_PIDS
 
 long last_blink = 0;
 int blink_point = 0;
@@ -70,6 +70,7 @@ int blink_pattern[4] = {1000,1000,1000,1000};
 
 ///////////////////////////////////`
 // user inputs
+#ifdef CASCADE_PIDS
 float input_values[17] = { 0,                       // thrust
                            0.355, 0.000, 0.000,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
                            0.897, 0.146, 0.030,     // Rate Pitch/Role PID P/I/D
@@ -80,6 +81,18 @@ float input_values[17] = { 0,                       // thrust
                            0.0, // setpoint pitch
                            12.6                     // battery voltage level
                            };
+#else
+float input_values[17] = { 0,                       // thrust
+                           1.0,   0.000, 0.100,     // Stable Pitch/Role PID P/I/D // .89, 0, .23
+                           0.0,   0.000, 0.000,     // Rate Pitch/Role PID P/I/D
+                           0.000, 0.000, 0.000,     // Stable Yaw 1.0, 0, 0.2,               // YAW P/I/D
+                           0.810, 0.000, 0.000,     // Rate Yaw 1.0, 0, 0.2,                 // YAW P/I/D
+                           0.0, // setpoint yaw
+                           0.0, // setpoint roll
+                           0.0, // setpoint pitch
+                           12.6                     // battery voltage level
+                           };
+#endif
 
 // PID values:
 // 4.7 / 0 / 0 | 1.2 / 0 / 0.16
