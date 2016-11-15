@@ -2,7 +2,7 @@
 
 #define LED_PIN 13            // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 #define LOG_FREQUENCY  50     // ms DEBUG Logging interval
-#define BLINK_FREQUENCY 1000
+//#define BLINK_FREQUENCY 1000
 
 #define INIT_CLEARED          0b00000000
 #define INIT_ESC_ATTACHED     0b00000001
@@ -18,34 +18,6 @@
 #define SETPOINT_CHANGED_BD   0b010
 #define SETPOINT_CHANGED_YW   0b100
 
-#define MPU_3
-
-#ifdef MPU_1
-#define MPU6050_ACCEL_OFFSET_X 699
-#define MPU6050_ACCEL_OFFSET_Y -669
-#define MPU6050_ACCEL_OFFSET_Z 1301
-#define MPU6050_GYRO_OFFSET_X  47
-#define MPU6050_GYRO_OFFSET_Y  -16
-#define MPU6050_GYRO_OFFSET_Z  -30
-#endif
-
-#ifdef MPU_2
-#define MPU6050_ACCEL_OFFSET_X -6542
-#define MPU6050_ACCEL_OFFSET_Y -1314
-#define MPU6050_ACCEL_OFFSET_Z 840
-#define MPU6050_GYRO_OFFSET_X  39
-#define MPU6050_GYRO_OFFSET_Y  -49
-#define MPU6050_GYRO_OFFSET_Z  15
-#endif
-
-#ifdef MPU_3
-#define MPU6050_ACCEL_OFFSET_X -62
-#define MPU6050_ACCEL_OFFSET_Y 366
-#define MPU6050_ACCEL_OFFSET_Z 1416
-#define MPU6050_GYRO_OFFSET_X  161
-#define MPU6050_GYRO_OFFSET_Y  145
-#define MPU6050_GYRO_OFFSET_Z  -19
-#endif
 
 
 // mpu1

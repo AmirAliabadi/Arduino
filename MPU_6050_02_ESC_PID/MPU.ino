@@ -12,15 +12,17 @@ void init_mpu()
     Serial.println(F("#Test device"));
     Serial.println(mpu.testConnection() ? F("#MPU6050 ok") : F("MPU6050 failed"));
 
-    delay(500);
+    delay(50);
 
     // load and configure the DMP
     Serial.println(F("#Init DMP"));
+
     devStatus = mpu.dmpInitialize();
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0)
     {
+
       // Supply your own gyro offsets here, scaled for min sensitivity
       mpu.setXAccelOffset(eeprom_data.ax_offset);
       mpu.setYAccelOffset(eeprom_data.ay_offset);
@@ -28,9 +30,16 @@ void init_mpu()
       mpu.setXGyroOffset(eeprom_data.gx_offset);
       mpu.setYGyroOffset(eeprom_data.gy_offset);
       mpu.setZGyroOffset(eeprom_data.gz_offset);
+      
+      delay(50);
+
+      // turn on the DMP, now that it's ready
+      Serial.println(F("#Enab DMP"));
+      mpu.setDMPEnabled(true);
+
+      delay(10);      
 
 ///////////////////////////////////////////////////////////////////
-      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -39,32 +48,34 @@ void init_mpu()
 //#define MPU6050_DLPF_BW_10          0x05
 //#define MPU6050_DLPF_BW_5           0x06
 /*
-* DLPF_CFG | Bandwidth | Delay | Bandwidth | Delay | Sample Rate
-* ---------+-----------+--------+-----------+--------+-------------
-* 0         | 260Hz     | 0ms     | 256Hz   | 0.98ms  | 8kHz
-* 1         | 184Hz     | 2.0ms   | 188Hz   | 1.9ms   | 1kHz
-* 2         | 94Hz      | 3.0ms   | 98Hz    | 2.8ms   | 1kHz
-* 3         | 44Hz      | 4.9ms   | 42Hz    | 4.8ms   | 1kHz
-* 4         | 21Hz      | 8.5ms   | 20Hz    | 8.3ms   | 1kHz
-* 5         | 10Hz      | 13.8ms  | 10Hz    | 13.4ms  | 1kHz
-* 6         | 5Hz       | 19.0ms  | 5Hz     | 18.6ms  | 1kHz
+* DLPF_CFG  | Bandwidth | Delay   | Bandwidth | Delay   | Sample Rate
+*  ---------+-----------+---------+-----------+---------+-------------
+* 0         | 260Hz     | 0ms     | 256Hz     | 0.98ms  | 8kHz
+* 1         | 184Hz     | 2.0ms   | 188Hz     | 1.9ms   | 1kHz
+* 2         | 94Hz      | 3.0ms   | 98Hz      | 2.8ms   | 1kHz
+* 3         | 44Hz      | 4.9ms   | 42Hz      | 4.8ms   | 1kHz
+* 4         | 21Hz      | 8.5ms   | 20Hz      | 8.3ms   | 1kHz
+* 5         | 10Hz      | 13.8ms  | 10Hz      | 13.4ms  | 1kHz
+* 6         | 5Hz       | 19.0ms  | 5Hz       | 18.6ms  | 1kHz
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
-
-      // turn on the DMP, now that it's ready
-      Serial.println(F("#Enab DMP"));
-      mpu.setDMPEnabled(true);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+     
+      delay(50);     
 
       mpuIntStatus = mpu.getIntStatus();
 
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
 
-      read_mpu = &read_mpu_process;
+      Serial.print( F("#MPU Rate ") );
+      Serial.println( mpu.getRate() );
 
+      Serial.println( F("#DMP rdy") );     
+      
       system_check |= INIT_MPU_ARMED;
-
-      Serial.println(F("#DMP rdy"));      
+      
+      read_mpu = &read_mpu_process;       
     }
     else
     {
@@ -159,31 +170,31 @@ void read_mpu_process()
         ypr[AC] = ypr[AC] - ac_offset;
         ypr[BD] = ypr[BD] - bd_offset;
         
-        if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
-        {
-          Serial.print(F("#bg chng ac"));
-          Serial.print("\t");
-          Serial.print(ypr_last[AC]);
-          Serial.print("\t");
-          Serial.println(ypr[AC]);
-        }
-  
-        if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
-        {
-          Serial.print(F("#bg chng bd"));
-          Serial.print("\t");
-          Serial.print(ypr_last[BD]);
-          Serial.print("\t");
-          Serial.println(ypr[BD]);
-        }      
-  
-        if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
-        if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
-        if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-  
-        ypr_last[YW] = ypr[YW];
-        ypr_last[AC] = ypr[AC];
-        ypr_last[BD] = ypr[BD];
+//        if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
+//        {
+//          Serial.print(F("#bg chng ac"));
+//          Serial.print("\t");
+//          Serial.print(ypr_last[AC]);
+//          Serial.print("\t");
+//          Serial.println(ypr[AC]);
+//        }
+//  
+//        if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
+//        {
+//          Serial.print(F("#bg chng bd"));
+//          Serial.print("\t");
+//          Serial.print(ypr_last[BD]);
+//          Serial.print("\t");
+//          Serial.println(ypr[BD]);
+//        }      
+//  
+//        if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
+//        if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
+//        if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
+//  
+//        ypr_last[YW] = ypr[YW];
+//        ypr_last[AC] = ypr[AC];
+//        ypr_last[BD] = ypr[BD];
   
       }
     }

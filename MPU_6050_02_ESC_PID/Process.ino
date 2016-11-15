@@ -30,8 +30,8 @@ void check_if_stable_process()
     Serial.print(F(" "));
     Serial.println(bd_offset);
 
-    //ac_offset = 0;
-    //bd_offset = 0;
+    ac_offset = 0;
+    bd_offset = 0;
 
     system_check |= INIT_MPU_STABLE;
 
@@ -58,72 +58,71 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-  if( system_check & INIT_ESC_ARMED )
-  {
-    if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
-    {
-      blink_pattern_5      
-      disarm_esc();
-      process = &do_log;
-      return;
-    }
-  }
+//  if( system_check & INIT_ESC_ARMED )
+//  {
+//    if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
+//    {
+//      blink_pattern_5      
+//      disarm_esc();
+//      process = &do_log;
+//      return;
+//    }
+//  }
 
   // Update the Stable PID input values
   // Angle reading
   current_attitude[YW] = ypr[YW];
-  current_attitude[AC] = ypr[AC];
   current_attitude[BD] = ypr[BD];  
+  current_attitude[AC] = ypr[AC];  
 
 #ifdef CASCADE_PIDS    
   // acceleration rate reading
   current_rate[YW] = gyro.z*-1.0;
-  current_rate[AC] = gyro.x;  
   current_rate[BD] = gyro.y*-1.0;    
+  current_rate[AC] = gyro.x;    
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
 
-    if( !(system_check & INIT_PID_ON) ) init_pid();    
-
-    if( INPUT_THRUST > 350 ) {
-
+    if( !(system_check & INIT_PID_ON) ) {
+            init_pid();  
+        }
+        
+//    if( INPUT_THRUST > 350 ) {
     pid_attitude[YW].Compute();  
-    pid_attitude[AC].Compute();      
     pid_attitude[BD].Compute();     
+    pid_attitude[AC].Compute();       
 
 #ifdef CASCADE_PIDS
     pid_rate[YW].Compute();
-    pid_rate[AC].Compute();     
     pid_rate[BD].Compute();         
+    pid_rate[AC].Compute();         
 #endif
-
-    }
-
+//}
 
     //////////////////////////////
     // Motor Mix Algorithm      //
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = INPUT_THRUST - rate_correction[YW];
-    v_bd = INPUT_THRUST + rate_correction[YW];
+    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST); // - rate_correction[YW]);
+    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST); // + rate_correction[YW]);
 #else
-    v_ac = INPUT_THRUST - attitude_correction[YW]; 
-    v_bd = INPUT_THRUST + attitude_correction[YW]; 
+    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST); // - attitude_correction[YW]); 
+    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST); // + attitude_correction[YW]); 
 #endif
 
     // compute motor speeds
 #ifdef CASCADE_PIDS
-    va = MIN_ESC_CUTOFF + (v_ac - rate_correction[AC]); 
-    vc = MIN_ESC_CUTOFF + (v_ac + rate_correction[AC]); 
-    vb = MIN_ESC_CUTOFF + (v_bd - rate_correction[BD]); 
-    vd = MIN_ESC_CUTOFF + (v_bd + rate_correction[BD]); 
+    va = (v_ac - rate_correction[AC]); 
+    vc = (v_ac + rate_correction[AC]); 
+    vb = (v_bd - rate_correction[BD]); 
+    vd = (v_bd + rate_correction[BD]); 
 #else
-    va = MIN_ESC_CUTOFF + (v_ac - attitude_correction[AC]); 
-    vc = MIN_ESC_CUTOFF + (v_ac + attitude_correction[AC]); 
-    vb = MIN_ESC_CUTOFF + (v_bd - attitude_correction[BD]); 
-    vd = MIN_ESC_CUTOFF + (v_bd + attitude_correction[BD]); 
+    va = (v_ac - attitude_correction[AC]); 
+    vc = (v_ac + attitude_correction[AC]); 
+    vb = (v_bd - attitude_correction[BD]); 
+    vd = (v_bd + attitude_correction[BD]); 
 #endif
     //
     ////////////////////////////////
