@@ -243,7 +243,7 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
-  process = &do_blink;
+  process  = &do_blink;
   read_mpu = &do_blink;
   disarm_esc();
 
@@ -256,8 +256,8 @@ void setup()
   
     blink_pattern_4  
     process     = &wait_for_stable_process;
-  
     send_serial = &SerialSend_A;    
+      
   } else {
     blink_pattern_5
     Serial.println("#Please run calibaration");

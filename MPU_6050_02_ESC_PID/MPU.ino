@@ -12,7 +12,7 @@ void init_mpu()
     Serial.println(F("#Test device"));
     Serial.println(mpu.testConnection() ? F("#MPU6050 ok") : F("MPU6050 failed"));
 
-    delay(500);
+    delay(50);
 
     // load and configure the DMP
     Serial.println(F("#Init DMP"));
@@ -22,34 +22,24 @@ void init_mpu()
     // make sure it worked (returns 0 if so)
     if (devStatus == 0)
     {
+
       // Supply your own gyro offsets here, scaled for min sensitivity
+      mpu.setXAccelOffset(eeprom_data.ax_offset);
+      mpu.setYAccelOffset(eeprom_data.ay_offset);
+      mpu.setZAccelOffset(eeprom_data.az_offset);
+      mpu.setXGyroOffset(eeprom_data.gx_offset);
+      mpu.setYGyroOffset(eeprom_data.gy_offset);
+      mpu.setZGyroOffset(eeprom_data.gz_offset);
+      
+      delay(50);
 
-//      int16_t foo ;
-//      foo = mpu.getXAccelOffset();
-//      if( foo != eeprom_data.ax_offset ) Serial.println(F("foo");
-//      foo = mpu.getYAccelOffset();
-//      if( foo != eeprom_data.ay_offset ) Serial.println(F("foo");
-//      foo = mpu.getZAccelOffset();
-//      if( foo != eeprom_data.az_offset ) Serial.println(F("foo");
-//      foo = mpu.getXGyroOffset();
-//      if( foo != eeprom_data.gx_offset ) Serial.println(F("foo");
-//      foo = mpu.getYGyroOffset();
-//      if( foo != eeprom_data.gy_offset ) Serial.println(F("foo");
-//      foo = mpu.gsetZGyroOffset();
-//      if( foo != eeprom_data.gz_offset ) Serial.println(F("foo");
-     
+      // turn on the DMP, now that it's ready
+      Serial.println(F("#Enab DMP"));
+      mpu.setDMPEnabled(true);
 
-//      mpu.setXAccelOffset(eeprom_data.ax_offset);
-//      mpu.setYAccelOffset(eeprom_data.ay_offset);
-//      mpu.setZAccelOffset(eeprom_data.az_offset);
-//      mpu.setXGyroOffset(eeprom_data.gx_offset);
-//      mpu.setYGyroOffset(eeprom_data.gy_offset);
-//      mpu.setZGyroOffset(eeprom_data.gz_offset);
-//
-//      delay(500);
+      delay(10);      
 
 ///////////////////////////////////////////////////////////////////
-//      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
 //#define MPU6050_DLPF_BW_256         0x00
 //#define MPU6050_DLPF_BW_188         0x01
 //#define MPU6050_DLPF_BW_98          0x02
@@ -69,12 +59,9 @@ void init_mpu()
 * 6         | 5Hz       | 19.0ms  | 5Hz       | 18.6ms  | 1kHz
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
-
-      // turn on the DMP, now that it's ready
-      Serial.println(F("#Enab DMP"));
-      mpu.setDMPEnabled(true);
-
-      delay(500);      
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+     
+      delay(50);     
 
       mpuIntStatus = mpu.getIntStatus();
 
