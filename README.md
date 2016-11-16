@@ -37,3 +37,11 @@ xxx paired with 002
 attach sync noise in sync 
 001 paired with 003
 xxx paired with 002
+
+motor thrust test
+VA @ 4.20		VC @ 4.20
+1210 -  60		1210 -  68
+1300 - 180		1300 - 168
+1400 - 270		1400 - 308
+1500 - 430		1500 - 410
+1600 - 600		1600 - 600
