@@ -13,9 +13,9 @@ void check_if_stable_process()
   static float last_yw = -333.0;
 
   Serial.print(F("#SR "));
-  Serial.println(abs(ypr[YW] - last_yw),2);
+  Serial.println(abs(ypr[YAW] - last_yw),2);
 
-  float yw_reading = (float)((int)(ypr[YW]*10.0 + .5))/10.0;
+  float yw_reading = (float)((int)(ypr[YAW]*10.0 + .5))/10.0;
   
   if(last_yw == yw_reading) 
   {
@@ -71,15 +71,15 @@ void attitude_process()
 
   // Update the Stable PID input values
   // Angle reading
-  current_attitude[YW] = ypr[YW];
-  current_attitude[BD] = ypr[BD];  
-  current_attitude[AC] = ypr[AC];  
+  current_attitude[YAW] = ypr[YAW];
+  current_attitude[BD]  = ypr[BD];  
+  current_attitude[AC]  = ypr[AC];  
 
 #ifdef CASCADE_PIDS    
   // acceleration rate reading
-  current_rate[YW] = gyro.z*-1.0;
-  current_rate[BD] = gyro.y*-1.0;    
-  current_rate[AC] = gyro.x;    
+  current_rate[YAW] = gyro.z*-1.0;
+  current_rate[BD]  = gyro.y*-1.0;    
+  current_rate[AC]  = gyro.x;    
 #endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) {
@@ -89,12 +89,12 @@ void attitude_process()
         }
         
 //    if( INPUT_THRUST > 350 ) {
-    pid_attitude[YW].Compute();  
+    pid_attitude[YAW].Compute();  
     pid_attitude[BD].Compute();     
     pid_attitude[AC].Compute();       
 
 #ifdef CASCADE_PIDS
-    pid_rate[YW].Compute();
+    pid_rate[YAW].Compute();
     pid_rate[BD].Compute();         
     pid_rate[AC].Compute();         
 #endif
@@ -105,11 +105,11 @@ void attitude_process()
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST); // - rate_correction[YW]);
-    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST); // + rate_correction[YW]);
+    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST  - rate_correction[YAW]);
+    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST  + rate_correction[YAW]);
 #else
-    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST); // - attitude_correction[YW]); 
-    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST); // + attitude_correction[YW]); 
+    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST  - attitude_correction[YAW]); 
+    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST  + attitude_correction[YAW]); 
 #endif
 
     // compute motor speeds
@@ -136,7 +136,7 @@ void attitude_process()
   {
     va = vb = vc = vd = MIN_ESC_SIGNAL;
 
-    yw_offset = (float)((int)(ypr[YW]*10.0 + .5))/10.0;
+    yw_offset = (float)((int)(ypr[YAW]*10.0 + .5))/10.0;
     
     pid_reset(); //(MANUAL);
   }

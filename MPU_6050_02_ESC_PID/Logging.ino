@@ -104,6 +104,6 @@ void log_data()
 {
   if( aserial_data_mode == 0 ) send_serial(AC);
   else if( aserial_data_mode == 1 ) send_serial(BD);
-  else if( aserial_data_mode == 2 ) send_serial(YW); 
+  else if( aserial_data_mode == 2 ) send_serial(YAW); 
 }
 

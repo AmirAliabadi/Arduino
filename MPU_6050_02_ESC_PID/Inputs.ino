@@ -43,7 +43,7 @@ void read_throttle()
 
 void read_setpoint()
 {
-  setpoint[YW] = INPUT_SETPOINT_YAW ;
+  setpoint[YAW] = INPUT_SETPOINT_YAW ;
   setpoint[AC] = INPUT_SETPOINT_ROLL ;
   setpoint[BD] = INPUT_SETPOINT_PITCH ;    
 }

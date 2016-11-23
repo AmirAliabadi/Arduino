@@ -19,30 +19,6 @@
 #define SETPOINT_CHANGED_YW   0b100
 
 
-
-// mpu1
-// 699  -669  1301  47  -16 -30
-// 757  -662  1301  47  -12 -30
-
-// mpu2
-// -6640  -1344  832   38    -52   16
-// -6542  -1314  840   39    -49   15
-// -6545  -1318  834   45    -48   14
-
-// mpu3
-// 46 365 1393  163 143 -19
-// 47 364 1394  162 143 -20
-// 40 376 1398  162 142 -19
-// 41 377 1398  162 142 -19
-/*
-Sensor readings with offsets:  -3  -7  16380 0 0 1
-Your offsets: -64 373 1417  161 145 -19
-
-Sensor readings with offsets:  2 -1  16388 0 1 1
-Your offsets: -62 366 1416  161 145 -19
-*/
-
-
 /*
  *             (y)
                 A Pitch +
@@ -53,14 +29,13 @@ Your offsets: -62 366 1416  161 145 -19
                 !
                 C Pitch -
 
-                USBaz
+                USB
 */
-#define YW 0
 #define YAW 0
-#define BD 1
-#define ROLL 1
 #define AC 2
 #define PITCH 2
+#define BD 1
+#define ROLL 1
 ////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////
@@ -84,18 +59,16 @@ Your offsets: -62 366 1416  161 145 -19
 #define MOTOR_PIN_C       11       
 #define MOTOR_PIN_D       10      
 /*
+ * If you use the default values set by the Arduino Diecimila's bootloader, these are your PWM frequencies:
+ * Arduino Pins 5 and 6: 1kHz
+ * Arduino Pins 9, 10, 11, and 3: 500Hz
+ * 
  * pin pairs:
  * 3 - 11 : default PWM frequency: 490.20 Hz
  * 9 - 10 : default PWM frequency: 490.20 Hz
  * 5 - 6  : default PWM frequency: 976.56 Hz
  */
 
-/*
- * 
-If you use the default values set by the Arduino Diecimila's bootloader, these are your PWM frequencies:
-Arduino Pins 5 and 6: 1kHz
-Arduino Pins 9, 10, 11, and 3: 500Hz
- */
 
 // THROTTLE SETTINGS
 #define MAX_INPUT_THRUST  1000    // 

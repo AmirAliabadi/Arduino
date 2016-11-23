@@ -195,16 +195,16 @@ float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 
 // input / output /setpoint
 PID pid_attitude[3]  = {
-  PID(&current_attitude[YW], &attitude_correction[YW], &setpoint[YW], 0, 0, 0, DIRECT),
-  PID(&current_attitude[BD], &attitude_correction[BD], &setpoint[BD], 0, 0, 0, DIRECT),
-  PID(&current_attitude[AC], &attitude_correction[AC], &setpoint[AC], 0, 0, 0, DIRECT)  
+  PID(&current_attitude[YAW], &attitude_correction[YAW], &setpoint[YAW], 0, 0, 0, DIRECT),
+  PID(&current_attitude[BD],  &attitude_correction[BD],  &setpoint[BD], 0, 0, 0, DIRECT),
+  PID(&current_attitude[AC],  &attitude_correction[AC],  &setpoint[AC], 0, 0, 0, DIRECT)  
 };
 
 #ifdef CASCADE_PIDS
 PID pid_rate[3] = {
-  PID(&current_rate[YW], &rate_correction[YW], &attitude_correction[YW], 0, 0, 0, DIRECT),
-  PID(&current_rate[BD], &rate_correction[BD], &attitude_correction[BD], 0, 0, 0, DIRECT),
-  PID(&current_rate[AC], &rate_correction[AC], &attitude_correction[AC], 0, 0, 0, DIRECT)  
+  PID(&current_rate[YAW], &rate_correction[YAW], &attitude_correction[YAW], 0, 0, 0, DIRECT),
+  PID(&current_rate[BD],  &rate_correction[BD],  &attitude_correction[BD], 0, 0, 0, DIRECT),
+  PID(&current_rate[AC],  &rate_correction[AC],  &attitude_correction[AC], 0, 0, 0, DIRECT)  
 };
 #endif
 

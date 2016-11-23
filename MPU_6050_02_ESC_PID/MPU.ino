@@ -143,7 +143,7 @@ void read_mpu_process()
 
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
-    ypr[YW] = ((ypr[YW] * A_180_DIV_PI) ) ;
+    ypr[YAW] = ((ypr[YAW] * A_180_DIV_PI) ) ;
     ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ) ;
     ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ) ;   
 
@@ -166,7 +166,7 @@ void read_mpu_process()
     if( INPUT_THRUST > MIN_INPUT_THRUST ) {
       if( system_check & INIT_MPU_STABLE )
       {
-        ypr[YW] = ypr[YW] - yw_offset;
+        ypr[YAW] = ypr[YAW] - yw_offset;
         ypr[AC] = ypr[AC] - ac_offset;
         ypr[BD] = ypr[BD] - bd_offset;
         

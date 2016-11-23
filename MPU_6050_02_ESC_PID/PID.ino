@@ -121,7 +121,7 @@ void init_pid()
 
   set_pid_refresh_rate();
   
-  for(byte i=YW; i<=AC; i++ ) {  
+  for(byte i=YAW; i<=AC; i++ ) {  
     pid_attitude[i].SetOutputLimits(-300, 300);
     pid_attitude[i].SetMode(AUTOMATIC);
 
@@ -137,7 +137,7 @@ void init_pid()
 
 void set_pid_refresh_rate()
 {
-  for(byte i=YW; i<=AC; i++ ) {  
+  for(byte i=YAW; i<=AC; i++ ) {  
     pid_attitude[i].SetSampleTime(pid_refresh_rate);
 #ifdef CASCADE_PIDS    
     pid_rate[i].SetSampleTime(pid_refresh_rate);      
@@ -147,7 +147,7 @@ void set_pid_refresh_rate()
 
 void pid_reset() 
 {
-  for(byte i=YW; i<=AC; i++ ) {
+  for(byte i=YAW; i<=AC; i++ ) {
     pid_attitude[i].Reset();
 #ifdef CASCADE_PIDS    
     pid_rate[i].Reset();  
@@ -169,12 +169,12 @@ void update_pid_settings()
   
       ///////////////////////////////////////////////////
       // 
-      pid_attitude[YW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
+      pid_attitude[YAW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
       pid_attitude[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
       pid_attitude[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);      
   
 #ifdef CASCADE_PIDS
-      pid_rate[YW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
+      pid_rate[YAW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
       pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
       pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);      
 #endif

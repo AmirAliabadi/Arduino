@@ -23,25 +23,17 @@ Rate: 0.515, 0.0, 0.08
 Alpha: 0.80
 
 
-
 -----
 For the threaded brushless motors:
 The direction you want the motor to spin is the direction that causes the nut to get tighter if you hold the nut still with your fingers.
 
 
-ESC motor pairs
-attach sync noise not in sync
-001 paired with 001
-xxx paired with 002
-
-attach sync noise in sync 
-001 paired with 003
-xxx paired with 002
-
+-----
 motor thrust test
-VA @ 4.20		VC @ 4.20
-1210 -  60		1210 -  68
-1300 - 180		1300 - 168
-1400 - 270		1400 - 308
-1500 - 430		1500 - 410
-1600 - 600		1600 - 600
+Spyder ZTW 30AMP with the Amazon 1000kv 2212 non-name motors
+VA @ 4.20v		VC @ 4.20v
+1210 -  60g		1210 -  68g
+1300 - 180g		1300 - 168g
+1400 - 270g		1400 - 308g
+1500 - 430g		1500 - 410g
+1600 - 600g		1600 - 600g
