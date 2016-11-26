@@ -5,112 +5,86 @@
 #define MOTOR_PIN_D       10 
 
 //#define USE_SERVO
-#define USE_ESC
+//#define USE_ESC
 //#define USE_ANALOGWRITE
+#define PHASE_CORRECT_PWM
+//#define USE_BITBANG
+//#define USE_BITBANG_2
 
-#ifdef USE_ANALOGWRITE
-#define PWM_INCREMENT 1
-#define pwm_20_percent 200
-#define pwm_10_percent 1
-#endif
+unsigned long tick;
+unsigned long last_tick = 0;
+unsigned long last_pwm_pulse = 0;
 
-#ifdef USE_SERVO
-//#include <Servo.h>
-//#define _ESC_ Servo
-#define SERVO_MODE "Servo "
-#define PWM_INCREMENT 10
-#define pwm_20_percent 2000
-#define pwm_10_percent 1000
-#endif
+int pwm_output = 0;
+int pwm_00_percent = 0;
+int pwm_10_percent = 0;
+int pwm_20_percent = 0;
+int pwm_increment = 0;
+int top_hold = 100;
 
-#ifdef USE_ESC 
-#include "ESC.h"
-#define _ESC_ ESC
-#define SERVO_MODE "ESC "
-#define PWM_INCREMENT 10
-#define pwm_20_percent 2000
-#define pwm_10_percent 1000
-#endif
 
-#ifdef SERVO_MODE
-_ESC_ esc_a;
-_ESC_ esc_b;
-_ESC_ esc_c;
-_ESC_ esc_d;
-#endif
-
+long throttle = 0;
 void setup() {
   Serial.begin(115200); 
   while (!Serial);
   
-#ifdef SERVO_MODE
-Serial.println(SERVO_MODE);
+  pwm_00_percent = get_pwm_00_percent();  
+  pwm_10_percent = get_pwm_10_percent();
+  pwm_20_percent = get_pwm_20_percent();
+  pwm_increment = get_pwm_increment();
+  
+  pwm_setup();
 
-esc_a.attach(MOTOR_PIN_A);
-esc_b.attach(MOTOR_PIN_B);
-esc_c.attach(MOTOR_PIN_C);
-esc_d.attach(MOTOR_PIN_D);  
+  throttle = read_throttle();
+return;
+  pwm_output = pwm_20_percent;
+  unsigned long last_tck = millis();
+  while( (millis() - last_tck) <= 10000 ){ do_it(); }
 
-esc_a.writeMicroseconds( pwm_10_percent );
-esc_b.writeMicroseconds( pwm_10_percent );
-esc_c.writeMicroseconds( pwm_10_percent );
-esc_d.writeMicroseconds( pwm_10_percent );
+  pwm_output = pwm_00_percent;
+  last_tck = millis();
+  while( (millis() - last_tck) <= 5000){ do_it(); }
 
-#endif
-
-#ifdef USE_ANALOGWRITE
-  Serial.println("analogWrite Mode");
-  analogWrite(MOTOR_PIN_A, 1);
-  analogWrite(MOTOR_PIN_B, 1);
-  analogWrite(MOTOR_PIN_C, 1);
-  analogWrite(MOTOR_PIN_D, 1);
-#endif
+  pwm_output = pwm_10_percent;
 
 }
 
-unsigned long tick;
-unsigned long last_tick = 0;
+long read_throttle()
+{
+  long foo = analogRead(0);
+  foo = map(foo, 0, 1000, pwm_10_percent, pwm_20_percent);
+  Serial.println(foo);
+  return foo; 
+}
 
-int pwm_output = pwm_10_percent;
-int pwm_increment = PWM_INCREMENT;
-int top_hold = 100;
-void loop() {
+void loop() 
+{  
+read_throttle();
+return;
+  
   tick = millis();
 
-  if( (tick - last_tick) > 10 )
+  if( (tick - last_tick) > 100 )
   {
     last_tick = tick;
     
     pwm_output = pwm_output + pwm_increment;
-
-    do_it();
-    
-    if( pwm_output >= pwm_20_percent ) { pwm_increment = pwm_increment * -1; delay(2500); }
-    if( pwm_output <= pwm_10_percent ) { pwm_increment = pwm_increment * -1; delay(2500); }
   }
-}
 
-void do_it()
-{
-  
-#ifdef SERVO_MODE
-  Serial.print(SERVO_MODE);
-  Serial.println( pwm_output );
+  do_it();
 
-  esc_a.writeMicroseconds( pwm_output );
-  esc_b.writeMicroseconds( pwm_output );
-  esc_c.writeMicroseconds( pwm_output );
-  esc_d.writeMicroseconds( pwm_output );
-#endif
+  if( pwm_output >= pwm_20_percent ) 
+  { 
+    unsigned long last_tck = millis();      
+    while( (millis() - last_tck) <= 5000){ do_it(); }
+    pwm_increment = pwm_increment * -1;
+  }
+  if( pwm_output <= pwm_10_percent ) 
+  { 
+    unsigned long last_tck = millis();      
+    while( (millis() - last_tck) <= 5000){ do_it(); }      
+    pwm_increment = pwm_increment * -1; 
+  }
 
-#ifdef USE_ANALOGWRITE
-  Serial.print("analogWrite: ");
-  Serial.println( pwm_output );
-  analogWrite(MOTOR_PIN_A, pwm_output);
-  analogWrite(MOTOR_PIN_B, pwm_output);
-  analogWrite(MOTOR_PIN_C, pwm_output);
-  analogWrite(MOTOR_PIN_D, pwm_output);   
-#endif
-  
 }
 
