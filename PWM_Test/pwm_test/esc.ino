@@ -5,8 +5,9 @@
 
 #define SERVO_MODE "ESC "
 #define PWM_INCREMENT 10
+#define PWM_00_PERCENT 1000
+#define PWM_10_PERCENT 1090
 #define PWM_20_PERCENT 2000
-#define PWM_10_PERCENT 1000
 
 _ESC_ esc_a;
 _ESC_ esc_b;
@@ -18,6 +19,12 @@ int get_pwm_increment()
 {
   return PWM_INCREMENT;
 }
+
+int get_pwm_00_percent()
+{
+  return PWM_00_PERCENT; 
+}
+
 
 int get_pwm_10_percent()
 {

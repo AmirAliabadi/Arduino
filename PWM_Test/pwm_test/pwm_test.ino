@@ -7,12 +7,12 @@
 //#define USE_SERVO
 //#define USE_ESC
 //#define USE_ANALOGWRITE
-#define PHASE_CORRECT_PWM
+//#define PHASE_CORRECT_PWM
 //#define USE_BITBANG
-//#define USE_BITBANG_2
+#define USE_BITBANG_2
 
-unsigned long tick;
-unsigned long last_tick = 0;
+//unsigned long tick;
+//unsigned long last_tick = 0;
 unsigned long last_pwm_pulse = 0;
 
 int pwm_output = 0;
@@ -35,18 +35,6 @@ void setup() {
   
   pwm_setup();
 
-  throttle = read_throttle();
-return;
-  pwm_output = pwm_20_percent;
-  unsigned long last_tck = millis();
-  while( (millis() - last_tck) <= 10000 ){ do_it(); }
-
-  pwm_output = pwm_00_percent;
-  last_tck = millis();
-  while( (millis() - last_tck) <= 5000){ do_it(); }
-
-  pwm_output = pwm_10_percent;
-
 }
 
 long read_throttle()
@@ -59,32 +47,29 @@ long read_throttle()
 
 void loop() 
 {  
-read_throttle();
-return;
-  
-  tick = millis();
-
-  if( (tick - last_tick) > 100 )
-  {
-    last_tick = tick;
-    
-    pwm_output = pwm_output + pwm_increment;
-  }
+  pwm_output = read_throttle();  
+  read_mpu();
+  read_battery();
+  update_pids();
+  process();
 
   do_it();
+}
 
-  if( pwm_output >= pwm_20_percent ) 
-  { 
-    unsigned long last_tck = millis();      
-    while( (millis() - last_tck) <= 5000){ do_it(); }
-    pwm_increment = pwm_increment * -1;
-  }
-  if( pwm_output <= pwm_10_percent ) 
-  { 
-    unsigned long last_tck = millis();      
-    while( (millis() - last_tck) <= 5000){ do_it(); }      
-    pwm_increment = pwm_increment * -1; 
-  }
-
+void read_mpu()
+{
+  delay(2); 
+}
+void read_battery()
+{
+  //delay(1);
+}
+void update_pids()
+{
+  //delay(1);
+}
+void process()
+{
+  //delay(1);
 }
 

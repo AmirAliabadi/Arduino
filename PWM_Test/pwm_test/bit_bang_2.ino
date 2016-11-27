@@ -56,7 +56,7 @@ void do_it()
   //          321098
   PORTB |= B00001110;                                        //Set digital poort 9,10,11 high
   
-  while( (micros() - last_pwm_pulse) < pwm_output ) ;
+  while( (micros() - last_pwm_pulse) < (PWM_20_PERCENT - pwm_output) ) ;
 
   //        76543210
   PORTD &= B11110111;                                        //Set digital poort 3 high

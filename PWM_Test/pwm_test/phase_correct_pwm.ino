@@ -43,8 +43,8 @@ void pwm_setup()
 
 void do_it()
 {
-  OCR2A = pwm_output;
-  OCR2B = pwm_output;
+  OCR2A = PWM_FERQUENCY - pwm_output;
+  OCR2B = PWM_FERQUENCY - pwm_output;
 }
 
 #endif

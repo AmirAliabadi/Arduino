@@ -53,7 +53,7 @@ void do_it()
   digitalWrite(MOTOR_PIN_C, HIGH);
   digitalWrite(MOTOR_PIN_D, HIGH);   
 
-  while( (micros() - last_pwm_pulse) < pwm_output ) ;
+  while( (micros() - last_pwm_pulse) < PWM_20_PERCENT - pwm_output ) ;
 
   digitalWrite(MOTOR_PIN_A, LOW);
   digitalWrite(MOTOR_PIN_B, LOW);
