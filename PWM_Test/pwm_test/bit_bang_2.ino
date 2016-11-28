@@ -60,6 +60,8 @@ Pin   Port Pin
 
   //PORTD |= B00001000;                                        //Set digital port 3 high
   //PORTB |= B00001110;                                        //Set digital port 9,10,11 high
+  //PORTD &= B11110111;                                        //Set digital port 3 low
+  //PORTB |= B11110001;                                        //Set digital port 9,10,11 low
 
 }
 
