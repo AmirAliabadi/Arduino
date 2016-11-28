@@ -1,8 +1,8 @@
 
 #define MOTOR_PIN_A       3       
 #define MOTOR_PIN_B       9       
-#define MOTOR_PIN_C       11       
-#define MOTOR_PIN_D       10 
+#define MOTOR_PIN_C       10       
+#define MOTOR_PIN_D       11 
 
 //#define USE_SERVO
 //#define USE_ESC
@@ -15,18 +15,24 @@
 //unsigned long last_tick = 0;
 unsigned long last_pwm_pulse = 0;
 
-int pwm_output = 0;
+//int pwm_output = 0;
+int pwm_output_a = 0;
+int pwm_output_b = 0;
+int pwm_output_c = 0;
+int pwm_output_d = 0;
+
+
 int pwm_00_percent = 0;
 int pwm_10_percent = 0;
 int pwm_20_percent = 0;
 int pwm_increment = 0;
-int top_hold = 100;
-
 
 long throttle = 0;
 void setup() {
   Serial.begin(115200); 
   while (!Serial);
+
+  pinMode(6, OUTPUT);
   
   pwm_00_percent = get_pwm_00_percent();  
   pwm_10_percent = get_pwm_10_percent();
@@ -41,35 +47,40 @@ long read_throttle()
 {
   long foo = analogRead(0);
   foo = map(foo, 0, 1000, pwm_10_percent, pwm_20_percent);
-  Serial.println(foo);
   return foo; 
 }
 
 void loop() 
 {  
-  pwm_output = read_throttle();  
+  int t = read_throttle();
+  pwm_output_a = t;  
+  pwm_output_b = t;
+  pwm_output_c = t;
+  pwm_output_d = t;      
+
+  digitalWrite(6, HIGH);
   read_mpu();
   read_battery();
   update_pids();
   process();
+  digitalWrite(6, LOW);
 
   do_it();
 }
 
 void read_mpu()
 {
-  delay(2); 
+  delayMicroseconds(400); 
 }
 void read_battery()
 {
-  //delay(1);
 }
 void update_pids()
 {
-  //delay(1);
+  delayMicroseconds(100); 
 }
 void process()
 {
-  //delay(1);
+  delayMicroseconds(100); 
 }
 

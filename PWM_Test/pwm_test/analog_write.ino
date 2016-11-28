@@ -1,9 +1,10 @@
 #ifdef USE_ANALOGWRITE
 
 #define PWM_INCREMENT 1
-#define PWM_00_PERCENT .35 * 255
-#define PWM_10_PERCENT .35 * 255 
-#define PWM_20_PERCENT .90 * 255
+#define PWM_FERQUENCY 255
+#define PWM_00_PERCENT .35 * PWM_FERQUENCY
+#define PWM_10_PERCENT .35 * PWM_FERQUENCY 
+#define PWM_20_PERCENT .90 * PWM_FERQUENCY
 
 
 int get_pwm_increment()
@@ -15,7 +16,6 @@ int get_pwm_00_percent()
 {
   return PWM_00_PERCENT; 
 }
-
 
 int get_pwm_10_percent()
 {
@@ -39,8 +39,6 @@ void pwm_setup()
 
 void do_it()
 {
-  Serial.print("analogWrite: ");
-  Serial.println( pwm_output );
   analogWrite(MOTOR_PIN_A, pwm_output);
   analogWrite(MOTOR_PIN_B, pwm_output);
   analogWrite(MOTOR_PIN_C, pwm_output);

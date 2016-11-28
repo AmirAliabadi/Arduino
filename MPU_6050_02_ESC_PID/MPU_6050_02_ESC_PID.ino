@@ -263,6 +263,8 @@ void setup()
     Serial.println("#Please run calibaration");
   }
 
+  pinMode(6, OUTPUT);
+
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -279,13 +281,17 @@ void do_blink()
 
 void loop()
 {
-  do_blink();
+//  do_blink();
+
+  digitalWrite(6, HIGH);
 
   read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
   update_pid_settings();
+  
+  digitalWrite(6, LOW);
   
   process();
 
