@@ -55,8 +55,8 @@ Pin   Port Pin
   
   //Arduino (Atmega) pins default to inputs, so they don't need to be explicitly declared as inputs.
 
-  DDRD |= B00001000;                                           //Configure digital poort 4, 5, 6 and 7 as output.
-  DDRB |= B00001110;                                           //Configure digital poort 12 and 13 as output.
+  DDRD |= B00001000;                                           //Configure digital poort 3 as output
+  DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
 
   //PORTD |= B00001000;                                        //Set digital port 3 high
   //PORTB |= B00001110;                                        //Set digital port 9,10,11 high

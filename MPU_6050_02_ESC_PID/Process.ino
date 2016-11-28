@@ -141,11 +141,13 @@ void attitude_process()
     pid_reset(); //(MANUAL);
   }
 
+  update_motors();
+/*
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
   esc_b.writeMicroseconds(vb);
   esc_d.writeMicroseconds(vd);  
-
+*/
 }
 
 //////////////////////////////////////////////////////////////////////

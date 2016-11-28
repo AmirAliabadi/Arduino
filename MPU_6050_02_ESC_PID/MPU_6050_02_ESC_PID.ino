@@ -3,8 +3,8 @@
 //#include "MyServo.h"
 //#define _ESC_ MyServo
 
-#include "ESC.h"
-#define _ESC_ ESC
+//#include "ESC.h"
+//#define _ESC_ ESC
 
 #include <EEPROM.h>             //Include the EEPROM.h library so we can store information onto the EEPROM
 
@@ -171,10 +171,10 @@ float bd_offset   = 0.0;
 
 ////////////////////////////////////////////////////////////////
 // ESC
-_ESC_ esc_a;
-_ESC_ esc_b;
-_ESC_ esc_c;
-_ESC_ esc_d;
+//_ESC_ esc_a;
+//_ESC_ esc_b;
+//_ESC_ esc_c;
+//_ESC_ esc_d;
 
 uint16_t va = 0;
 uint16_t vb = 0;
@@ -294,6 +294,9 @@ void loop()
   digitalWrite(6, LOW);
   
   process();
+//  va = vb = vc = vd = 1400;
+//  delay(3);
+//  update_motors();
 
   do_log();
 

@@ -1,3 +1,8 @@
+#define PWM_FERQUENCY 2000 //2800
+#define PWM_00_PERCENT .30 * PWM_FERQUENCY
+#define PWM_10_PERCENT .32 * PWM_FERQUENCY
+#define PWM_20_PERCENT .65 * PWM_FERQUENCY
+
 /*
    *  ESC respond to PWM signals
    *  typically 
@@ -45,11 +50,16 @@
 
 void init_esc()
 {
+/*
   esc_a.attach(MOTOR_PIN_A);
   esc_c.attach(MOTOR_PIN_C);
   esc_b.attach(MOTOR_PIN_B);
   esc_d.attach(MOTOR_PIN_D);
-  
+*/  
+
+  DDRD |= B00001000;                                           //Configure digital poort 3 as output
+  DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
+
   system_check |= INIT_ESC_ATTACHED;
   
   arm_esc();
@@ -57,23 +67,51 @@ void init_esc()
 
 void arm_esc()
 {
+/*  
   esc_a.arm();
   esc_c.arm();
   esc_b.arm();
   esc_d.arm();
+*/
   
   system_check |= INIT_ESC_ARMED;
 }
 
 void disarm_esc()
 {
+  /*
 #ifdef ARMED_PULSE_WIDTH
     esc_a.disarm();
     esc_c.disarm();
     esc_b.disarm();
     esc_d.disarm();
 #endif    
-
+*/
     system_check &= ~(INIT_ESC_ARMED);
+}
+
+unsigned long last_pwm_pulse = 0;
+unsigned long micro_tickets = 0;
+void update_motors()
+{  
+  va = map(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
+  vb = map(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
+  vc = map(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
+  vd = map(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
+  
+  while( (micro_tickets = micros()) - last_pwm_pulse <= PWM_FERQUENCY ) ;  // wait until next rising pulse
+  last_pwm_pulse= micro_tickets;
+  
+  PORTD |= B00001000;                                        //Set digital port 3 high
+  PORTB |= B00001110;                                        //Set digital port 9,10,11 high
+
+  int motors =    0x00001111;
+  while( motors | 0x00000000 )
+  {
+      if((micros() - last_pwm_pulse) >= va) { PORTD &= B11110111; motors &= 0x00000111; }
+      if((micros() - last_pwm_pulse) >= vb) { PORTB &= B11110111; motors &= 0x00001011; }
+      if((micros() - last_pwm_pulse) >= vc) { PORTB &= B11111011; motors &= 0x00001101; }
+      if((micros() - last_pwm_pulse) >= vd) { PORTB &= B11111101; motors &= 0x00001110; }
+  }
 }
 
