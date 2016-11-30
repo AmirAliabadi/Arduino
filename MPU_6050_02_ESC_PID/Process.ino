@@ -143,6 +143,7 @@ void attitude_process()
 
   update_motors();
 /*
+
   esc_a.writeMicroseconds(va);
   esc_c.writeMicroseconds(vc);
   esc_b.writeMicroseconds(vb);

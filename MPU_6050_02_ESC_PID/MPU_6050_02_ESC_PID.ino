@@ -251,8 +251,8 @@ void setup()
   if(eeprom_data.id[0] == 'A' && eeprom_data.id[1] == 'A') {
 
     init_i2c();
-    init_pid();
     init_mpu();
+    init_pid();
   
     blink_pattern_4  
     process     = &wait_for_stable_process;
@@ -270,36 +270,31 @@ void setup()
 
 void do_blink()
 {
-  if( millis() - last_blink > blink_pattern[blink_point] )
-  {
-    if(++blink_point > 3) blink_point = 0;
+//  if( millis() - last_blink > blink_pattern[blink_point] )
+//  {
+//    if(++blink_point > 3) blink_point = 0;
     
-    last_blink = millis();
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
-  }
+//    last_blink = millis();
+//    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
+//  }
 }
 
 void loop()
 {
 //  do_blink();
 
-  digitalWrite(6, HIGH);
-
+digitalWrite(6,HIGH);
   read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
   update_pid_settings();
-  
-  digitalWrite(6, LOW);
-  
-  process();
-//  va = vb = vc = vd = 1400;
-//  delay(3);
-//  update_motors();
+digitalWrite(6,LOW);
 
-  do_log();
+//  va = vb = vc = vd = MIN_ESC_CUTOFF;
+//  update_motors();
+  process();
+//  do_log();
 
 }
-
 

@@ -117,7 +117,7 @@ void read_mpu_process()
 
     // read a packet from FIFO
     mpu.getFIFOBytes(fifoBuffer, packetSize);
-
+    
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
     fifoCount -= packetSize;
@@ -126,7 +126,6 @@ void read_mpu_process()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
                                                // this give you the angle the MPU is at, the attitude
-
 #ifdef CASCADE_PIDS
     // dmpGetGryo returns the Accelration data ??
     // I thought gyro data gives you angular reading and accelerator data gave you acceleration in deg/sec ??
