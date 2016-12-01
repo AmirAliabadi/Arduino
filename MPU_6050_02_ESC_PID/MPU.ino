@@ -117,7 +117,7 @@ void read_mpu_process()
 
     // read a packet from FIFO
     mpu.getFIFOBytes(fifoBuffer, packetSize);
-    
+
     // track FIFO count here in case there is > 1 packet available
     // (this lets us immediately read more without waiting for an interrupt)
     fifoCount -= packetSize;

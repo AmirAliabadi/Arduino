@@ -270,31 +270,28 @@ void setup()
 
 void do_blink()
 {
-//  if( millis() - last_blink > blink_pattern[blink_point] )
-//  {
-//    if(++blink_point > 3) blink_point = 0;
+  /* 
+  if( millis() - last_blink > blink_pattern[blink_point] )
+  {
+    if(++blink_point > 3) blink_point = 0;
     
-//    last_blink = millis();
-//    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
-//  }
+    last_blink = millis();
+    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
+  }
+  */
 }
 
 void loop()
 {
 //  do_blink();
 
-digitalWrite(6,HIGH);
   read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
   update_pid_settings();
-digitalWrite(6,LOW);
 
-//  va = vb = vc = vd = MIN_ESC_CUTOFF;
-//  update_motors();
   process();
-//  do_log();
 
 }
 

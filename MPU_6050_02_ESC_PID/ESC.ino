@@ -1,7 +1,3 @@
-#define PWM_FERQUENCY 2800 //2800
-#define PWM_00_PERCENT .30 * PWM_FERQUENCY
-#define PWM_10_PERCENT .32 * PWM_FERQUENCY
-#define PWM_20_PERCENT .65 * PWM_FERQUENCY
 
 /*
    *  ESC respond to PWM signals
@@ -90,10 +86,40 @@ void disarm_esc()
     system_check &= ~(INIT_ESC_ARMED);
 }
 
+void update_motors_analogWrite()
+{
+#define PWM_FERQUENCY_analogWrite 255 //2800
+#define PWM_00_PERCENT_analogWrite 0.05 * PWM_FERQUENCY_analogWrite
+#define PWM_10_PERCENT_analogWrite 0.20 * PWM_FERQUENCY_analogWrite
+#define PWM_20_PERCENT_analogWrite 0.65 * PWM_FERQUENCY_analogWrite
+
+Serial.print(va);
+Serial.print(" : ");
+Serial.print((va-1000)/4.0);
+Serial.print(" : ");
+  va = constrain((va-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
+  vb = constrain((vb-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
+  vc = constrain((vc-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
+  vd = constrain((vd-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
+Serial.println(va);
+
+  analogWrite(MOTOR_PIN_A , va);
+  analogWrite(MOTOR_PIN_B , vb);
+  analogWrite(MOTOR_PIN_C , vc);
+  analogWrite(MOTOR_PIN_D , vd);
+  
+}
+
+
 unsigned long last_pwm_pulse = 0;
 unsigned long micro_tickets = 0;
 void update_motors()
-{  
+{
+#define PWM_FERQUENCY 2800 //2800
+#define PWM_00_PERCENT .30 * PWM_FERQUENCY
+#define PWM_10_PERCENT .32 * PWM_FERQUENCY
+#define PWM_20_PERCENT .65 * PWM_FERQUENCY
+   
   va = map(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
   vb = map(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
   vc = map(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
@@ -108,10 +134,10 @@ void update_motors()
   int motors =    0x00001111;
   while( motors | 0x00000000 )
   {
-      if((micros() - last_pwm_pulse) >= va) { PORTD &= B11110111; motors &= 0x00000111; }
-      if((micros() - last_pwm_pulse) >= vb) { PORTB &= B11110111; motors &= 0x00001011; }
-      if((micros() - last_pwm_pulse) >= vc) { PORTB &= B11111011; motors &= 0x00001101; }
-      if((micros() - last_pwm_pulse) >= vd) { PORTB &= B11111101; motors &= 0x00001110; }
+      if((motors & 0x00001000) && (micros() - last_pwm_pulse) >= va) { PORTD &= B11110111; motors &= 0x00000111; }
+      if((motors & 0x00000100) && (micros() - last_pwm_pulse) >= vb) { PORTB &= B11110111; motors &= 0x00001011; }
+      if((motors & 0x00000010) && (micros() - last_pwm_pulse) >= vc) { PORTB &= B11111011; motors &= 0x00001101; }
+      if((motors & 0x00000001) && (micros() - last_pwm_pulse) >= vd) { PORTB &= B11111101; motors &= 0x00001110; }
   }
 }
 
