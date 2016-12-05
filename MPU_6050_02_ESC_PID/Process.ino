@@ -105,11 +105,11 @@ void attitude_process()
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST  - rate_correction[YAW]);
-    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST  + rate_correction[YAW]);
+    v_ac = (INPUT_THRUST  - rate_correction[YAW]);
+    v_bd = (INPUT_THRUST  + rate_correction[YAW]);
 #else
-    v_ac = MIN_ESC_CUTOFF + (INPUT_THRUST  - attitude_correction[YAW]); 
-    v_bd = MIN_ESC_CUTOFF + (INPUT_THRUST  + attitude_correction[YAW]); 
+    v_ac = (INPUT_THRUST  - attitude_correction[YAW]); 
+    v_bd = (INPUT_THRUST  + attitude_correction[YAW]); 
 #endif
 
     // compute motor speeds
@@ -127,24 +127,21 @@ void attitude_process()
     //
     ////////////////////////////////
 
-    va = constrain(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    vc = constrain(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    vb = constrain(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    vd = constrain(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);    
+//    va = constrain(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+//    vc = constrain(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+//    vb = constrain(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+//    vd = constrain(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);    
   }
   else 
   {
-    va = vb = vc = vd = MIN_ESC_SIGNAL;
+    va = vb = vc = vd = MIN_INPUT_THRUST;
 
     yw_offset = (float)((int)(ypr[YAW]*10.0 + .5))/10.0;
     
     pid_reset(); //(MANUAL);
   }
 
-digitalWrite(6,HIGH);
-  //update_motors();
-  update_motors_analogWrite(); 
-digitalWrite(6,LOW);
+  update_motors();
   
 /*
 

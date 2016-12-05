@@ -86,22 +86,18 @@ void disarm_esc()
     system_check &= ~(INIT_ESC_ARMED);
 }
 
-void update_motors_analogWrite()
+/*
+void update_motors()
 {
-#define PWM_FERQUENCY_analogWrite 255 //2800
-#define PWM_00_PERCENT_analogWrite 0.05 * PWM_FERQUENCY_analogWrite
-#define PWM_10_PERCENT_analogWrite 0.20 * PWM_FERQUENCY_analogWrite
-#define PWM_20_PERCENT_analogWrite 0.65 * PWM_FERQUENCY_analogWrite
+#define PWM_FERQUENCY 255 //2800
+#define PWM_00_PERCENT 0.05 * PWM_FERQUENCY
+#define PWM_10_PERCENT 0.20 * PWM_FERQUENCY
+#define PWM_20_PERCENT 0.65 * PWM_FERQUENCY
 
-Serial.print(va);
-Serial.print(" : ");
-Serial.print((va-1000)/4.0);
-Serial.print(" : ");
-  va = constrain((va-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
-  vb = constrain((vb-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
-  vc = constrain((vc-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
-  vd = constrain((vd-1000)/4.0, PWM_10_PERCENT_analogWrite, PWM_20_PERCENT_analogWrite);
-Serial.println(va);
+  va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
+  vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
+  vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
+  vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
 
   analogWrite(MOTOR_PIN_A , va);
   analogWrite(MOTOR_PIN_B , vb);
@@ -109,24 +105,28 @@ Serial.println(va);
   analogWrite(MOTOR_PIN_D , vd);
   
 }
+*/
 
 
 unsigned long last_pwm_pulse = 0;
 unsigned long micro_tickets = 0;
 void update_motors()
 {
-#define PWM_FERQUENCY 2800 //2800
-#define PWM_00_PERCENT .30 * PWM_FERQUENCY
-#define PWM_10_PERCENT .32 * PWM_FERQUENCY
-#define PWM_20_PERCENT .65 * PWM_FERQUENCY
-   
-  va = map(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
-  vb = map(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
-  vc = map(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
-  vd = map(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL, PWM_10_PERCENT, PWM_20_PERCENT);
-  
-  while( (micro_tickets = micros()) - last_pwm_pulse <= PWM_FERQUENCY ) ;  // wait until next rising pulse
-  last_pwm_pulse= micro_tickets;
+#define PWM_FERQUENCY 2500 //2800
+#define PWM_00_PERCENT .10 * PWM_FERQUENCY
+//#define PWM_10_PERCENT .65 * PWM_FERQUENCY
+#define PWM_20_PERCENT .20 * PWM_FERQUENCY
+
+  va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
+  vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
+  vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
+  vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
+
+  if( (micro_tickets = micros()) - last_pwm_pulse <= PWM_FERQUENCY ) 
+  {
+    //return;  // wait until next rising pulse
+  }
+  last_pwm_pulse= micro_tickets; 
   
   PORTD |= B00001000;                                        //Set digital port 3 high
   PORTB |= B00001110;                                        //Set digital port 9,10,11 high
