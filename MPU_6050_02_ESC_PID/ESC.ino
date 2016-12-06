@@ -85,14 +85,13 @@ void disarm_esc()
 */
     system_check &= ~(INIT_ESC_ARMED);
 }
-
 /*
 void update_motors()
 {
 #define PWM_FERQUENCY 255 //2800
-#define PWM_00_PERCENT 0.05 * PWM_FERQUENCY
-#define PWM_10_PERCENT 0.20 * PWM_FERQUENCY
-#define PWM_20_PERCENT 0.65 * PWM_FERQUENCY
+#define PWM_00_PERCENT 120 //0.05 * PWM_FERQUENCY
+#define PWM_10_PERCENT 120 //* PWM_FERQUENCY
+#define PWM_20_PERCENT 240 //0.65 * PWM_FERQUENCY
 
   va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
   vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_10_PERCENT, PWM_20_PERCENT);
@@ -109,35 +108,42 @@ void update_motors()
 
 
 unsigned long last_pwm_pulse = 0;
+unsigned long esc_pwm_timmer = 0;
 unsigned long micro_tickets = 0;
+unsigned long timer_channel_1 = 0;
+unsigned long timer_channel_2 = 0; 
+unsigned long timer_channel_3 = 0;
+unsigned long timer_channel_4 = 0; 
+int motors = 0x0;
 void update_motors()
 {
-#define PWM_FERQUENCY 2500 //2800
-#define PWM_00_PERCENT .10 * PWM_FERQUENCY
-//#define PWM_10_PERCENT .65 * PWM_FERQUENCY
-#define PWM_20_PERCENT .20 * PWM_FERQUENCY
+#define PWM_FERQUENCY 5550 //2800
+#define PWM_00_PERCENT 1000 //.10 * PWM_FERQUENCY
+#define PWM_20_PERCENT 2000 //.80 * PWM_FERQUENCY
 
   va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
   vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
   vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
   vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
 
-  if( (micro_tickets = micros()) - last_pwm_pulse <= PWM_FERQUENCY ) 
-  {
-    //return;  // wait until next rising pulse
-  }
-  last_pwm_pulse= micro_tickets; 
+  while( (micros() - last_pwm_pulse) < PWM_FERQUENCY );
+  last_pwm_pulse= micros(); 
   
   PORTD |= B00001000;                                        //Set digital port 3 high
   PORTB |= B00001110;                                        //Set digital port 9,10,11 high
 
-  int motors =    0x00001111;
-  while( motors | 0x00000000 )
+  timer_channel_1 = last_pwm_pulse + va;                                     //Calculate the time of the faling edge of the esc-1 pulse.
+  timer_channel_2 = last_pwm_pulse + vb;                                     //Calculate the time of the faling edge of the esc-2 pulse.
+  timer_channel_3 = last_pwm_pulse + vc;                                     //Calculate the time of the faling edge of the esc-3 pulse.
+  timer_channel_4 = last_pwm_pulse + vd;                                     //Calculate the time of the faling edge of the esc-4 pulse.
+  motors = 0x00001111;
+  while( motors )
   {
-      if((motors & 0x00001000) && (micros() - last_pwm_pulse) >= va) { PORTD &= B11110111; motors &= 0x00000111; }
-      if((motors & 0x00000100) && (micros() - last_pwm_pulse) >= vb) { PORTB &= B11110111; motors &= 0x00001011; }
-      if((motors & 0x00000010) && (micros() - last_pwm_pulse) >= vc) { PORTB &= B11111011; motors &= 0x00001101; }
-      if((motors & 0x00000001) && (micros() - last_pwm_pulse) >= vd) { PORTB &= B11111101; motors &= 0x00001110; }
+      esc_pwm_timmer = micros();
+      if((motors & 0x00001000) && (timer_channel_1 <= esc_pwm_timmer)){ PORTD &= B11110111; motors &= 0x00000111; }
+      if((motors & 0x00000100) && (timer_channel_2 <= esc_pwm_timmer)){ PORTB &= B11110111; motors &= 0x00001011; }
+      if((motors & 0x00000010) && (timer_channel_3 <= esc_pwm_timmer)){ PORTB &= B11111011; motors &= 0x00001101; }
+      if((motors & 0x00000001) && (timer_channel_4 <= esc_pwm_timmer)){ PORTB &= B11111101; motors &= 0x00001110; }      
   }
 }
 

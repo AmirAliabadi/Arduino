@@ -285,14 +285,12 @@ void loop()
 {
 //  do_blink();
 
-digitalWrite(6,HIGH);
-//  read_mpu();
+  read_mpu();
   read_throttle();
   read_setpoint();
   read_battery_voltage();
   update_pid_settings();
   process();
-digitalWrite(6,LOW);
   
 }
 

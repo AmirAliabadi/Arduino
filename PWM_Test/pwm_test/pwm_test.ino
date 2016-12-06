@@ -46,7 +46,7 @@ void setup() {
 long read_throttle()
 {
   long foo = analogRead(0);
-  foo = map(foo, 0, 1000, pwm_10_percent, pwm_20_percent);
+  foo = map(constrain(foo,0,1000), 0, 1000, pwm_10_percent, pwm_20_percent);
   return foo; 
 }
 
@@ -65,12 +65,13 @@ void loop()
   process();
   digitalWrite(6, LOW);
 
+Serial.println(t);
   do_it();
 }
 
 void read_mpu()
 {
-  delayMicroseconds(400); 
+  delayMicroseconds(800); 
 }
 void read_battery()
 {
