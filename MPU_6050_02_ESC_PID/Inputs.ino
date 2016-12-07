@@ -40,7 +40,6 @@ void read_throttle()
 {
 //INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
 INPUT_THRUST = constrain(analogRead(0), MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
-//INPUT_THRUST = map( analogRead(0), MIN_INPUT_THRUST, MAX_INPUT_THRUST, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);  // todo: determine max when arming
 }
 
 void read_setpoint()

@@ -1,11 +1,5 @@
 #include "Config.h"
 
-//#include "MyServo.h"
-//#define _ESC_ MyServo
-
-//#include "ESC.h"
-//#define _ESC_ ESC
-
 #include <EEPROM.h>             //Include the EEPROM.h library so we can store information onto the EEPROM
 
 #include <PID_v1.h>
@@ -168,14 +162,8 @@ float bd_offset   = 0.0;
 //
 ////////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////////////////////////////////
-// ESC
-//_ESC_ esc_a;
-//_ESC_ esc_b;
-//_ESC_ esc_c;
-//_ESC_ esc_d;
-
+//
 uint16_t va = 0;
 uint16_t vb = 0;
 uint16_t vc = 0;
@@ -270,7 +258,6 @@ void setup()
 
 void do_blink()
 {
-  /* 
   if( millis() - last_blink > blink_pattern[blink_point] )
   {
     if(++blink_point > 3) blink_point = 0;
@@ -278,7 +265,6 @@ void do_blink()
     last_blink = millis();
     digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
   }
-  */
 }
 
 void loop()
@@ -291,6 +277,7 @@ void loop()
   read_battery_voltage();
   update_pid_settings();
   process();
-  
+
+  do_log();
 }
 

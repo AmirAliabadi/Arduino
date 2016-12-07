@@ -22,7 +22,6 @@ void init_mpu()
     // make sure it worked (returns 0 if so)
     if (devStatus == 0)
     {
-
       // Supply your own gyro offsets here, scaled for min sensitivity
       mpu.setXAccelOffset(eeprom_data.ax_offset);
       mpu.setYAccelOffset(eeprom_data.ay_offset);
@@ -37,7 +36,7 @@ void init_mpu()
       Serial.println(F("#Enab DMP"));
       mpu.setDMPEnabled(true);
 
-      delay(10);      
+      delay(50);      
 
 ///////////////////////////////////////////////////////////////////
 //#define MPU6050_DLPF_BW_256         0x00
@@ -59,7 +58,7 @@ void init_mpu()
 * 6         | 5Hz       | 19.0ms  | 5Hz       | 18.6ms  | 1kHz
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
-      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+//      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
      
       delay(50);     
 
