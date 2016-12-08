@@ -89,14 +89,15 @@ void attitude_process()
         }
         
 //    if( INPUT_THRUST > 350 ) {
-    pid_attitude[YAW].Compute();  
-    pid_attitude[BD].Compute();     
-    pid_attitude[AC].Compute();       
+
+      pid_attitude[YAW].Compute();
+      pid_attitude[BD].Compute(); 
+      pid_attitude[AC].Compute(); 
 
 #ifdef CASCADE_PIDS
-    pid_rate[YAW].Compute();
-    pid_rate[BD].Compute();         
-    pid_rate[AC].Compute();         
+      pid_rate[YAW].Compute();
+      pid_rate[BD].Compute();         
+      pid_rate[AC].Compute();         
 #endif
 //}
 
@@ -127,10 +128,6 @@ void attitude_process()
     //
     ////////////////////////////////
 
-//    va = constrain(va, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-//    vc = constrain(vc, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-//    vb = constrain(vb, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-//    vd = constrain(vd, MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);    
   }
   else 
   {
@@ -142,14 +139,6 @@ void attitude_process()
   }
 
   update_motors();
-  
-/*
-
-  esc_a.writeMicroseconds(va);
-  esc_c.writeMicroseconds(vc);
-  esc_b.writeMicroseconds(vb);
-  esc_d.writeMicroseconds(vd);  
-*/
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@ byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
 float alpha = 0.44;
-int pid_refresh_rate = 25;
+int pid_refresh_rate = 1; //5; //25;
 
 #define DEBUG
 //#define CASCADE_PIDS
@@ -253,6 +253,7 @@ void setup()
 
   pinMode(6, OUTPUT);
 
+  SerialSend_A(AC)  ;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -278,6 +279,6 @@ void loop()
   update_pid_settings();
   process();
 
-  do_log();
+//  do_log();
 }
 

@@ -51,8 +51,8 @@ THE SOFTWARE.
 // I2C interface implementation setting
 // -----------------------------------------------------------------------------
 #ifndef I2CDEV_IMPLEMENTATION
-//#define I2CDEV_IMPLEMENTATION       I2CDEV_ARDUINO_WIRE
-#define I2CDEV_IMPLEMENTATION       I2CDEV_BUILTIN_FASTWIRE
+#define I2CDEV_IMPLEMENTATION       I2CDEV_ARDUINO_WIRE
+//#define I2CDEV_IMPLEMENTATION       I2CDEV_BUILTIN_FASTWIRE
 #endif // I2CDEV_IMPLEMENTATION
 
 // comment this out if you are using a non-optimal IDE/implementation setting
@@ -79,10 +79,7 @@ THE SOFTWARE.
     #else
         #include "Arduino.h"
     #endif
-    #if defined(CORE_TEENSY) && defined(__MK20DX256__)
-        #include <i2c_t3.h>
-        #define BUFFER_LENGTH 32
-    #elif I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         #include <Wire.h>
     #endif
     #if I2CDEV_IMPLEMENTATION == I2CDEV_I2CMASTER_LIBRARY
