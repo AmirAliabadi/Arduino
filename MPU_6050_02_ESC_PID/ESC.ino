@@ -40,14 +40,13 @@ void update_motors()
 
   // map 125 to 245 to 1000 to 2000, this makes things look like the 1-2ms duty cycle
   // this is only needed for debuging / comparing analogWrite() to bit banging to Servo.h to ESC.h 
-  va = map(va, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vb = map(vb, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vc = map(vc, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vd = map(vd, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  va = map(va, PWM_00_PERCENT, PWM_20_PERCENT, va == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vb = map(vb, PWM_00_PERCENT, PWM_20_PERCENT, vb == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vc = map(vc, PWM_00_PERCENT, PWM_20_PERCENT, vc == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vd = map(vd, PWM_00_PERCENT, PWM_20_PERCENT, vd == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
 
 }
 */
-
 
 unsigned long last_pwm_pulse = 0;
 unsigned long esc_pwm_timmer = 0;
@@ -67,10 +66,10 @@ void update_motors()
   PORTD |= B00001000; // Set digital port 3 high
   PORTB |= B00001110; // Set digital port 9,10,11 high
   
-  va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
-  vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vd == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
 
   timer_channel_a = last_pwm_pulse + va ;
   timer_channel_b = last_pwm_pulse + vb ;

@@ -88,8 +88,6 @@ void attitude_process()
             init_pid();  
         }
         
-//    if( INPUT_THRUST > 350 ) {
-
       pid_attitude[YAW].Compute();
       pid_attitude[BD].Compute(); 
       pid_attitude[AC].Compute(); 
@@ -99,18 +97,17 @@ void attitude_process()
       pid_rate[BD].Compute();         
       pid_rate[AC].Compute();         
 #endif
-//}
 
     //////////////////////////////
     // Motor Mix Algorithm      //
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = (INPUT_THRUST  - rate_correction[YAW]);
-    v_bd = (INPUT_THRUST  + rate_correction[YAW]);
+    v_ac = (INPUT_THRUST - rate_correction[YAW]);
+    v_bd = (INPUT_THRUST + rate_correction[YAW]);
 #else
-    v_ac = (INPUT_THRUST  - attitude_correction[YAW]); 
-    v_bd = (INPUT_THRUST  + attitude_correction[YAW]); 
+    v_ac = (INPUT_THRUST - attitude_correction[YAW]); 
+    v_bd = (INPUT_THRUST + attitude_correction[YAW]); 
 #endif
 
     // compute motor speeds
