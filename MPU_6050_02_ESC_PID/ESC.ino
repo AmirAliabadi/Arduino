@@ -19,35 +19,37 @@ void disarm_esc()
   system_check &= ~(INIT_ESC_ARMED);
 }
 
-/*
+
 void update_motors()
 {
   // TRIAL AND Error has yielded 120 - 240 ESC signal when 
   // using analogWrite() and the yellow unknown esc's from amazon
   #define PWM_00_PERCENT 125 // (MIN_ESC_SIGNAL / 10 + 20) // 120
+  #define PWM_10_PERCENT 155 // (MIN_ESC_SIGNAL / 10 + 20) // 120
   #define PWM_20_PERCENT 245 // (MAX_ESC_SIGNAL / 10 + 40) // 240
 
   // map input throttle of 0-1000 to 125 to 245
-  va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
-  vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
-  vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
-  vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, PWM_00_PERCENT, PWM_20_PERCENT);
+  //va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT);
+  //vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT);
+  //vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT);
+  //vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vd == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT);
   
-  analogWrite(MOTOR_PIN_A , va ) ;
-  analogWrite(MOTOR_PIN_B , vb ) ;
-  analogWrite(MOTOR_PIN_C , vc ) ;
-  analogWrite(MOTOR_PIN_D , vd ) ; 
+  analogWrite(MOTOR_PIN_A , map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
+  analogWrite(MOTOR_PIN_B , map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
+  analogWrite(MOTOR_PIN_C , map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
+  analogWrite(MOTOR_PIN_D , map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vd == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ; 
 
   // map 125 to 245 to 1000 to 2000, this makes things look like the 1-2ms duty cycle
   // this is only needed for debuging / comparing analogWrite() to bit banging to Servo.h to ESC.h 
-  va = map(va, PWM_00_PERCENT, PWM_20_PERCENT, va == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-  vb = map(vb, PWM_00_PERCENT, PWM_20_PERCENT, vb == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-  vc = map(vc, PWM_00_PERCENT, PWM_20_PERCENT, vc == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-  vd = map(vd, PWM_00_PERCENT, PWM_20_PERCENT, vd == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
+  //va = map(va, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  //vb = map(vb, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  //vc = map(vc, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
+  //vd = map(vd, PWM_00_PERCENT, PWM_20_PERCENT, MIN_ESC_SIGNAL, MAX_ESC_SIGNAL);
 
 }
-*/
 
+
+/*
 unsigned long last_pwm_pulse = 0;
 unsigned long esc_pwm_timmer = 0;
 unsigned long timer_channel_a = 0;
@@ -86,4 +88,4 @@ void update_motors()
       if((motors & 0x00000001) && (timer_channel_d <= esc_pwm_timmer)){ PORTB &= B11111101; motors &= 0x00001110; }      
   }
 }
-
+*/

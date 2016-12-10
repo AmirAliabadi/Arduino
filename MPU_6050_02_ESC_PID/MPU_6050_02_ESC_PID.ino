@@ -253,7 +253,7 @@ void setup()
 
   pinMode(6, OUTPUT);
 
-  SerialSend_A(AC)  ;
+  SerialSend_A(AC) ;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -279,6 +279,6 @@ void loop()
   update_pid_settings();
   process();
 
-//  do_log();
+  do_log();
 }
 
