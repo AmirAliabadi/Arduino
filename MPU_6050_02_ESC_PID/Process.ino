@@ -87,7 +87,10 @@ void attitude_process()
     if( !(system_check & INIT_PID_ON) ) {
             init_pid();  
         }
-        
+
+      do_pid_compute();
+     
+/*
       pid_attitude[YAW].Compute();
       pid_attitude[BD].Compute(); 
       pid_attitude[AC].Compute(); 
@@ -97,6 +100,7 @@ void attitude_process()
       pid_rate[BD].Compute();         
       pid_rate[AC].Compute();         
 #endif
+*/
 
     //////////////////////////////
     // Motor Mix Algorithm      //

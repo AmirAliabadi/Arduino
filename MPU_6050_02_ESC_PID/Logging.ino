@@ -1,3 +1,64 @@
+void SerialSend_Minimal(byte mode)
+{
+  Serial.print(F("M "));
+  Serial.print(selected_pot_tuning);
+  Serial.print(F("_"));
+  Serial.print(aserial_data_mode);
+  Serial.print(F(" "));
+
+  Serial.print(INPUT_THRUST);  
+  Serial.print(F(" "));
+
+  Serial.print(va); Serial.print(F(" "));
+  Serial.print(vb); Serial.print(F(" "));
+  Serial.print(vc); Serial.print(F(" "));
+  Serial.print(vd); Serial.print(F(" "));  
+
+  Serial.print(current_rate[mode]);         Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
+  Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU    
+
+#ifdef CASCADE_PIDS    
+  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
+  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
+#else 
+  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
+  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
+#endif
+
+  if( mode == 0x0 )
+  {
+    Serial.print(INPUT_YAW_PID_P, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_YAW_PID_I, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_YAW_PID_D, 4);   Serial.print(F(" "));
+  
+  #ifdef CASCADE_PIDS    
+    Serial.print(INPUT_YAW_RATE_PID_P, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_YAW_RATE_PID_I, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_YAW_RATE_PID_D, 4);   Serial.print(F(" "));
+  #else
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+  #endif    
+  } else {
+    Serial.print(INPUT_STB_PID_P, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_STB_PID_I, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_STB_PID_D, 4);   Serial.print(F(" "));
+  
+  #ifdef CASCADE_PIDS    
+    Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_RAT_PID_D, 4);   Serial.print(F(" "));
+  #else
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+    Serial.print(0.0000, 4);   Serial.print(F(" "));
+  #endif
+  }
+
+  Serial.print(alpha); Serial.print(F(" E"));  
+}
+
 
 void SerialSend_A(byte mode)
 {

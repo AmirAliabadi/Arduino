@@ -165,9 +165,10 @@ void read_mpu_process()
       if( system_check & INIT_MPU_STABLE )
       {
         ypr[YAW] = ypr[YAW] - yw_offset;
-        ypr[AC] = ypr[AC] - ac_offset;
-        ypr[BD] = ypr[BD] - bd_offset;
-        
+        //ypr[AC] = ypr[AC] - ac_offset;
+        //ypr[BD] = ypr[BD] - bd_offset;
+
+// safety : ignore large changes        
 //        if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
 //        {
 //          Serial.print(F("#bg chng ac"));
@@ -186,6 +187,7 @@ void read_mpu_process()
 //          Serial.println(ypr[BD]);
 //        }      
 //  
+// safety : ignore large (spikes) changes for one cycle
 //        if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
 //        if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
 //        if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];

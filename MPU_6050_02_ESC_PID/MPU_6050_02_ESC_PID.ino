@@ -181,6 +181,11 @@ float attitude_correction[3]    = {0.0f, 0.0f, 0.0f};
 float current_rate[3]           = {0.0f, 0.0f, 0.0f}; 
 float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 
+float pid_temp_error = 0.0;
+float last_i_term[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
+float last_d_error[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
+
+
 // input / output /setpoint
 PID pid_attitude[3]  = {
   PID(&current_attitude[YAW], &attitude_correction[YAW], &setpoint[YAW], 0, 0, 0, DIRECT),
@@ -195,6 +200,7 @@ PID pid_rate[3] = {
   PID(&current_rate[AC],  &rate_correction[AC],  &attitude_correction[AC], 0, 0, 0, DIRECT)  
 };
 #endif
+
 
 //
 ////////////////////////////////////////////////////////////////
@@ -251,7 +257,8 @@ void setup()
     Serial.println("#Please run calibaration");
   }
 
-  pinMode(6, OUTPUT);
+//  pinMode(5, OUTPUT);
+//  pinMode(6, OUTPUT);
 
   SerialSend_A(AC) ;
 }
@@ -276,9 +283,9 @@ void loop()
   read_throttle();
   read_setpoint();
   read_battery_voltage();
-  update_pid_settings();
+  //update_pid_settings();
   process();
 
-  do_log();
+//  do_log();
 }
 
