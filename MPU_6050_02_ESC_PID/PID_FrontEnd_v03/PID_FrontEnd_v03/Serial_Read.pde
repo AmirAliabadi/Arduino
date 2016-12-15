@@ -100,7 +100,6 @@ void parseM(String[] s ) {
     
     Input_angle    = float(trim(s[7]));
     Input_gyro     = float(trim(s[8]));
-
     InputAngleLabel.setValue( Float.toString(Input_angle) );    
     InputGyroLabel.setValue( Float.toString(Input_gyro) ); 
     
@@ -115,12 +114,11 @@ void parseM(String[] s ) {
     controlP5.getController("vd").setValue(vd);    
     
     Output_angle = float(trim(s[9]));  // stable pid output (current angle - setpoint) => desired acceleration
-    Output_gyro = float(trim(s[10]));   // this is the rate pid output (desired acceleration - current acceleration) => motor inputs    
-    
+    Output_gyro = float(trim(s[10]));   // this is the rate pid output (desired acceleration - current acceleration) => motor inputs  
     AngleOutLabel.setValue(Float.toString(Output_angle)); 
-    GyroOutLabel.setValue(Float.toString(Output_gyro));       
-    
-    
+    GyroOutLabel.setValue(Float.toString(Output_gyro));
+    Output_gyro = Output_angle;
+   
     kp = float(trim(s[11]));
     ki = float(trim(s[12]));
     kd = float(trim(s[13]));
