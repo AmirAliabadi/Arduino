@@ -82,49 +82,33 @@ void attitude_process()
   current_rate[AC]  = gyro.x;    
 #endif  
 
-  if(INPUT_THRUST > MIN_INPUT_THRUST) {
-
-    if( !(system_check & INIT_PID_ON) ) {
-            init_pid();  
-        }
-
-      do_pid_compute();
-     
-/*
-      pid_attitude[YAW].Compute();
-      pid_attitude[BD].Compute(); 
-      pid_attitude[AC].Compute(); 
-
-#ifdef CASCADE_PIDS
-      pid_rate[YAW].Compute();
-      pid_rate[BD].Compute();         
-      pid_rate[AC].Compute();         
-#endif
-*/
+  if(INPUT_THRUST > MIN_INPUT_THRUST) 
+  {
+    do_pid_compute();
 
     //////////////////////////////
     // Motor Mix Algorithm      //
     //////////////////////////////
     // compute the boom thrust  //
 #ifdef CASCADE_PIDS    
-    v_ac = (INPUT_THRUST - rate_correction[YAW]);
-    v_bd = (INPUT_THRUST + rate_correction[YAW]);
+    v_ac = constrain( (INPUT_THRUST - rate_correction[YAW]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    v_bd = constrain( (INPUT_THRUST + rate_correction[YAW]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
 #else
-    v_ac = (INPUT_THRUST - attitude_correction[YAW]); 
-    v_bd = (INPUT_THRUST + attitude_correction[YAW]); 
+    v_ac = constrain( (INPUT_THRUST - attitude_correction[YAW]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    v_bd = constrain( (INPUT_THRUST + attitude_correction[YAW]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
 #endif
 
     // compute motor speeds
 #ifdef CASCADE_PIDS
-    va = (v_ac - rate_correction[AC]); 
-    vc = (v_ac + rate_correction[AC]); 
-    vb = (v_bd - rate_correction[BD]); 
-    vd = (v_bd + rate_correction[BD]); 
+    va = constrain( (v_ac - rate_correction[AC]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vc = constrain( (v_ac + rate_correction[AC]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vb = constrain( (v_bd - rate_correction[BD]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vd = constrain( (v_bd + rate_correction[BD]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
 #else
-    va = (v_ac - attitude_correction[AC]); 
-    vc = (v_ac + attitude_correction[AC]); 
-    vb = (v_bd - attitude_correction[BD]); 
-    vd = (v_bd + attitude_correction[BD]); 
+    va = constrain( (v_ac - attitude_correction[AC]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vc = constrain( (v_ac + attitude_correction[AC]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vb = constrain( (v_bd - attitude_correction[BD]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
+    vd = constrain( (v_bd + attitude_correction[BD]), MIN_INPUT_THRUST+1, MAX_INPUT_THRUST );
 #endif
     //
     ////////////////////////////////
@@ -136,7 +120,7 @@ void attitude_process()
 
     yw_offset = (float)((int)(ypr[YAW]*10.0 + .5))/10.0;
     
-    pid_reset(); //(MANUAL);
+    pid_reset(); 
   }
 
   update_motors();

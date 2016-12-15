@@ -1,7 +1,5 @@
 /*
  * 
- * 
- * 
 http://www.thorlabs.com/tutorials.cfm?tabID=5dfca308-d07e-46c9-baa0-4defc5c40c3e 
 
 While manual tuning can be very effective at setting a PID circuit for your specific system, it does require some amount of 
@@ -115,38 +113,11 @@ MPU motian fusion of MPU6050_DLPF_BW_98
 
 void init_pid()
 {
-  /*
-  Serial.println("#pid");
-
-  update_pid_settings();
-
-  set_pid_refresh_rate();
-  
-  for(byte i=YAW; i<=AC; i++ ) {  
-    pid_attitude[i].SetOutputLimits(-300, 300);
-    pid_attitude[i].SetMode(AUTOMATIC);
-
-#ifdef CASCADE_PIDS    
-    pid_rate[i].SetOutputLimits(-300, 300);    
-    pid_rate[i].SetMode(AUTOMATIC);
-#endif
-      
-  }
- */
-  
   system_check |= INIT_PID_ON ;
 }
 
 void set_pid_refresh_rate()
 {
-  /*
-  for(byte i=YAW; i<=AC; i++ ) {  
-    pid_attitude[i].SetSampleTime(pid_refresh_rate);
-#ifdef CASCADE_PIDS    
-    pid_rate[i].SetSampleTime(pid_refresh_rate);      
-#endif
-  }
-  */
 }
 
 void pid_reset() 
@@ -154,47 +125,10 @@ void pid_reset()
   for(int i=0; i< 2; i++)
     for(int j=0; j<3; j++)
       last_i_term[i][j] = 0.0;
-  
-  /*
-  for(byte i=YAW; i<=AC; i++ ) {
-    pid_attitude[i].Reset();
-#ifdef CASCADE_PIDS    
-    pid_rate[i].Reset();  
-#endif
-  }
-  */
 }
 
 void update_pid_settings()
 {
-  /*
-    if( update_pid_settings_needed == 1 ) {  
-      ////////////////////////////////////////////////////
-      // Reset of PID when setpoint changes
-      //if( setpoint_changed & SETPOINT_CHANGED_AC ) {pid_ac_stable.Reset(); ac_rat.Reset(); }
-      //if( setpoint_changed & SETPOINT_CHANGED_BD ) {pid_bd_stable.Reset(); bd_rat.Reset(); }
-      //if( setpoint_changed & SETPOINT_CHANGED_YW ) {pid_yw_stable.Reset(); }
-      // setpoint_changed = SETPOINT_UNCHANGED;
-      //
-      ///////////////////////////////////////////////////
-  
-      ///////////////////////////////////////////////////
-      // 
-      pid_attitude[YAW].SetTunings(INPUT_YAW_PID_P, INPUT_YAW_PID_I, INPUT_YAW_PID_D);    
-      pid_attitude[AC].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);
-      pid_attitude[BD].SetTunings(INPUT_STB_PID_P, INPUT_STB_PID_I, INPUT_STB_PID_D);      
-  
-#ifdef CASCADE_PIDS
-      pid_rate[YAW].SetTunings(INPUT_YAW_RATE_PID_P, INPUT_YAW_RATE_PID_I, INPUT_YAW_RATE_PID_D);    
-      pid_rate[AC].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);
-      pid_rate[BD].SetTunings(INPUT_RAT_PID_P, INPUT_RAT_PID_I, INPUT_RAT_PID_D);      
-#endif
-      //
-      //////////////////////////////////////////////////
-      
-      update_pid_settings_needed = 0;
-    }
-    */
 }
 
 
@@ -210,7 +144,7 @@ void do_pid_compute()
   attitude_correction[BD] = (INPUT_STB_PID_P * pid_temp_error) + (last_i_term[0][BD]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][BD]) ;
   last_d_error[0][BD] = pid_temp_error;
 
-  pid_temp_error = current_attitude[AC] - setpoint[BD]; 
+  pid_temp_error = current_attitude[AC] - setpoint[AC]; 
   last_i_term[0][AC] += INPUT_STB_PID_I * pid_temp_error;
   attitude_correction[AC] = ((INPUT_STB_PID_P * pid_temp_error) + (last_i_term[0][AC]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][AC])) * -1.0 ;
   last_d_error[0][AC] = pid_temp_error;

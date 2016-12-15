@@ -14,23 +14,11 @@ void serialEvent()
     } else {
       if(cmd == 100) {
         aserial_data_mode = (int)from_processing.asFloat[1];
-              
-      } else if (cmd == 101) {
-        pid_attitude[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
-        
-      } else if (cmd == 102) { 
-#ifdef CASCADE_PIDS         
-        pid_rate[AC].SetControllerDirection( (int)from_processing.asFloat[1] == 0.0 ? DIRECT : REVERSE );
-#endif        
         
       } else if (cmd == 200) {
         alpha = from_processing.asFloat[1];
 
-      } else if (cmd == 201) {
-        pid_refresh_rate = (int)from_processing.asFloat[1];
-        set_pid_refresh_rate();
-        
-      }
+      } 
     }
   }
 }

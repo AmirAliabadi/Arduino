@@ -145,23 +145,8 @@ void read_mpu_process()
     ypr[AC] = ((ypr[AC] * A_180_DIV_PI) ) ;
     ypr[BD] = ((ypr[BD] * A_180_DIV_PI) ) ;   
 
-    ////////////////////////////////////////////////
-    // round off the data
-    // this might *help* will small-small gittery 
-    // movements. 
-//    ypr[YW] = ((int)(ypr[YW] * 1.0 + 0.5))/1.0;
-//    ypr[AC] = ((int)(ypr[AC] * 1.0 + 0.5))/1.0;
-//    ypr[BD] = ((int)(ypr[BD] * 1.0 + 0.5))/1.0;
-//
-//#ifdef CASCADE_PIDS    
-//    gyro.x = ((int)(gyro.x * 10.0 + 0.5))/10.0;
-//    gyro.y = ((int)(gyro.y * 10.0 + 0.5))/10.0;
-//    gyro.z = ((int)(gyro.z * 10.0 + 0.5))/10.0;
-//#endif         
-    // round off the data
-    ////////////////////////////////////////////////
-
-    if( INPUT_THRUST > MIN_INPUT_THRUST ) {
+    if( INPUT_THRUST > MIN_INPUT_THRUST ) 
+    {
       if( system_check & INIT_MPU_STABLE )
       {
         ypr[YAW] = ypr[YAW] - yw_offset;

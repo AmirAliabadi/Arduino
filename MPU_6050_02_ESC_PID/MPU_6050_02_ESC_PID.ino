@@ -2,7 +2,6 @@
 
 #include <EEPROM.h>             //Include the EEPROM.h library so we can store information onto the EEPROM
 
-#include <PID_v1.h>
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 #include "Wire.h"
 #endif
@@ -16,7 +15,6 @@ byte selected_pot_tuning = 0;
 byte aserial_data_mode = 0;
 
 float alpha = 0.44;
-int pid_refresh_rate = 1; //5; //25;
 
 #define DEBUG
 //#define CASCADE_PIDS
@@ -87,10 +85,7 @@ float input_values[17] = { 0,                       // thrust
                            12.6                     // battery voltage level
                            };
 #endif
-
-// PID values:
-// 4.7 / 0 / 0 | 1.2 / 0 / 0.16
-// 2.681 / 0 / 0 | 0.967 / 0.125 / 0.096                           
+                  
 
 #define INPUT_THRUST          input_values[0]
 
@@ -126,7 +121,6 @@ float last_setpoint[3] = {0, 0, 0};
 // function pointer to what should be happing in the loop()
 void (*process)(void);
 void (*read_mpu)(void);
-void (*send_serial)(byte mode);
 //
 //////////////////////////////////////////////////////////////////
 
@@ -184,24 +178,6 @@ float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 float pid_temp_error = 0.0;
 float last_i_term[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
 float last_d_error[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
-
-
-// input / output /setpoint
-PID pid_attitude[3]  = {
-  PID(&current_attitude[YAW], &attitude_correction[YAW], &setpoint[YAW], 0, 0, 0, DIRECT),
-  PID(&current_attitude[BD],  &attitude_correction[BD],  &setpoint[BD], 0, 0, 0, DIRECT),
-  PID(&current_attitude[AC],  &attitude_correction[AC],  &setpoint[AC], 0, 0, 0, DIRECT)  
-};
-
-#ifdef CASCADE_PIDS
-PID pid_rate[3] = {
-  PID(&current_rate[YAW], &rate_correction[YAW], &attitude_correction[YAW], 0, 0, 0, DIRECT),
-  PID(&current_rate[BD],  &rate_correction[BD],  &attitude_correction[BD], 0, 0, 0, DIRECT),
-  PID(&current_rate[AC],  &rate_correction[AC],  &attitude_correction[AC], 0, 0, 0, DIRECT)  
-};
-#endif
-
-
 //
 ////////////////////////////////////////////////////////////////
 
@@ -250,7 +226,6 @@ void setup()
   
     blink_pattern_4  
     process     = &wait_for_stable_process;
-    send_serial = &SerialSend_A;    
       
   } else {
     blink_pattern_5
@@ -259,8 +234,6 @@ void setup()
 
 //  pinMode(5, OUTPUT);
 //  pinMode(6, OUTPUT);
-
-  SerialSend_A(AC) ;
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -286,6 +259,6 @@ void loop()
   //update_pid_settings();
   process();
 
-//  do_log();
+  do_log();
 }
 

@@ -58,9 +58,123 @@ void serialEvent(Serial myPort)
     parseA(s);
   } else if (trim(s[0]).equals("B")) {
     parseB(s);
-  } else {
+  } else if (trim(s[0]).equals("M")) {
+    parseM(s);
+  }  else {
     print(read);
   }
+}
+
+void parseM(String[] s ) {
+  // M selected_pot_tuning_aserial_data_mode INPUT_THRUST va vb vc vd current_attitude current_rate attitude_correction rate_correction stable_p stable_i stable_d rate_p rate_i rate_d alpha E
+  //                   0                              1    2  3  4  5        6                7             8                9              10     11        12      13     14     15    16
+  // M     0
+  // 0_0   1
+  // 0.00  2  throttle
+  // 0     3  va
+  // 0     4  vb
+  // 0     5  vc
+  // 0     6  vd
+  // 0.84  7  
+  // 0.00  8 
+  // 0.00  9
+  // 0.00  10
+  // 1.0000   11  kp
+  // 0.0000   12  ki
+  // 0.1000   13  kd
+  // 0.0000   14  krp
+  // 0.0000   15  kri
+  // 0.0000   16  krd
+  // 0.44     17  alpha
+  // E        18
+
+  int expected_size = 19; 
+  if (s.length == expected_size)
+  {
+    if(! trim(s[expected_size-1]).equals("E") ) {print(s.length); return;}   
+    
+    Input_Thrust   = float(trim(s[2])); 
+    cur_throttle = (int)Input_Thrust; 
+    InputThrustLabel.setValue( Float.toString(Input_Thrust) );
+    throttle_slider.setValue( Input_Thrust );    
+    
+    Input_angle    = float(trim(s[7]));
+    Input_gyro     = float(trim(s[8]));
+
+    InputAngleLabel.setValue( Float.toString(Input_angle) );    
+    InputGyroLabel.setValue( Float.toString(Input_gyro) ); 
+    
+    va = float(trim(s[ 3]));
+    vb = float(trim(s[ 4]));
+    vc = float(trim(s[ 5]));
+    vd = float(trim(s[ 6]));
+    
+    controlP5.getController("va").setValue(va);
+    controlP5.getController("vb").setValue(vb);
+    controlP5.getController("vc").setValue(vc);
+    controlP5.getController("vd").setValue(vd);    
+    
+    Output_angle = float(trim(s[9]));  // stable pid output (current angle - setpoint) => desired acceleration
+    Output_gyro = float(trim(s[10]));   // this is the rate pid output (desired acceleration - current acceleration) => motor inputs    
+    
+    AngleOutLabel.setValue(Float.toString(Output_angle)); 
+    GyroOutLabel.setValue(Float.toString(Output_gyro));       
+    
+    
+    kp = float(trim(s[11]));
+    ki = float(trim(s[12]));
+    kd = float(trim(s[13]));
+    krp = float(trim(s[14]));
+    kri = float(trim(s[15]));
+    krd = float(trim(s[16])); 
+ 
+    PLabel.setValue(Float.toString(kp));
+    ILabel.setValue(Float.toString(ki)); 
+    DLabel.setValue(Float.toString(kd)); 
+    
+    PrLabel.setValue(Float.toString(krp));  
+    IrLabel.setValue(Float.toString(kri));
+    DrLabel.setValue(Float.toString(krd));    
+    
+    alpha = float(trim(s[17])); 
+    AlphaLable.setValue(Float.toString(alpha)); 
+    
+    if( va > vc )
+    {
+      int c = (int)abs(va-vc)*7;
+      controlP5.getController("va").setColorForeground(color(c, 0, 255));
+      controlP5.getController("vc").setColorForeground(color(0, 0, 255-c));    
+    }
+    else
+    {
+      int c = (int)abs(va-vc)*7;
+      controlP5.getController("va").setColorForeground(color(0, 0, 255-c));
+      controlP5.getController("vc").setColorForeground(color(c, 0, 255));  
+    }
+    
+    if( vb > vd )
+    {
+      int c = (int)abs(vb-vd)*7;      
+      controlP5.getController("vb").setColorForeground(color(c, 0, 255));
+      controlP5.getController("vd").setColorForeground(color(0, 0, 255-c));    
+    }
+    else
+    {
+      int c = (int)abs(vb-vd)*7;
+      controlP5.getController("vb").setColorForeground(color(0, 0, 255-c));
+      controlP5.getController("vd").setColorForeground(color(c, 0, 255));  
+    }  
+    
+    if(justSent)                     
+    {                                
+      justSent=false;
+    } 
+
+    if(!madeContact) madeContact=true;      
+    
+    
+  }
+  
 }
 
 void parseA(String[] s ) {

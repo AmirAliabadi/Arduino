@@ -9,7 +9,7 @@ void disarm_esc()
   system_check &= ~(INIT_ESC_ARMED);
 }
 
-/*
+
 void init_esc()
 {
   system_check |= INIT_ESC_ATTACHED;
@@ -25,16 +25,15 @@ void update_motors()
   #define PWM_20_PERCENT 245 
 
   // map input throttle of 0-1000 to 125 to 245
-  
   analogWrite(MOTOR_PIN_A , map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
   analogWrite(MOTOR_PIN_B , map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
   analogWrite(MOTOR_PIN_C , map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
   analogWrite(MOTOR_PIN_D , map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vd == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ; 
 
 }
-*/
 
 
+/*
 unsigned long last_pwm_pulse = 0;
 unsigned long esc_pwm_timmer = 0;
 unsigned long timer_channel_a = 0;
@@ -85,4 +84,4 @@ void update_motors()
       if((motors & 0x00000001) && (timer_channel_d <= micros())){ PORTB &= B11111101; motors &= 0x00001110; }      
   }
 }
-
+*/

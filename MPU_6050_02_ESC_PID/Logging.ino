@@ -1,5 +1,7 @@
 void SerialSend_Minimal(byte mode)
 {
+  // M_selected_pot_tuning_aserial_data_mode INPUT_THRUST va vb vc vd current_attitude current_rate attitude_correction rate_correction stable_p stable_i stable_d rate_p rate_i rate_d alpha E
+  
   Serial.print(F("M "));
   Serial.print(selected_pot_tuning);
   Serial.print(F("_"));
@@ -14,16 +16,11 @@ void SerialSend_Minimal(byte mode)
   Serial.print(vc); Serial.print(F(" "));
   Serial.print(vd); Serial.print(F(" "));  
 
-  Serial.print(current_rate[mode]);         Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
   Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU    
+  Serial.print(current_rate[mode]);         Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
 
-#ifdef CASCADE_PIDS    
   Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
   Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
-#else 
-  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
-  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
-#endif
 
   if( mode == 0x0 )
   {
@@ -56,115 +53,13 @@ void SerialSend_Minimal(byte mode)
   #endif
   }
 
-  Serial.print(alpha); Serial.print(F(" E"));  
-}
-
-
-void SerialSend_A(byte mode)
-{
-//Serial.print(F("# "));
-//Serial.println(attitude_correction[mode]);
-  
-  Serial.print(F("A "));
-  Serial.print(selected_pot_tuning);
-  Serial.print(F("_"));
-  Serial.print(aserial_data_mode);
-  Serial.print(F(" "));
-
-#ifdef CASCADE_PIDS    
-  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
-  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
-#else 
-  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
-  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
-#endif
-
-  Serial.print(pid_attitude[mode].GetKp(), 4);   Serial.print(F(" "));
-  Serial.print(pid_attitude[mode].GetKi(), 4);   Serial.print(F(" "));
-  Serial.print(pid_attitude[mode].GetKd(), 4);   Serial.print(F(" "));
-
-#ifdef CASCADE_PIDS    
-  Serial.print(pid_rate[mode].GetKp(), 4);   Serial.print(F(" "));
-  Serial.print(pid_rate[mode].GetKi(), 4);   Serial.print(F(" "));
-  Serial.print(pid_rate[mode].GetKd(), 4);   Serial.print(F(" "));
-#else
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-#endif
-
-  Serial.print(pid_attitude[mode].pterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_attitude[mode].iterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_attitude[mode].dterm, 4);   Serial.print(F(" "));
-
-#ifdef CASCADE_PIDS    
-  Serial.print(pid_rate[mode].pterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_rate[mode].iterm, 4);   Serial.print(F(" "));
-  Serial.print(pid_rate[mode].dterm, 4);   Serial.print(F(" "));
-#else  
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-  Serial.print(0.0000, 4);   Serial.print(F(" "));
-#endif
-
-  Serial.println(F("E"));
-
-  send_serial = &SerialSend_B;
-    
-}
-
-void SerialSend_B(byte mode)
-{
-  Serial.print(F("B "));
-  Serial.print(selected_pot_tuning);
-  Serial.print(F("_"));
-  Serial.print(aserial_data_mode);
-  Serial.print(F(" "));
-
-  Serial.print(INPUT_THRUST);  
-  Serial.print(F(" "));
-  
-  Serial.print(setpoint[mode]);   Serial.print(F(" "));  
-
-  Serial.print(current_rate[mode]);         Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
-  Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU  
-
-  if(pid_attitude[mode].GetMode()==AUTOMATIC) Serial.print(F("A"));
-  else Serial.print(F("M"));  
-  Serial.print(F(" "));
-  
-  if(pid_attitude[mode].GetDirection()==DIRECT) Serial.print(F("D"));
-  else Serial.print(F("R"));
-  Serial.print(F(" "));
-
-#ifdef CASCADE_PIDS 
-  if(pid_rate[mode].GetDirection()==DIRECT) Serial.print(F("D"));
-  else Serial.print(F("R"));  
-#else  
-  Serial.print(F("D"));  
-#endif  
-
-  Serial.print(F(" "));
-  
-  Serial.print(va); Serial.print(F(" "));
-  Serial.print(vb); Serial.print(F(" "));
-  Serial.print(vc); Serial.print(F(" "));
-  Serial.print(vd); Serial.print(F(" "));
-
-  Serial.print(alpha); Serial.print(F(" "));  
-
-  Serial.print(pid_refresh_rate); Serial.print(F(" "));  
-  
-  Serial.println(F("E"));
-
-  send_serial = &SerialSend_A;
-    
+  Serial.print(alpha); Serial.println(F(" E"));  
 }
 
 void log_data()
 {
-  if( aserial_data_mode == 0 ) send_serial(AC);
-  else if( aserial_data_mode == 1 ) send_serial(BD);
-  else if( aserial_data_mode == 2 ) send_serial(YAW); 
+  if( aserial_data_mode == 0 ) SerialSend_Minimal(AC);
+  else if( aserial_data_mode == 1 ) SerialSend_Minimal(BD);
+  else if( aserial_data_mode == 2 ) SerialSend_Minimal(YAW); 
 }
 

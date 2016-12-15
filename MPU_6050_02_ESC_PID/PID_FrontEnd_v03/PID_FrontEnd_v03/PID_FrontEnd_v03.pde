@@ -201,28 +201,28 @@ void setup()
    controlP5.addSlider("va")
      .setPosition(group_x+=40,group_y)
      .setSize(20,100)
-     .setRange(1000,2000)
+     .setRange(0,1000)
      .setValue(0)
      ;
 
   controlP5.addSlider("vb")
     .setPosition(group_x+=40,group_y)
      .setSize(20,100)
-     .setRange(1000,2000)
+     .setRange(0,1000)
      .setValue(0)
      ;
      
   controlP5.addSlider("vc")
     .setPosition(group_x+=40,group_y)
      .setSize(20,100)
-     .setRange(1000,2000)
+     .setRange(0,1000)
      .setValue(0)
      ;
      
   controlP5.addSlider("vd")
      .setPosition(group_x+=40,group_y)
      .setSize(20,100)
-     .setRange(1000,2000)
+     .setRange(0,1000)
      .setValue(0)
      ;           
      
