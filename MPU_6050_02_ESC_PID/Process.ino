@@ -58,16 +58,16 @@ void arm_esc_process()
 // main autopilot routine
 void attitude_process()
 {
-//  if( system_check & INIT_ESC_ARMED )
-//  {
-//    if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
-//    {
-//      blink_pattern_5      
-//      disarm_esc();
-//      process = &do_log;
-//      return;
-//    }
-//  }
+  if( system_check & INIT_ESC_ARMED )
+  {
+    if(abs(ypr[AC]) > 45.0 || abs(ypr[BD]) > 45.0) 
+    {
+      blink_pattern_5      
+      disarm_esc();
+      process = &do_log;
+      return;
+    }
+  }
 
   // Update the Stable PID input values
   // Angle reading
