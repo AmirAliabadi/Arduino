@@ -131,13 +131,16 @@ void update_pid_settings()
 {
 }
 
-#define max_i_term 210
+#define MAX_ATTITUDE_YAW_I_TERM  210
+#define MAX_ATTITUDE_PR_I_TERM  310
+#define MAX_RATE_YAW_I_TERM  210
+#define MAX_RATE_PR_I_TERM  310
 void do_pid_compute()
 {
   pid_temp_error = current_attitude[YAW] - setpoint[YAW]; 
   last_i_term[0][YAW] += pid_temp_error;
-  if(last_i_term[0][YAW] > max_i_term)            last_i_term[0][YAW] = max_i_term;
-  else if(last_i_term[0][YAW] < max_i_term * -1)  last_i_term[0][YAW] = max_i_term * -1;
+  if(last_i_term[0][YAW] > MAX_ATTITUDE_YAW_I_TERM)            last_i_term[0][YAW] = MAX_ATTITUDE_YAW_I_TERM;
+  else if(last_i_term[0][YAW] < MAX_ATTITUDE_YAW_I_TERM * -1)  last_i_term[0][YAW] = MAX_ATTITUDE_YAW_I_TERM * -1;
  
   attitude_correction[YAW] = (INPUT_YAW_PID_P * pid_temp_error) + INPUT_YAW_PID_I * (last_i_term[0][YAW]) +  INPUT_YAW_PID_D * (pid_temp_error - last_d_error[0][YAW]) ;
   last_d_error[0][YAW] = pid_temp_error;
@@ -145,8 +148,8 @@ void do_pid_compute()
 
   pid_temp_error = current_attitude[BD] - setpoint[BD]; 
   last_i_term[0][BD] +=  pid_temp_error;
-  if(last_i_term[0][BD] > max_i_term)            last_i_term[0][BD] = max_i_term;
-  else if(last_i_term[0][BD] < max_i_term * -1)  last_i_term[0][BD] = max_i_term * -1;
+  if(last_i_term[0][BD] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[0][BD] = MAX_ATTITUDE_PR_I_TERM;
+  else if(last_i_term[0][BD] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[0][BD] = MAX_ATTITUDE_PR_I_TERM * -1;
   
   attitude_correction[BD] = (INPUT_STB_PID_P * pid_temp_error) + INPUT_STB_PID_I * (last_i_term[0][BD]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][BD]) ;
   last_d_error[0][BD] = pid_temp_error;
@@ -154,8 +157,8 @@ void do_pid_compute()
 
   pid_temp_error = current_attitude[AC] - setpoint[AC]; 
   last_i_term[0][AC] +=  pid_temp_error;
-  if(last_i_term[0][AC] > max_i_term)            last_i_term[0][AC] = max_i_term;
-  else if(last_i_term[0][AC] < max_i_term * -1)  last_i_term[0][AC] = max_i_term * -1;
+  if(last_i_term[0][AC] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[0][AC] = MAX_ATTITUDE_PR_I_TERM;
+  else if(last_i_term[0][AC] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[0][AC] = MAX_ATTITUDE_PR_I_TERM * -1;
   
   attitude_correction[AC] = ((INPUT_STB_PID_P * pid_temp_error) + INPUT_STB_PID_I * (last_i_term[0][AC]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][AC])) * -1.0 ;
   last_d_error[0][AC] = pid_temp_error;
@@ -164,18 +167,30 @@ void do_pid_compute()
 #ifdef CASCADE_PIDS
   pid_temp_error = current_rate[YAW] - attitude_correction[YAW];
   last_i_term[1][YAW] += pid_temp_error;
+  if(last_i_term[1][YAW] > MAX_RATE_YAW_I_TERM)            last_i_term[1][YAW] = MAX_RATE_YAW_I_TERM;
+  else if(last_i_term[1][YAW] < MAX_RATE_YAW_I_TERM * -1)  last_i_term[1][YAW] = MAX_RATE_YAW_I_TERM * -1;
+  
   rate_correction[YAW] = (INPUT_YAW_RATE_PID_P * pid_temp_error) + INPUT_YAW_RATE_PID_I * (last_i_term[1][YAW]) +  INPUT_YAW_RATE_PID_D * (pid_temp_error - last_d_error[1][YAW]) ;
   last_d_error[1][YAW] = pid_temp_error;
+// --------------  
   
   pid_temp_error = current_rate[BD] - attitude_correction[BD];
   last_i_term[1][BD] += pid_temp_error;
+  if(last_i_term[1][BD] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[1][BD] = MAX_ATTITUDE_PR_I_TERM;
+  else if(last_i_term[1][BD] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[1][BD] = MAX_ATTITUDE_PR_I_TERM * -1;
+    
   rate_correction[BD] = (INPUT_RAT_PID_P * pid_temp_error) + INPUT_RAT_PID_I * (last_i_term[1][BD]) +  INPUT_RAT_PID_D * (pid_temp_error - last_d_error[1][BD]) ;
   last_d_error[1][BD] = pid_temp_error;  
+// --------------
 
   pid_temp_error = current_rate[AC] - attitude_correction[AC];
   last_i_term[1][AC] += pid_temp_error;
+  if(last_i_term[1][AC] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[1][AC] = MAX_ATTITUDE_PR_I_TERM;
+  else if(last_i_term[1][AC] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[1][AC] = MAX_ATTITUDE_PR_I_TERM * -1;
+  
   rate_correction[AC] = (INPUT_RAT_PID_P * pid_temp_error) + INPUT_RAT_PID_I * (last_i_term[1][AC]) +  INPUT_RAT_PID_D * (pid_temp_error - last_d_error[1][AC]) ;
   last_d_error[1][AC] = pid_temp_error;  
+// --------------  
 #endif   
 
 }

@@ -9,6 +9,8 @@ void disarm_esc()
   system_check &= ~(INIT_ESC_ARMED);
 }
 
+//----------------
+
 
 void init_esc()
 {
@@ -22,7 +24,7 @@ void update_motors()
   // using analogWrite() and the yellow unknown esc's from amazon
   #define PWM_00_PERCENT 125 
   #define PWM_10_PERCENT 155 
-  #define PWM_20_PERCENT 245 
+  #define PWM_20_PERCENT 250 
 
   if( system_check & INIT_ESC_ARMED ) {
     // map input throttle of 0-1000 to 125 to 245
@@ -37,7 +39,6 @@ void update_motors()
     analogWrite(MOTOR_PIN_D , 0 );
   }
 }
-
 
 /*
 unsigned long last_pwm_pulse = 0;
@@ -72,11 +73,6 @@ void update_motors()
 
   if( system_check & INIT_ESC_ARMED ) {
 
-    //va = map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    //vb = map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    //vc = map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-    //vd = map(vd, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vd == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL);
-  
     timer_channel_a = last_pwm_pulse + map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL); ;
     timer_channel_b = last_pwm_pulse + map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL); ;
     timer_channel_c = last_pwm_pulse + map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? MIN_ESC_SIGNAL : MIN_ESC_CUTOFF, MAX_ESC_SIGNAL); ;

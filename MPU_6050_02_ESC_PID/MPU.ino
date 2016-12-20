@@ -58,7 +58,7 @@ void init_mpu()
 * 6         | 5Hz       | 19.0ms  | 5Hz       | 18.6ms  | 1kHz
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
-//      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
      
       delay(50);     
 
