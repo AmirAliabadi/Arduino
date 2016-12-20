@@ -19,6 +19,87 @@ float alpha = 0.44;
 #define DEBUG
 //#define CASCADE_PIDS
 
+
+class PID {
+  public:
+  
+  PID(float p, float i, float d, float ref, float in, float maxCtrl, float minCtrl) {
+    Kp = p;
+    Ki = i;
+    Kd = d;
+    prevTime = millis();
+    prevRef = ref;
+    prevInput = in;
+    
+    minLimit = minCtrl;
+    maxLimit = maxCtrl;
+    
+    iTerm = 0;
+  }
+  
+  void resetITerm() {
+    iTerm = 0;
+    prevTime = micros();
+  }
+
+  float calculate(float ref, float input) {
+    // Calculate sampling time
+    unsigned long dt = (micros() - prevTime); // Convert to seconds
+    float dt_float = dt * 0.001 ;
+    
+    float error = ref - input;
+    pTerm = Kp * (ref - input);
+    dTerm = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt
+    iTerm += Ki * error * dt;
+    
+    // Calculate control
+    float output = pTerm + iTerm + dTerm;
+    
+    // Anti-windup
+    if (output > maxLimit) {
+      iTerm -= output - maxLimit;
+      output = maxLimit;
+    } else if ( output < minLimit ){
+      iTerm += minLimit - output;
+      output = minLimit;
+    } else {
+      //output is output
+    }
+    
+    // Update state
+    prevTime = micros();
+    prevRef = ref;
+    prevInput = input;
+    
+    return output;
+  }
+
+  void setControlCoeffs(float* pidVector) {
+    Kp = pidVector[0];
+    Ki = pidVector[1];
+    Kd = pidVector[2];
+  }
+  
+  private:
+  unsigned long prevTime;
+  float prevRef;
+  float prevInput;
+  float pTerm;
+  float iTerm;
+  float dTerm;
+  float minLimit;
+  float maxLimit;
+  float Kp, Ki, Kd;
+};
+
+
+PID yaw_pid    (0, 0, 0, 0, 0, 300, 300);
+PID att_pid_ac (0, 0, 0, 0, 0, 300, 300);
+PID att_pid_bd (0, 0, 0, 0, 0, 300, 300);
+PID rate_pid_ac(0, 0, 0, 0, 0, 300, 300);
+PID rate_pid_bd(0, 0, 0, 0, 0, 300, 300);
+
+
 long last_blink = 0;
 int blink_point = 0;
 int blink_pattern[4] = {1000,1000,1000,1000};
@@ -175,9 +256,6 @@ float attitude_correction[3]    = {0.0f, 0.0f, 0.0f};
 float current_rate[3]           = {0.0f, 0.0f, 0.0f}; 
 float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 
-float pid_temp_error = 0.0;
-float last_i_term[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
-float last_d_error[2][3] = {{0.0,0.0,0.0},{0.0,0.0,0.0}};
 //
 ////////////////////////////////////////////////////////////////
 
@@ -256,7 +334,7 @@ void loop()
   read_throttle();
   read_setpoint();
   read_battery_voltage();
-  //update_pid_settings();
+  update_pid_settings();
   process();
 
   do_log();

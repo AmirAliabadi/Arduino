@@ -1,3 +1,5 @@
+
+
 /*
  * 
 http://www.thorlabs.com/tutorials.cfm?tabID=5dfca308-d07e-46c9-baa0-4defc5c40c3e 
@@ -122,75 +124,43 @@ void set_pid_refresh_rate()
 
 void pid_reset() 
 {
-  for(int i=0; i< 2; i++)
-    for(int j=0; j<3; j++)
-      last_i_term[i][j] = 0.0;
+  yaw_pid.resetITerm();
+  att_pid_bd.resetITerm();  
+  att_pid_ac.resetITerm();
+
+  rate_pid_ac.resetITerm();
+  rate_pid_bd.resetITerm();  
 }
 
 void update_pid_settings()
 {
-}
+  float c[3];
 
-#define MAX_ATTITUDE_YAW_I_TERM  210
-#define MAX_ATTITUDE_PR_I_TERM  310
-#define MAX_RATE_YAW_I_TERM  210
-#define MAX_RATE_PR_I_TERM  310
-void do_pid_compute()
-{
-  pid_temp_error = current_attitude[YAW] - setpoint[YAW]; 
-  last_i_term[0][YAW] += pid_temp_error;
-  if(last_i_term[0][YAW] > MAX_ATTITUDE_YAW_I_TERM)            last_i_term[0][YAW] = MAX_ATTITUDE_YAW_I_TERM;
-  else if(last_i_term[0][YAW] < MAX_ATTITUDE_YAW_I_TERM * -1)  last_i_term[0][YAW] = MAX_ATTITUDE_YAW_I_TERM * -1;
- 
-  attitude_correction[YAW] = (INPUT_YAW_PID_P * pid_temp_error) + INPUT_YAW_PID_I * (last_i_term[0][YAW]) +  INPUT_YAW_PID_D * (pid_temp_error - last_d_error[0][YAW]) ;
-  last_d_error[0][YAW] = pid_temp_error;
-// ------------------
+  c[0] = INPUT_YAW_PID_P; c[1] = INPUT_YAW_PID_I; c[2] = INPUT_YAW_PID_D;
+  yaw_pid.setControlCoeffs(c);
 
-  pid_temp_error = current_attitude[BD] - setpoint[BD]; 
-  last_i_term[0][BD] +=  pid_temp_error;
-  if(last_i_term[0][BD] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[0][BD] = MAX_ATTITUDE_PR_I_TERM;
-  else if(last_i_term[0][BD] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[0][BD] = MAX_ATTITUDE_PR_I_TERM * -1;
-  
-  attitude_correction[BD] = (INPUT_STB_PID_P * pid_temp_error) + INPUT_STB_PID_I * (last_i_term[0][BD]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][BD]) ;
-  last_d_error[0][BD] = pid_temp_error;
-// ------------------  
-
-  pid_temp_error = current_attitude[AC] - setpoint[AC]; 
-  last_i_term[0][AC] +=  pid_temp_error;
-  if(last_i_term[0][AC] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[0][AC] = MAX_ATTITUDE_PR_I_TERM;
-  else if(last_i_term[0][AC] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[0][AC] = MAX_ATTITUDE_PR_I_TERM * -1;
-  
-  attitude_correction[AC] = ((INPUT_STB_PID_P * pid_temp_error) + INPUT_STB_PID_I * (last_i_term[0][AC]) +  INPUT_STB_PID_D * (pid_temp_error - last_d_error[0][AC])) * -1.0 ;
-  last_d_error[0][AC] = pid_temp_error;
-// ------------------    
+  c[0] = INPUT_STB_PID_P; c[1] = INPUT_STB_PID_I; c[2] = INPUT_STB_PID_D;
+  att_pid_bd.setControlCoeffs(c);
+  att_pid_ac.setControlCoeffs(c);  
 
 #ifdef CASCADE_PIDS
-  pid_temp_error = current_rate[YAW] - attitude_correction[YAW];
-  last_i_term[1][YAW] += pid_temp_error;
-  if(last_i_term[1][YAW] > MAX_RATE_YAW_I_TERM)            last_i_term[1][YAW] = MAX_RATE_YAW_I_TERM;
-  else if(last_i_term[1][YAW] < MAX_RATE_YAW_I_TERM * -1)  last_i_term[1][YAW] = MAX_RATE_YAW_I_TERM * -1;
-  
-  rate_correction[YAW] = (INPUT_YAW_RATE_PID_P * pid_temp_error) + INPUT_YAW_RATE_PID_I * (last_i_term[1][YAW]) +  INPUT_YAW_RATE_PID_D * (pid_temp_error - last_d_error[1][YAW]) ;
-  last_d_error[1][YAW] = pid_temp_error;
-// --------------  
-  
-  pid_temp_error = current_rate[BD] - attitude_correction[BD];
-  last_i_term[1][BD] += pid_temp_error;
-  if(last_i_term[1][BD] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[1][BD] = MAX_ATTITUDE_PR_I_TERM;
-  else if(last_i_term[1][BD] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[1][BD] = MAX_ATTITUDE_PR_I_TERM * -1;
-    
-  rate_correction[BD] = (INPUT_RAT_PID_P * pid_temp_error) + INPUT_RAT_PID_I * (last_i_term[1][BD]) +  INPUT_RAT_PID_D * (pid_temp_error - last_d_error[1][BD]) ;
-  last_d_error[1][BD] = pid_temp_error;  
-// --------------
+  c[0] = INPUT_RAT_PID_P; c[1] = INPUT_RAT_PID_I; c[2] = INPUT_RAT_PID_D;
+  rate_pid_ac.setControlCoeffs(c);
+  rate_pid_bd.setControlCoeffs(c);
+#endif    
+}
 
-  pid_temp_error = current_rate[AC] - attitude_correction[AC];
-  last_i_term[1][AC] += pid_temp_error;
-  if(last_i_term[1][AC] > MAX_ATTITUDE_PR_I_TERM)            last_i_term[1][AC] = MAX_ATTITUDE_PR_I_TERM;
-  else if(last_i_term[1][AC] < MAX_ATTITUDE_PR_I_TERM * -1)  last_i_term[1][AC] = MAX_ATTITUDE_PR_I_TERM * -1;
-  
-  rate_correction[AC] = (INPUT_RAT_PID_P * pid_temp_error) + INPUT_RAT_PID_I * (last_i_term[1][AC]) +  INPUT_RAT_PID_D * (pid_temp_error - last_d_error[1][AC]) ;
-  last_d_error[1][AC] = pid_temp_error;  
-// --------------  
+void do_pid_compute()
+{
+  attitude_correction[YAW] = yaw_pid.calculate(setpoint[YAW],  current_attitude[YAW]);
+
+  attitude_correction[BD] = att_pid_bd.calculate(setpoint[BD], current_attitude[BD]);  
+
+  attitude_correction[AC] = att_pid_ac.calculate(setpoint[AC], current_attitude[AC]);    
+
+#ifdef CASCADE_PIDS
+  rate_correction[AC] = rate_pid_ac.calculate( attitude_correction[AC], gyro.x);
+  rate_correction[BD] = rate_pid_bd.calculate( attitude_correction[BD], gyro.y);  
 #endif   
 
 }
