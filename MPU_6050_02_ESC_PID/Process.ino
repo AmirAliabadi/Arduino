@@ -75,12 +75,12 @@ void attitude_process()
   current_attitude[BD]  = ypr[BD];  
   current_attitude[AC]  = ypr[AC];  
 
-#ifdef CASCADE_PIDS    
+//#ifdef CASCADE_PIDS    
   // acceleration rate reading
   current_rate[YAW] = gyro.z*-1.0;
   current_rate[BD]  = gyro.y*-1.0;    
   current_rate[AC]  = gyro.x;    
-#endif  
+//#endif  
 
   if(INPUT_THRUST > MIN_INPUT_THRUST) 
   {

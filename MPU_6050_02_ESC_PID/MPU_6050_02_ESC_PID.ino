@@ -27,7 +27,7 @@ class PID {
     Kp = p;
     Ki = i;
     Kd = d;
-    prevTime = millis();
+    prevTime = micros();
     prevRef = ref;
     prevInput = in;
     
@@ -45,12 +45,12 @@ class PID {
   float calculate(float ref, float input) {
     // Calculate sampling time
     unsigned long dt = (micros() - prevTime); // Convert to seconds
-    float dt_float = dt * 0.001 ;
+    float dt_float = dt * 0.0001 ;
     
     float error = ref - input;
     pTerm = Kp * (ref - input);
     dTerm = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt
-    iTerm += Ki * error * dt;
+    iTerm += Ki * error * dt_float;
     
     // Calculate control
     float output = pTerm + iTerm + dTerm;
@@ -93,11 +93,11 @@ class PID {
 };
 
 
-PID yaw_pid    (0, 0, 0, 0, 0, 300, 300);
-PID att_pid_ac (0, 0, 0, 0, 0, 300, 300);
-PID att_pid_bd (0, 0, 0, 0, 0, 300, 300);
-PID rate_pid_ac(0, 0, 0, 0, 0, 300, 300);
-PID rate_pid_bd(0, 0, 0, 0, 0, 300, 300);
+PID yaw_pid    (0, 0, 0, 0, 0, 300, -300);
+PID att_pid_ac (0, 0, 0, 0, 0, 300, -300);
+PID att_pid_bd (0, 0, 0, 0, 0, 300, -300);
+PID rate_pid_ac(0, 0, 0, 0, 0, 300, -300);
+PID rate_pid_bd(0, 0, 0, 0, 0, 300, -300);
 
 
 long last_blink = 0;
@@ -224,10 +224,10 @@ VectorInt16 aaReal;     			// [x, y, z]            gravity-free accel sensor mea
 VectorInt16 aaWorld;    			// [x, y, z]            world-frame accel sensor measurements
 VectorFloat gravity;    			// [x, y, z]            gravity vector
 
-#ifdef CASCADE_PIDS    
+//#ifdef CASCADE_PIDS    
 VectorInt16 gyro;
 VectorInt16 gyro1;
-#endif
+//#endif
 
 float ypr[3]      = {0.0f, 0.0f, 0.0f};
 float ypr_last[3] = {0.0f, 0.0f, 0.0f};

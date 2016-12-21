@@ -153,14 +153,14 @@ void update_pid_settings()
 void do_pid_compute()
 {
   attitude_correction[YAW] = yaw_pid.calculate(setpoint[YAW],  current_attitude[YAW]);
-
+  attitude_correction[YAW] = 0;
   attitude_correction[BD] = att_pid_bd.calculate(setpoint[BD], current_attitude[BD]);  
-
   attitude_correction[AC] = att_pid_ac.calculate(setpoint[AC], current_attitude[AC]);    
 
 #ifdef CASCADE_PIDS
-  rate_correction[AC] = rate_pid_ac.calculate( attitude_correction[AC], gyro.x);
-  rate_correction[BD] = rate_pid_bd.calculate( attitude_correction[BD], gyro.y);  
+//   current_rate[YAW] = gyro.z*-1.0;
+  rate_correction[AC] = rate_pid_ac.calculate( attitude_correction[AC], current_rate[AC] );
+  rate_correction[BD] = rate_pid_bd.calculate( attitude_correction[BD], current_rate[BD] );  
 #endif   
 
 }

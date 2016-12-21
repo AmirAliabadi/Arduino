@@ -125,7 +125,7 @@ void read_mpu_process()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
                                                // this give you the angle the MPU is at, the attitude
-#ifdef CASCADE_PIDS
+//#ifdef CASCADE_PIDS
     // dmpGetGryo returns the Accelration data ??
     // I thought gyro data gives you angular reading and accelerator data gave you acceleration in deg/sec ??
     // this is the current acceleration rate
@@ -137,7 +137,7 @@ void read_mpu_process()
     gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 
     // low pass filter on the gyro data   
     
-#endif
+//#endif
 
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
