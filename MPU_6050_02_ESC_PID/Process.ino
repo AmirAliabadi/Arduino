@@ -1,4 +1,4 @@
-
+long stable_check_loop = 0;
 void wait_for_stable_process()
 {
   if (millis() - stable_check_loop > 2000)

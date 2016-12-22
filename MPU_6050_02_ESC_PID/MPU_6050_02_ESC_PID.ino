@@ -27,7 +27,7 @@ class PID {
     Kp = p;
     Ki = i;
     Kd = d;
-    prevTime = micros();
+    prevTime = millis();
     prevRef = ref;
     prevInput = in;
     
@@ -39,12 +39,12 @@ class PID {
   
   void resetITerm() {
     iTerm = 0;
-    prevTime = micros();
+    prevTime = millis();
   }
 
   float calculate(float ref, float input) {
     // Calculate sampling time
-    unsigned long dt = (micros() - prevTime); // Convert to seconds
+    unsigned long dt = (millis() - prevTime); // Convert to seconds
     float dt_float = dt * 0.0001 ;
     
     float error = ref - input;
@@ -67,7 +67,7 @@ class PID {
     }
     
     // Update state
-    prevTime = micros();
+    prevTime = millis();
     prevRef = ref;
     prevInput = input;
     
@@ -93,11 +93,11 @@ class PID {
 };
 
 
-PID yaw_pid    (0, 0, 0, 0, 0, 300, -300);
-PID att_pid_ac (0, 0, 0, 0, 0, 300, -300);
-PID att_pid_bd (0, 0, 0, 0, 0, 300, -300);
-PID rate_pid_ac(0, 0, 0, 0, 0, 300, -300);
-PID rate_pid_bd(0, 0, 0, 0, 0, 300, -300);
+PID yaw_pid    (0, 0, 0, 0, 0, 200, -200);
+PID att_pid_ac (0, 0, 0, 0, 0, 200, -200);
+PID att_pid_bd (0, 0, 0, 0, 0, 200, -200);
+PID rate_pid_ac(0, 0, 0, 0, 0, 200, -200);
+PID rate_pid_bd(0, 0, 0, 0, 0, 200, -200);
 
 
 long last_blink = 0;
@@ -267,7 +267,6 @@ uint16_t system_check = INIT_CLEARED;
 long log_line = 0;
 long last_log = 0;
 #endif
-long stable_check_loop = 0;
 
 struct EEPROMData {
   char id[3];
