@@ -10,13 +10,13 @@ void disarm_esc()
 }
 
 //----------------
-
-
+/*
 void init_esc()
 {
   system_check |= INIT_ESC_ATTACHED;
   arm_esc();
 }
+
 
 void update_motors()
 {
@@ -27,7 +27,7 @@ void update_motors()
   #define PWM_20_PERCENT 250 
 
   if( system_check & INIT_ESC_ARMED ) {
-    // map input throttle of 0-1000 to 125 to 245
+    // map input throttle of 0-1000 to 125 to 250
     analogWrite(MOTOR_PIN_A , map(va, MIN_INPUT_THRUST, MAX_INPUT_THRUST, va == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
     analogWrite(MOTOR_PIN_B , map(vb, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vb == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
     analogWrite(MOTOR_PIN_C , map(vc, MIN_INPUT_THRUST, MAX_INPUT_THRUST, vc == 0 ? PWM_00_PERCENT : PWM_10_PERCENT, PWM_20_PERCENT) ) ;
@@ -39,8 +39,10 @@ void update_motors()
     analogWrite(MOTOR_PIN_D , 0 );
   }
 }
+*/
 
-/*
+
+
 unsigned long last_pwm_pulse = 0;
 unsigned long esc_pwm_timmer = 0;
 unsigned long timer_channel_a = 0;
@@ -61,7 +63,7 @@ void init_esc()
 
 void update_motors()
 {
-  #define PWM_FERQUENCY 5450 // 5550 //5550 works with mpu dmpEnabled()
+  #define PWM_FERQUENCY 5550 // 5550 //5550 works with mpu dmpEnabled()
   // 5450 : 170-190hz 
   // 5000 jumps arounds when throttle at over 60%
 
@@ -81,11 +83,11 @@ void update_motors()
     motors = 0x00001111;
     while( motors ) 
     {
-        //esc_pwm_timmer = micros();
-        if((motors & 0x00001000) && (timer_channel_a <= micros())){ PORTD &= B11110111; motors &= 0x00000111; }
-        if((motors & 0x00000100) && (timer_channel_b <= micros())){ PORTB &= B11110111; motors &= 0x00001011; }
-        if((motors & 0x00000010) && (timer_channel_c <= micros())){ PORTB &= B11111011; motors &= 0x00001101; }
-        if((motors & 0x00000001) && (timer_channel_d <= micros())){ PORTB &= B11111101; motors &= 0x00001110; }      
+        esc_pwm_timmer = micros();
+        if( (motors & 0x00001000) && ( esc_pwm_timmer > timer_channel_a )){ PORTD &= B11110111; motors &= 0x00000111; }
+        if( (motors & 0x00000100) && ( esc_pwm_timmer > timer_channel_b )){ PORTB &= B11110111; motors &= 0x00001011; }
+        if( (motors & 0x00000010) && ( esc_pwm_timmer > timer_channel_c )){ PORTB &= B11111011; motors &= 0x00001101; }
+        if( (motors & 0x00000001) && ( esc_pwm_timmer > timer_channel_d )){ PORTB &= B11111101; motors &= 0x00001110; }      
     }
     
   } else {
@@ -95,4 +97,4 @@ void update_motors()
     PORTB &= B11111101;
   }
 }
-*/
+

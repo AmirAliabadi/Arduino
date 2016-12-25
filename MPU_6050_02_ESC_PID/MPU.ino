@@ -12,8 +12,6 @@ void init_mpu()
     Serial.println(F("#Test device"));
     Serial.println(mpu.testConnection() ? F("#MPU6050 ok") : F("MPU6050 failed"));
 
-    delay(50);
-
     // load and configure the DMP
     Serial.println(F("#Init DMP"));
 
@@ -30,13 +28,9 @@ void init_mpu()
       mpu.setYGyroOffset(eeprom_data.gy_offset);
       mpu.setZGyroOffset(eeprom_data.gz_offset);
       
-      delay(50);
-
       // turn on the DMP, now that it's ready
       Serial.println(F("#Enab DMP"));
       mpu.setDMPEnabled(true);
-
-      delay(50);      
 
 ///////////////////////////////////////////////////////////////////
 //#define MPU6050_DLPF_BW_256         0x00
@@ -58,19 +52,12 @@ void init_mpu()
 * 6         | 5Hz       | 19.0ms  | 5Hz       | 18.6ms  | 1kHz
 * 7         | -- Reserved -- | -- Reserved -- | Reserved  
 */
-      mpu.setDLPFMode(MPU6050_DLPF_BW_188);
+//      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
      
-      delay(50);     
-
       mpuIntStatus = mpu.getIntStatus();
 
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
-
-      Serial.print( F("#MPU Rate ") );
-      Serial.println( mpu.getRate() );
-
-      Serial.println( F("#DMP rdy") );     
       
       system_check |= INIT_MPU_ARMED;
       
@@ -93,23 +80,25 @@ void init_mpu()
 void read_mpu_process()
 {
   // get INT_STATUS byte
-  mpuIntStatus = mpu.getIntStatus();
+ // mpuIntStatus = mpu.getIntStatus();
 
   // get current FIFO count
   fifoCount = mpu.getFIFOCount();
 
-  // check for overflow (this should never happen unless our code is too inefficient)
-  if ((mpuIntStatus & 0x10) || fifoCount == 1024)
-  {
-    // reset so we can continue cleanly
-    mpu.resetFIFO();
+//  // check for overflow (this should never happen unless our code is too inefficient)
+//  if ((mpuIntStatus & 0x10) || fifoCount == 1024)
+//  {
+//    // reset so we can continue cleanly
+//    mpu.resetFIFO();
+//
+//#ifdef DEBUG
+//    Serial.println(F("#Foflw"));
+//#endif
+//
+//  } // otherwise, check for DMP data ready interrupt (this should happen frequently)
+//  else if (mpuIntStatus & 0x02)
 
-#ifdef DEBUG
-    Serial.println(F("#Foflw"));
-#endif
-
-  } // otherwise, check for DMP data ready interrupt (this should happen frequently)
-  else if (mpuIntStatus & 0x02)
+  if( 1 == 1 )
   {
     // wait for correct available data length, should be a VERY short wait
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
@@ -125,7 +114,7 @@ void read_mpu_process()
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity); // this is in radians
                                                // this give you the angle the MPU is at, the attitude
-//#ifdef CASCADE_PIDS
+#ifdef CASCADE_PIDS
     // dmpGetGryo returns the Accelration data ??
     // I thought gyro data gives you angular reading and accelerator data gave you acceleration in deg/sec ??
     // this is the current acceleration rate
@@ -136,8 +125,7 @@ void read_mpu_process()
     gyro.y = gyro1.y * alpha + (gyro.y * (1.0 - alpha));
     gyro.z = gyro1.z * alpha + (gyro.z * (1.0 - alpha)); 
     // low pass filter on the gyro data   
-    
-//#endif
+#endif
 
     // convert radians to degrees
     #define A_180_DIV_PI 57.2957795131
@@ -152,34 +140,6 @@ void read_mpu_process()
         ypr[YAW] = ypr[YAW] - yw_offset;
         //ypr[AC] = ypr[AC] - ac_offset;
         //ypr[BD] = ypr[BD] - bd_offset;
-
-// safety : ignore large changes        
-//        if( (abs(ypr[AC] - ypr_last[AC]) > 30) ) 
-//        {
-//          Serial.print(F("#bg chng ac"));
-//          Serial.print("\t");
-//          Serial.print(ypr_last[AC]);
-//          Serial.print("\t");
-//          Serial.println(ypr[AC]);
-//        }
-//  
-//        if( (abs(ypr[BD] - ypr_last[BD]) > 30) ) 
-//        {
-//          Serial.print(F("#bg chng bd"));
-//          Serial.print("\t");
-//          Serial.print(ypr_last[BD]);
-//          Serial.print("\t");
-//          Serial.println(ypr[BD]);
-//        }      
-//  
-// safety : ignore large (spikes) changes for one cycle
-//        if (abs(ypr[YW] - ypr_last[YW]) > 30) ypr[YW] = ypr_last[YW];
-//        if (abs(ypr[AC] - ypr_last[AC]) > 30) ypr[AC] = ypr_last[AC];      
-//        if (abs(ypr[BD] - ypr_last[BD]) > 30) ypr[BD] = ypr_last[BD];
-//  
-//        ypr_last[YW] = ypr[YW];
-//        ypr_last[AC] = ypr[AC];
-//        ypr_last[BD] = ypr[BD];
   
       }
     }

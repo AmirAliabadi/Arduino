@@ -1,10 +1,9 @@
 #include "Config.h"
 
 #include <EEPROM.h>             //Include the EEPROM.h library so we can store information onto the EEPROM
+#include <Wire.h>
+#include <MyPID.h>
 
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-#include "Wire.h"
-#endif
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 //#include "MPU6050_9Axis_MotionApps41.h"
@@ -17,129 +16,13 @@ byte aserial_data_mode = 0;
 float alpha = 0.44;
 
 #define DEBUG
-//#define CASCADE_PIDS
+// #define CASCADE_PIDS
 
-
-class PID {
-  public:
-  
-  PID(float p, float i, float d, float ref, float in, float maxCtrl, float minCtrl) {
-    Kp = p;
-    Ki = i;
-    Kd = d;
-    prevTime = millis();
-    prevRef = ref;
-    prevInput = in;
-    
-    minLimit = minCtrl;
-    maxLimit = maxCtrl;
-    
-    iTerm = 0;
-  }
-  
-  void resetITerm() {
-    iTerm = 0;
-    prevTime = millis();
-  }
-
-  float calculate(float ref, float input) {
-    // Calculate sampling time
-    unsigned long dt = (millis() - prevTime); // Convert to seconds
-    float dt_float = dt * 0.0001 ;
-    
-    float error = ref - input;
-    pTerm = Kp * (ref - input);
-    dTerm = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt
-    iTerm += Ki * error * dt_float;
-    
-    // Calculate control
-    float output = pTerm + iTerm + dTerm;
-    
-    // Anti-windup
-    if (output > maxLimit) {
-      iTerm -= output - maxLimit;
-      output = maxLimit;
-    } else if ( output < minLimit ){
-      iTerm += minLimit - output;
-      output = minLimit;
-    } else {
-      //output is output
-    }
-    
-    // Update state
-    prevTime = millis();
-    prevRef = ref;
-    prevInput = input;
-    
-    return output;
-  }
-
-  void setControlCoeffs(float* pidVector) {
-    Kp = pidVector[0];
-    Ki = pidVector[1];
-    Kd = pidVector[2];
-  }
-  
-  private:
-  unsigned long prevTime;
-  float prevRef;
-  float prevInput;
-  float pTerm;
-  float iTerm;
-  float dTerm;
-  float minLimit;
-  float maxLimit;
-  float Kp, Ki, Kd;
-};
-
-
-PID yaw_pid    (0, 0, 0, 0, 0, 200, -200);
-PID att_pid_ac (0, 0, 0, 0, 0, 200, -200);
-PID att_pid_bd (0, 0, 0, 0, 0, 200, -200);
-PID rate_pid_ac(0, 0, 0, 0, 0, 200, -200);
-PID rate_pid_bd(0, 0, 0, 0, 0, 200, -200);
-
-
-long last_blink = 0;
-int blink_point = 0;
-int blink_pattern[4] = {1000,1000,1000,1000};
-#define blink_reset blink_point = 0; last_blink = millis(); digitalWrite(LED_PIN, LOW); 
-#define blink_pattern_1 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 1000;  blink_pattern[2] = 1000;  blink_pattern[3] = 1000;
-#define blink_pattern_2 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 1000;  blink_pattern[3] = 200;
-#define blink_pattern_3 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 1000;
-#define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 200;
-#define blink_pattern_5 blink_reset blink_pattern[0] = 100;  blink_pattern[1] = 100;   blink_pattern[2] = 100;   blink_pattern[3] = 100;
-
-/*
- * Single Boom PID values
- * ----------------------
- * 5.07, 0.00, 0.00
- * 0.443, 0.034, 0.112
- * 
- * 2.49, 0.00, 0.00       works but slugish
- * 0.376, 0.004, 0.004
- * 
- * alpha 0.02, pid rate 20
- * 2.615, 0.085, 0.065
- * 0.41, 0, 0.004
- * 
- * found some checkin notes about the d-term causing chatter
- *                           4.70,  0.0, 0.00,    // Stable P/I/D // .89,0,.23
- *                           1.20,  0.0, 0.16,    // Rate P/I/D
- *                           
- *  3.135, 0.0, 0.0
- *  0.672, 0.01, 0.013
- *  alpha 0.2, PID Refresh 5.0
- * 
- * *
- * Single Boom Quad PID
- * ---------------------
- * 6.885  0.00  0.405
- * 0.551  0.00  0.184
- * 
- * * 2.865 0.00 0.00
- * * 0.429 0.005 0.038
- */
+MyPID yaw_pid    (0, 0, 0, 0, 0, 200, -200);
+MyPID att_pid_ac (0, 0, 0, 0, 0, 200, -200);
+MyPID att_pid_bd (0, 0, 0, 0, 0, 200, -200);
+MyPID rate_pid_ac(0, 0, 0, 0, 0, 200, -200);
+MyPID rate_pid_bd(0, 0, 0, 0, 0, 200, -200);
 
 ///////////////////////////////////`
 // user inputs
@@ -278,6 +161,7 @@ struct EEPROMData {
   int gz_offset;
 } eeprom_data;
 
+
 //////////////////////////////////////////////////////////////////////
 // setup
 void setup()
@@ -309,33 +193,27 @@ void setup()
     Serial.println("#Please run calibaration");
   }
 
-//  pinMode(5, OUTPUT);
-//  pinMode(6, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
 }
 //////////////////////////////////////////////////////////////////////
 
-void do_blink()
-{
-  if( millis() - last_blink > blink_pattern[blink_point] )
-  {
-    if(++blink_point > 3) blink_point = 0;
-    
-    last_blink = millis();
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));    
-  }
-}
 
 void loop()
 {
-//  do_blink();
+  //do_blink();
 
+digitalWrite(5, HIGH);
   read_mpu();
+digitalWrite(5, LOW); 
+
+return;
   read_throttle();
   read_setpoint();
   read_battery_voltage();
   update_pid_settings();
   process();
 
-  do_log();
+  //do_log();
 }
 

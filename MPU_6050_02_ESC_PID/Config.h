@@ -73,3 +73,18 @@
 // THROTTLE SETTINGS
 #define MAX_INPUT_THRUST  1000    // 
 #define MIN_INPUT_THRUST  0       // 
+
+
+
+// led blink patterns
+long last_blink = 0;
+int blink_point = 0;
+int blink_pattern[4] = {1000,1000,1000,1000};
+
+#define blink_reset blink_point = 0; last_blink = millis(); digitalWrite(LED_PIN, LOW); 
+#define blink_pattern_1 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 1000;  blink_pattern[2] = 1000;  blink_pattern[3] = 1000;
+#define blink_pattern_2 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 1000;  blink_pattern[3] = 200;
+#define blink_pattern_3 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 1000;
+#define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 200;
+#define blink_pattern_5 blink_reset blink_pattern[0] = 100;  blink_pattern[1] = 100;   blink_pattern[2] = 100;   blink_pattern[3] = 100;
+
