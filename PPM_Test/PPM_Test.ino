@@ -1,53 +1,67 @@
+
+int throttle = 0;
+unsigned long last_log = 0;
+
 void setup() {
   Serial.begin(115200); 
   while (!Serial);
 
   pinMode(6, OUTPUT);
 
+  throttle = 0;
+
   attachInterrupt(digitalPinToInterrupt(3), ppmRising, RISING);
   
 }
 
-volatile unsigned long last_ppm_clock = 99999;
-volatile unsigned long current_ppm_clock = 0;
-volatile unsigned long ppm_dt = 0;
-volatile uint16_t ppm_channels[6];
-volatile uint8_t ppm_channel = 0;
+unsigned long last_ppm_clock = 99999;
+unsigned long current_ppm_clock = 0;
+unsigned long ppm_dt = 0;
+volatile unsigned int ppm_channels[6];
+volatile unsigned int ppm_channel = 0;
+volatile boolean ppm_read = true;
 
 void ppmRising() {
-    current_ppm_clock = micros();
-    ppm_dt = current_ppm_clock - last_ppm_clock;
-    if( ppm_dt >= 4000 ) ppm_channel = 0;
-    else {
-      ppm_channels[ppm_channel] = ppm_dt * .8 + ( ppm_channels[ppm_channel] * (1.0 - .8)); 
-      //ppm_channels[ppm_channel] = ppm_dt ;
-      ppm_channel ++ ;
+    ppm_read = false;
+    {
+      current_ppm_clock = micros();
+      ppm_dt = current_ppm_clock - last_ppm_clock;
+      if( ppm_dt >= 4000 ) {
+        ppm_channel = 0;
+      }
+      else {
+        ppm_channels[ppm_channel++] = ppm_dt ;
+      }
+      last_ppm_clock = current_ppm_clock;   
     }
-    last_ppm_clock = current_ppm_clock;   
+    ppm_read = true;
 }
 
-uint16_t throttle = 0;
-
 void read_throttle() {
-  if( throttle >= 0 and throttle <= 1000 ) {
-    throttle += ( ppm_channels[2] - 1500 );
+  if( ppm_read ) {}
+  if( ppm_channels[2] == 123 ) {}
+  return ;
+  
+  if( ppm_read ) {
+    
+    if( ppm_channels[2] < 1490 && throttle > 0 ) {
+     throttle -= 1;
+    } 
+    
+    if ( ppm_channels[2] > 1510 && throttle < 1000 ) {
+     throttle += 1 ;
+    }
   }
 }
 
-unsigned long last_log = 0;
 void loop() 
-{  
-    read_throttle()
-    if( millis() - last_log  > 600 ) {
-      Serial.println( throttle );
-//      for( int i = 0; i < 6; i ++ )
-//      {
-//        Serial.print( ppm_channels[i] );
-//        Serial.print( " : " );
-//      }
-//      Serial.println();
-      last_log = millis();
-    }
+{        
+  if( millis() - last_log  > 500 ) 
+  {
+    read_throttle();
+    Serial.println( throttle );  
+    last_log = millis();
+  }
 }
 
 
