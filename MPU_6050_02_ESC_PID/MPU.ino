@@ -54,7 +54,7 @@ void init_mpu()
 */
 //      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
      
-      mpuIntStatus = mpu.getIntStatus();
+      //mpuIntStatus = mpu.getIntStatus();
 
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
@@ -80,26 +80,23 @@ void init_mpu()
 void read_mpu_process()
 {
   // get INT_STATUS byte
- // mpuIntStatus = mpu.getIntStatus();
+  mpuIntStatus = mpu.getIntStatus();
 
   // get current FIFO count
   fifoCount = mpu.getFIFOCount();
 
-//  // check for overflow (this should never happen unless our code is too inefficient)
-//  if ((mpuIntStatus & 0x10) || fifoCount == 1024)
-//  {
-//    // reset so we can continue cleanly
-//    mpu.resetFIFO();
-//
-//#ifdef DEBUG
-//    Serial.println(F("#Foflw"));
-//#endif
-//
-//  } // otherwise, check for DMP data ready interrupt (this should happen frequently)
-//  else if (mpuIntStatus & 0x02)
-
-  if( 1 == 1 )
+  // check for overflow (this should never happen unless our code is too inefficient)
+  if ((mpuIntStatus & 0x10) || fifoCount == 1024)
   {
+    // reset so we can continue cleanly
+    mpu.resetFIFO();
+
+#ifdef DEBUG
+    Serial.println(F("#Foflw"));
+#endif
+
+  } // otherwise, check for DMP data ready interrupt (this should happen frequently)
+  else if (mpuIntStatus & 0x02) {
     // wait for correct available data length, should be a VERY short wait
     while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
 

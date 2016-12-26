@@ -192,7 +192,8 @@ void loop() {
 digitalWrite(5,HIGH);
     readMPU();
 digitalWrite(5,LOW); 
-  delay(1);   
+delay(1);
+  
 }
 
 void readMPU()
@@ -246,6 +247,7 @@ void readMPU()
         Serial.print(ypr[1] * 180/M_PI);
         Serial.print("\t");
         Serial.println(ypr[2] * 180/M_PI);
+       // return;
     #endif
 
     #ifdef OUTPUT_READABLE_REALACCEL

@@ -207,7 +207,6 @@ digitalWrite(5, HIGH);
   read_mpu();
 digitalWrite(5, LOW); 
 
-return;
   read_throttle();
   read_setpoint();
   read_battery_voltage();
