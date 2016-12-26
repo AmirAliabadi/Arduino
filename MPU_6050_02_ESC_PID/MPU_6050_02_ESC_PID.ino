@@ -198,14 +198,25 @@ void setup()
 }
 //////////////////////////////////////////////////////////////////////
 
+// ================================================================
+// ===               INTERRUPT DETECTION ROUTINE                ===
+// ================================================================
 
+volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+void dmpDataReady() {
+    mpuInterrupt = true;
+}
+
+//////////////////////////////////////////////////////////////////////
 void loop()
 {
   //do_blink();
 
-digitalWrite(5, HIGH);
-  read_mpu();
-digitalWrite(5, LOW); 
+  if( mpuInterrupt ) {
+    digitalWrite(5, HIGH);    
+    read_mpu();
+    digitalWrite(5, LOW);     
+  }
 
   read_throttle();
   read_setpoint();

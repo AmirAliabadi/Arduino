@@ -63,7 +63,7 @@ void init_esc()
 
 void update_motors()
 {
-  #define PWM_FERQUENCY 5000 // 5550 //5550 works with mpu dmpEnabled()
+  #define PWM_FERQUENCY 5550 // 5550 //5550 works with mpu dmpEnabled()
   // 5450 : 170-190hz 
   // 5000 jumps arounds when throttle at over 60%
 

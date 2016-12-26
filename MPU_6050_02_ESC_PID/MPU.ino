@@ -54,7 +54,11 @@ void init_mpu()
 */
 //      mpu.setDLPFMode(MPU6050_DLPF_BW_5);
      
-      //mpuIntStatus = mpu.getIntStatus();
+      // enable Arduino interrupt detection
+      Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+      attachInterrupt(digitalPinToInterrupt(2), dmpDataReady, RISING);
+      mpuIntStatus = mpu.getIntStatus();
+      
 
       // get expected DMP packet size for later comparison
       packetSize = mpu.dmpGetFIFOPacketSize();
@@ -79,6 +83,8 @@ void init_mpu()
 //
 void read_mpu_process()
 {
+  mpuInterrupt = false;
+  
   // get INT_STATUS byte
   mpuIntStatus = mpu.getIntStatus();
 

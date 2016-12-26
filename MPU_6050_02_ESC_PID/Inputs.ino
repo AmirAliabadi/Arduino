@@ -26,10 +26,7 @@ void serialEvent()
 //int current_throttle = 0;
 void read_throttle()
 {
-INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
-//current_throttle = constrain(analogRead(0), MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
-//if( INPUT_THRUST != current_throttle ) { Serial.print("#throttle:"); Serial.println(current_throttle); }
-//INPUT_THRUST = current_throttle;
+  INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
 }
 
 void read_setpoint()
