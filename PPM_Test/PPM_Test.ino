@@ -17,11 +17,12 @@ void setup() {
 unsigned long last_ppm_clock = 99999;
 unsigned long current_ppm_clock = 0;
 unsigned long ppm_dt = 0;
-volatile unsigned int ppm_channels[6];
-volatile unsigned int ppm_channel = 0;
 volatile boolean ppm_read = true;
+volatile unsigned int ppm_channel = 0;
+volatile unsigned int ppm_channels[6];
 
 void ppmRising() {
+  noInterrupts();
     ppm_read = false;
     {
       current_ppm_clock = micros();
@@ -35,6 +36,17 @@ void ppmRising() {
       last_ppm_clock = current_ppm_clock;   
     }
     ppm_read = true;
+  interrupts();    
+}
+
+void loop() 
+{        
+  if( millis() - last_log  > 500 ) 
+  {
+    read_throttle();
+    Serial.println( throttle );  
+    last_log = millis();
+  }
 }
 
 void read_throttle() {
@@ -53,16 +65,3 @@ void read_throttle() {
     }
   }
 }
-
-void loop() 
-{        
-  if( millis() - last_log  > 500 ) 
-  {
-    read_throttle();
-    Serial.println( throttle );  
-    last_log = millis();
-  }
-}
-
-
-
