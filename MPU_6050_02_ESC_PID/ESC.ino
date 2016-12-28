@@ -53,7 +53,8 @@ int motors = 0x00000000;
 
 void init_esc()
 {
-  DDRD |= B00001000;                                           //Configure digital poort 3 as output
+//DDRD |= B00001000;                                           //Configure digital poort 3 as output
+  DDRD |= B00100000;                                           //Configure digital poort 5 as output
   DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
 
   system_check |= INIT_ESC_ATTACHED;
@@ -69,8 +70,29 @@ void update_motors()
 
   while( (micros() - last_pwm_pulse) < PWM_FERQUENCY );
   last_pwm_pulse= micros(); 
+
+/*
+Arduino Digital 
+Pin   Port Pin
+0     PD0
+1     PD1
+2     PD2
+3     PD3
+4     PD4
+5     PD5
+6     PD6
+7     PD7
+
+8     PB0
+9     PB1
+10    PB2
+11    PB3
+12    PB4
+13    PB5  
+*/  
   
-  PORTD |= B00001000; // Set digital port 3 high
+  //PORTD |= B00001000; // Set digital port 3 high
+  PORTD |= B00100000; // Set digital port 5 high
   PORTB |= B00001110; // Set digital port 9,10,11 high
 
   if( system_check & INIT_ESC_ARMED ) {
@@ -84,7 +106,7 @@ void update_motors()
     while( motors ) 
     {
         esc_pwm_timmer = micros();
-        if( (motors & 0x00001000) && ( esc_pwm_timmer > timer_channel_a )){ PORTD &= B11110111; motors &= 0x00000111; }
+        if( (motors & 0x00001000) && ( esc_pwm_timmer > timer_channel_a )){ PORTD &= B11011111; motors &= 0x00000111; }
         if( (motors & 0x00000100) && ( esc_pwm_timmer > timer_channel_b )){ PORTB &= B11110111; motors &= 0x00001011; }
         if( (motors & 0x00000010) && ( esc_pwm_timmer > timer_channel_c )){ PORTB &= B11111011; motors &= 0x00001101; }
         if( (motors & 0x00000001) && ( esc_pwm_timmer > timer_channel_d )){ PORTB &= B11111101; motors &= 0x00001110; }      

@@ -24,9 +24,29 @@ void serialEvent()
 }
 
 //int current_throttle = 0;
+unsigned long foo = 0;
 void read_throttle()
 {
-  INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+  //INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+  if( ppm_read ) {
+    cli();
+    foo = ppm_channels[3] ;    
+    sei();
+    
+    if( foo < 1490 && INPUT_THRUST > 0 ) {
+      if( INPUT_THRUST > 1 ) INPUT_THRUST -= 1;
+      else INPUT_THRUST = 0;
+    } 
+
+    if( foo < 1200 && INPUT_THRUST > 0 ) {
+      if( INPUT_THRUST > 50 ) INPUT_THRUST -= 50;
+      else INPUT_THRUST = 0;
+    }     
+    
+    if ( foo > 1510 && INPUT_THRUST < 1000 ) {
+     INPUT_THRUST += 1 ;
+    }
+  }  
 }
 
 void read_setpoint()

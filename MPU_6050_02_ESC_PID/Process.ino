@@ -132,7 +132,8 @@ void do_log() {
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    log_data();
+    Serial.println( foo );
+//    log_data();
   }
 }
 

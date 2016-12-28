@@ -174,6 +174,8 @@ void setup()
   // configure LED for output
   pinMode(LED_PIN, OUTPUT);
 
+  attachInterrupt(digitalPinToInterrupt(3), ppmRising, RISING);  
+
   process  = &do_blink;
   read_mpu = &do_blink;
   disarm_esc();
@@ -194,7 +196,6 @@ void setup()
   }
 
   pinMode(5, OUTPUT);
-  pinMode(6, OUTPUT);
 }
 //////////////////////////////////////////////////////////////////////
 
@@ -213,9 +214,7 @@ void loop()
   //do_blink();
 
   if( mpuInterrupt ) {
-    digitalWrite(5, HIGH);    
     read_mpu();
-    digitalWrite(5, LOW);     
   }
 
   read_throttle();
@@ -224,6 +223,39 @@ void loop()
   update_pid_settings();
   process();
 
-  //do_log();
+  do_log();
 }
 
+
+////////////////////////////////////////////////////////
+volatile unsigned long last_ppm_clock = 99999;
+volatile unsigned long current_ppm_clock = 0;
+volatile unsigned long ppm_dt = 0;
+volatile boolean ppm_read = true;
+volatile boolean ppm_sync = false;
+volatile unsigned short ppm_channel = 0;
+volatile unsigned long ppm_channels[7] = {4000,1500,1500,1500,1500,1500,1500};
+
+void ppmRising() {
+//  noInterrupts();
+  ppm_read = false;
+    {
+      current_ppm_clock = micros();
+      ppm_dt = current_ppm_clock - last_ppm_clock;
+      if( ppm_dt >= 4000 ) {
+        ppm_sync = true;
+        ppm_channel = 0;
+        ppm_channels[ppm_channel]=ppm_dt;         
+      }
+      else {
+        if( ppm_sync ) {
+          ppm_channel++;
+          if( ppm_channel > 6 ) ppm_sync = false;
+          else ppm_channels[ppm_channel]=ppm_dt; 
+        }
+      }
+      last_ppm_clock = current_ppm_clock;   
+    }
+  ppm_read = true;
+//  interrupts();    
+}
