@@ -132,14 +132,46 @@ void pid_reset()
   rate_pid_bd.resetITerm();  
 }
 
+unsigned long pid_select_channel;
+unsigned long pid_tune_channel;
 void update_pid_settings()
 {
   float c[3];
 
-  c[0] = INPUT_YAW_PID_P; c[1] = INPUT_YAW_PID_I; c[2] = INPUT_YAW_PID_D;
+  if( ppm_read && ppm_sync ) {
+    cli();
+    pid_select_channel = ppm_channels[PID_SELECT_CHANNEL];
+    pid_tune_channel = ppm_channels[PID_TUNE_CHANNEL] ;    
+    sei();
+  }  
+
+  c[0] = INPUT_YAW_PID_P; 
+  c[1] = INPUT_YAW_PID_I; 
+  c[2] = INPUT_YAW_PID_D;
   yaw_pid.setControlCoeffs(c);
 
-  c[0] = INPUT_STB_PID_P; c[1] = INPUT_STB_PID_I; c[2] = INPUT_STB_PID_D;
+/*
+#define INPUT_STB_PID_P       input_values[1]
+#define INPUT_STB_PID_I       input_values[2]
+#define INPUT_STB_PID_D       input_values[3]
+
+#define INPUT_RAT_PID_P       input_values[4]
+#define INPUT_RAT_PID_I       input_values[5]
+#define INPUT_RAT_PID_D       input_values[6]
+*/
+
+  unsigned int index = (pid_select_channel < 1300 ? 1 : (pid_select_channel > 1700 ? 3 : 2) ) ;
+  input_values[ index ] += ( 
+    pid_tune_channel < 1100 ? -0.0010 :     
+    pid_tune_channel < 1300 ? -0.0001 : 
+    pid_tune_channel > 1900 ? +0.0010 :     
+    pid_tune_channel > 1700 ? +0.0001 : 
+    0.0000  );
+  input_values[ index ] = constrain( input_values[ index ], 0, 10.0 );
+
+  c[0] = INPUT_STB_PID_P; 
+  c[1] = INPUT_STB_PID_I; 
+  c[2] = INPUT_STB_PID_D;
   att_pid_bd.setControlCoeffs(c);
   att_pid_ac.setControlCoeffs(c);  
 

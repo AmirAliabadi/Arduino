@@ -23,8 +23,11 @@ volatile boolean ppm_sync = false;
 volatile unsigned short ppm_channel = 0;
 volatile unsigned long ppm_channels[7] = {4000,1500,1500,1500,1500,1500,1500};
 
+#define THROTTLE_CHANNEL 3
+#define PID_SELECT_CHANNEL 5
+#define PID_TUNE_CHANNEL 6
+
 void ppmRising() {
-//  noInterrupts();
   ppm_read = false;
     {
       current_ppm_clock = micros();
@@ -44,17 +47,25 @@ void ppmRising() {
       last_ppm_clock = current_ppm_clock;   
     }
   ppm_read = true;
-//  interrupts();    
+ 
 }
 
+unsigned long pid_select_channel;
+unsigned long pid_tune_channel;
 unsigned long foo ;
 unsigned long micros_count = 0;
 void loop() 
 {        
-  read_throttle();   
-  if( millis() - last_log  > 5 ) 
+  if( millis() - last_log  > 50 ) 
   {
-    Serial.println( throttle );     
+    read_throttle();   
+    read_pid();
+    
+    Serial.print( throttle );     
+    Serial.print(" ");
+    Serial.print( pid_select_channel );     
+    Serial.print(" ");
+    Serial.println( pid_tune_channel );     
     last_log = millis();
   }
 
@@ -64,23 +75,30 @@ void loop()
   }
 }
 
-void read_throttle() {
-  if( ppm_read ) {
+
+void read_pid() {
+  
+  if( ppm_read && ppm_sync ) {
     cli();
-    foo = ppm_channels[3] ;    
+    pid_select_channel = ppm_channels[PID_SELECT_CHANNEL];
+    pid_tune_channel = ppm_channels[PID_TUNE_CHANNEL] ;    
+    sei();
+  }
+}
+
+void read_throttle() {
+  if( ppm_read && ppm_sync ) {
+    cli();
+    foo = ppm_channels[THROTTLE_CHANNEL] ;    
     sei();
     
-    if( foo < 1490 && throttle > 0 ) {
-      if( throttle > 1 ) throttle -= 1;
+    if( foo < 1400 && throttle > 0 ) {
+      if( throttle >= 1 ) throttle -= 1;
       else throttle = 0;
-    } 
-
-    if( foo < 1200 && throttle > 0 ) {
-      if( throttle > 50 ) throttle -= 50;
+    } else if( foo < 1200 && throttle > 0 ) {
+      if( throttle >= 50 ) throttle -= 50;
       else throttle = 0;
-    }     
-    
-    if ( foo > 1510 && throttle < 1000 ) {
+    } else if ( foo > 1600 && throttle < 1000 ) {
      throttle += 1 ;
     }
   }

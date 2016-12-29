@@ -213,17 +213,20 @@ void loop()
 {
   //do_blink();
 
-  if( mpuInterrupt ) {
-    read_mpu();
-  }
-
+  if( mpuInterrupt ) read_mpu();
   read_throttle();
+  if( mpuInterrupt ) read_mpu();  
   read_setpoint();
+  if( mpuInterrupt ) read_mpu();   
   read_battery_voltage();
+  if( mpuInterrupt ) read_mpu();  
   update_pid_settings();
+  if( mpuInterrupt ) read_mpu();
   process();
-
+  if( mpuInterrupt ) read_mpu(); 
+   
   do_log();
+  
 }
 
 
@@ -237,12 +240,11 @@ volatile unsigned short ppm_channel = 0;
 volatile unsigned long ppm_channels[7] = {4000,1500,1500,1500,1500,1500,1500};
 
 void ppmRising() {
-//  noInterrupts();
   ppm_read = false;
     {
       current_ppm_clock = micros();
       ppm_dt = current_ppm_clock - last_ppm_clock;
-      if( ppm_dt >= 4000 ) {
+      if( ppm_dt >= 7000 ) {
         ppm_sync = true;
         ppm_channel = 0;
         ppm_channels[ppm_channel]=ppm_dt;         
@@ -257,5 +259,4 @@ void ppmRising() {
       last_ppm_clock = current_ppm_clock;   
     }
   ppm_read = true;
-//  interrupts();    
 }

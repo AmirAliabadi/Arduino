@@ -41,8 +41,6 @@ void update_motors()
 }
 */
 
-
-
 unsigned long last_pwm_pulse = 0;
 unsigned long esc_pwm_timmer = 0;
 unsigned long timer_channel_a = 0;
@@ -91,8 +89,8 @@ Pin   Port Pin
 13    PB5  
 */  
   
-  //PORTD |= B00001000; // Set digital port 3 high
-  PORTD |= B00100000; // Set digital port 5 high
+//PORTD |= B00001000; // Set digital port 3 high
+  PORTD |= B01000000; // Set digital port 6 high
   PORTB |= B00001110; // Set digital port 9,10,11 high
 
   if( system_check & INIT_ESC_ARMED ) {
@@ -106,7 +104,7 @@ Pin   Port Pin
     while( motors ) 
     {
         esc_pwm_timmer = micros();
-        if( (motors & 0x00001000) && ( esc_pwm_timmer > timer_channel_a )){ PORTD &= B11011111; motors &= 0x00000111; }
+        if( (motors & 0x00001000) && ( esc_pwm_timmer > timer_channel_a )){ PORTD &= B10111111; motors &= 0x00000111; }
         if( (motors & 0x00000100) && ( esc_pwm_timmer > timer_channel_b )){ PORTB &= B11110111; motors &= 0x00001011; }
         if( (motors & 0x00000010) && ( esc_pwm_timmer > timer_channel_c )){ PORTB &= B11111011; motors &= 0x00001101; }
         if( (motors & 0x00000001) && ( esc_pwm_timmer > timer_channel_d )){ PORTB &= B11111101; motors &= 0x00001110; }      

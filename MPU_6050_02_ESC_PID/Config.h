@@ -1,7 +1,7 @@
 
 
 #define LED_PIN 13            // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-#define LOG_FREQUENCY  50     // ms DEBUG Logging interval
+#define LOG_FREQUENCY  500     // ms DEBUG Logging interval
 //#define BLINK_FREQUENCY 1000
 
 #define INIT_CLEARED          0b00000000
@@ -88,3 +88,8 @@ int blink_pattern[4] = {1000,1000,1000,1000};
 #define blink_pattern_4 blink_reset blink_pattern[0] = 1000; blink_pattern[1] = 200;   blink_pattern[2] = 200;   blink_pattern[3] = 200;
 #define blink_pattern_5 blink_reset blink_pattern[0] = 100;  blink_pattern[1] = 100;   blink_pattern[2] = 100;   blink_pattern[3] = 100;
 
+///
+// PPM INPUTS
+#define THROTTLE_CHANNEL 3
+#define PID_SELECT_CHANNEL 5
+#define PID_TUNE_CHANNEL 6
