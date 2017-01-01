@@ -34,16 +34,18 @@ void read_throttle()
       sei();
   
       if( foo < 1490 ) {
-          if( foo < 1200 ) {
-            if( INPUT_THRUST >= 50 ) INPUT_THRUST -= 50;
+          if( foo < 1100 ) {
+            INPUT_THRUST = 0;
+          } else if( foo < 1300 ) {
+            if( INPUT_THRUST >= 10 ) INPUT_THRUST -= 10;
             else INPUT_THRUST = 0;
-          } else if( foo < 1490 ) {
+          } else if( foo < 1410 ) {
             if( INPUT_THRUST >= 1 ) INPUT_THRUST -= 1;
             else INPUT_THRUST = 0;
           } 
       } else if ( foo > 1510 ) {
         if ( foo > 1910 ) {
-          if( INPUT_THRUST < 1000 ) INPUT_THRUST += 10 ;          
+          if( INPUT_THRUST < 990 ) INPUT_THRUST += 10 ;          
         } else if ( foo > 1610  ) {
           if( INPUT_THRUST < 990 ) INPUT_THRUST += 1 ;          
         }

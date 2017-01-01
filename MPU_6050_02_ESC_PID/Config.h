@@ -1,7 +1,7 @@
 
 
 #define LED_PIN 13            // (Arduino is 13, Teensy is 11, Teensy++ is 6)
-#define LOG_FREQUENCY  50     // ms DEBUG Logging interval
+#define LOG_FREQUENCY  500     // ms DEBUG Logging interval
 //#define BLINK_FREQUENCY 1000
 
 #define INIT_CLEARED          0b00000000
@@ -52,7 +52,7 @@
 // ESC Settings
 #define ESC_ARM_DELAY     3000
 #define MAX_ESC_SIGNAL    2000    // This is the max output that will be sent to ESC.
-#define MIN_ESC_CUTOFF    1200    // Minimum ESC signal to spin props
+#define MIN_ESC_CUTOFF    1100    // Minimum ESC signal to spin props
 #define MIN_ESC_SIGNAL    1000    // Minimum ESC signal, attach esc with this singal, should be not prop spinning.
 #define MOTOR_PIN_A       6 // 3       // setup with 500hz PWM pins
 #define MOTOR_PIN_B       9       

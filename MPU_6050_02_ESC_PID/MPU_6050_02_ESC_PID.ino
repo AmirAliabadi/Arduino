@@ -212,7 +212,7 @@ void dmpDataReady() {
 unsigned short last_tx = 0;
 void loop()
 {
-  //do_blink();
+  do_blink();
 
   if( millis() - last_tx > 50 ) {
     if( mpuInterrupt ) read_mpu();    
@@ -231,7 +231,7 @@ void loop()
   if( mpuInterrupt ) read_mpu(); 
   process();
    
-  do_log();
+  //do_log();
   
 }
 

@@ -51,9 +51,15 @@ int motors = 0x00000000;
 
 void init_esc()
 {
-//DDRD |= B00001000;                                           //Configure digital poort 3 as output
-  DDRD |= B00100000;                                           //Configure digital poort 6 as output
-  DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
+  
+//DDRD = B11111110;         // sets Arduino pins 1 to 7 as outputs, pin 0 as input
+//DDRD = DDRD | B11111100;  // this is safer as it sets pins 2 to 7 as outputs
+                            // without changing the value of pins 0 & 1, which are RX & TX 
+  
+//  DDRD |= B00001000;                                           //Configure digital poort 3 as output
+//  DDRD |= B00100000;                                           //Configure digital poort 5 as output
+    DDRD |= B01000000;                                           //Configure digital poort 6 as output
+    DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
 
   system_check |= INIT_ESC_ATTACHED;
   
@@ -111,10 +117,9 @@ Pin   Port Pin
     }
     
   } else {
-    PORTD &= B11110111;
-    PORTB &= B11110111;
-    PORTB &= B11111011;
-    PORTB &= B11111101;
+  //PORTD &= B11110111;  // 3 low
+    PORTD &= B10111111;  // 6 low
+    PORTB &= B11110001;  // 9, 10, 11 low
   }
 }
 

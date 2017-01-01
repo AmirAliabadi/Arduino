@@ -91,8 +91,8 @@ void SerialSend_Console_Out(byte mode)
 
 void log_data()
 {
-  if( aserial_data_mode == 0 ) SerialSend_Minimal(AC);
-  else if( aserial_data_mode == 1 ) SerialSend_Minimal(BD);
-  else if( aserial_data_mode == 2 ) SerialSend_Minimal(YAW); 
+  if( aserial_data_mode == 0 ) SerialSend_Console_Out(AC);
+  else if( aserial_data_mode == 1 ) SerialSend_Console_Out(BD);
+  else if( aserial_data_mode == 2 ) SerialSend_Console_Out(YAW); 
 }
 
