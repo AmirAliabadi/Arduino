@@ -52,7 +52,7 @@ int motors = 0x00000000;
 void init_esc()
 {
 //DDRD |= B00001000;                                           //Configure digital poort 3 as output
-  DDRD |= B00100000;                                           //Configure digital poort 5 as output
+  DDRD |= B00100000;                                           //Configure digital poort 6 as output
   DDRB |= B00001110;                                           //Configure digital poort 9, 10, 11 as output.
 
   system_check |= INIT_ESC_ATTACHED;

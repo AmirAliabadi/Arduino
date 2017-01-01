@@ -34,12 +34,17 @@ class MyPID {
 	float calculate(float ref, float input, bool debug) {
 		// Calculate sampling time
 		long dt = (micros() - prevTime); // Convert to seconds
+		if( dt > 500 ) {
 		float dt_float = (float)dt ;//* 0.001 ;
 		
 		float error = ref - input;
-		pTerm = Kp * (ref - input);
-		dTerm = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt
-		iTerm += Ki * error * dt;
+		
+		pTerm  =  Kp * (ref - input);
+		iTerm +=  Ki/1000.0 * (error * dt);
+		dTerm  = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt	
+
+		if( iTerm >  75.0 ) iTerm =  75.0;
+		if( iTerm < -75.0 ) iTerm = -75.0;
 		
 		// Calculate control
 		float output = pTerm + iTerm + dTerm;
@@ -59,8 +64,10 @@ class MyPID {
 		prevTime = micros();
 		prevRef = ref;
 		prevInput = input;
+		last_output = output;
+		}
 		
-		return output;
+		return last_output;
 	}
 
 	void setControlCoeffs(float* pidVector) {
@@ -79,6 +86,7 @@ class MyPID {
 	float minLimit;
 	float maxLimit;
 	float Kp, Ki, Kd;
+	float last_output;
 };
 
 #endif

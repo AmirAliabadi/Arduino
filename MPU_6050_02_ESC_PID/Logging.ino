@@ -58,6 +58,37 @@ void SerialSend_Minimal(byte mode)
   Serial.print(alpha); Serial.println(F(" E"));  
 }
 
+void SerialSend_Console_Out(byte mode)
+{
+  Serial.print(F("M "));
+
+  Serial.print(INPUT_THRUST); Serial.print(F(" "));
+
+  Serial.print(va); Serial.print(F(" "));
+  Serial.print(vb); Serial.print(F(" "));
+  Serial.print(vc); Serial.print(F(" "));
+  Serial.print(vd); Serial.print(F(" "));  
+
+  Serial.print(current_attitude[mode]);     Serial.print(F(" "));  // this is the actual angle being read by the MPU    
+  Serial.print(current_rate[mode]);         Serial.print(F(" "));  // this is the actual acceleration being read by the MPU
+
+  Serial.print(attitude_correction[mode]);    Serial.print(F(" "));  // this is the stable pid output (measured angle - setpoint) => desired acceleration
+  Serial.print(rate_correction[mode]);        Serial.print(F(" "));  // this is the rate pid output (desired acceleration - current acceleration) => motor output
+
+  Serial.print(INPUT_STB_PID_P, 4);   Serial.print(F(" "));
+  Serial.print(INPUT_STB_PID_I, 4);   Serial.print(F(" "));
+  Serial.print(INPUT_STB_PID_D, 4);   Serial.print(F(" "));
+  
+  Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" "));
+  Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" "));
+  Serial.print(INPUT_RAT_PID_D, 4);   Serial.print(F(" "));
+
+  Serial.print(alpha); 
+  
+  Serial.println(F(" E"));  
+}
+
+
 void log_data()
 {
   if( aserial_data_mode == 0 ) SerialSend_Minimal(AC);

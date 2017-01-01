@@ -209,21 +209,27 @@ void dmpDataReady() {
 }
 
 //////////////////////////////////////////////////////////////////////
+unsigned short last_tx = 0;
 void loop()
 {
   //do_blink();
 
-  if( mpuInterrupt ) read_mpu();
-  read_throttle();
-  if( mpuInterrupt ) read_mpu();  
-  read_setpoint();
+  if( millis() - last_tx > 50 ) {
+    if( mpuInterrupt ) read_mpu();    
+    read_throttle();
+    if( mpuInterrupt ) read_mpu();  
+    read_setpoint();
+    if( mpuInterrupt ) read_mpu();  
+    update_pid_settings();
+   
+    last_tx = millis();
+  }
+
   if( mpuInterrupt ) read_mpu();   
   read_battery_voltage();
-  if( mpuInterrupt ) read_mpu();  
-  update_pid_settings();
-  if( mpuInterrupt ) read_mpu();
-  process();
+
   if( mpuInterrupt ) read_mpu(); 
+  process();
    
   do_log();
   
@@ -236,24 +242,24 @@ volatile unsigned long current_ppm_clock = 0;
 volatile unsigned long ppm_dt = 0;
 volatile boolean ppm_read = true;
 volatile boolean ppm_sync = false;
-volatile unsigned short ppm_channel = 0;
-volatile unsigned long ppm_channels[7] = {4000,1500,1500,1500,1500,1500,1500};
+volatile unsigned short ppm_current_channel = 99;
+volatile unsigned long ppm_channels[11] = {0,0,0,0,0,0,0,0,0,0,0};
 
 void ppmRising() {
   ppm_read = false;
     {
       current_ppm_clock = micros();
       ppm_dt = current_ppm_clock - last_ppm_clock;
-      if( ppm_dt >= 7000 ) {
+      if( ppm_dt >= 3500 ) {
         ppm_sync = true;
-        ppm_channel = 0;
-        ppm_channels[ppm_channel]=ppm_dt;         
+        ppm_current_channel = 0;
+        ppm_channels[ppm_current_channel] = ppm_dt;         
       }
       else {
         if( ppm_sync ) {
-          ppm_channel++;
-          if( ppm_channel > 6 ) ppm_sync = false;
-          else ppm_channels[ppm_channel]=ppm_dt; 
+          ppm_current_channel++;
+          if( ppm_current_channel > 7 ) ppm_sync = false;
+          else ppm_channels[ppm_current_channel] = ppm_dt; 
         }
       }
       last_ppm_clock = current_ppm_clock;   

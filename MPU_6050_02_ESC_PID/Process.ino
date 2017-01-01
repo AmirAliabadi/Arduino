@@ -121,6 +121,14 @@ void attitude_process()
     yw_offset = (float)((int)(ypr[YAW]*10.0 + .5))/10.0;
     
     pid_reset(); 
+
+    rate_correction[YAW] = 0;
+    rate_correction[AC] = 0;
+    rate_correction[BD] = 0;
+    attitude_correction[YAW] = 0;
+    attitude_correction[AC] = 0;
+    attitude_correction[AC] = 0;
+
   }
 
   //update_motors();
@@ -132,17 +140,7 @@ void do_log() {
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    //log_data();
-    Serial.print(pid_select_channel);
-    Serial.print(" - ");    
-    Serial.print(index);
-    Serial.print(" - ");
-    Serial.print(pid_tune_channel);
-    Serial.print(" - ");
-    Serial.print(F("P: "));
-    Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" I: "));
-    Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" D: "));
-    Serial.print(INPUT_RAT_PID_D, 4);   Serial.println(F(" "));    
+    log_data();
   }
 }
 
