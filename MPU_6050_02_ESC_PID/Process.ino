@@ -123,7 +123,7 @@ void attitude_process()
     pid_reset(); 
   }
 
-  update_motors();
+  //update_motors();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -132,7 +132,17 @@ void do_log() {
   if (millis() - last_log > LOG_FREQUENCY)
   {
     last_log = millis();
-    log_data();
+    //log_data();
+    Serial.print(pid_select_channel);
+    Serial.print(" - ");    
+    Serial.print(index);
+    Serial.print(" - ");
+    Serial.print(pid_tune_channel);
+    Serial.print(" - ");
+    Serial.print(F("P: "));
+    Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" I: "));
+    Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" D: "));
+    Serial.print(INPUT_RAT_PID_D, 4);   Serial.println(F(" "));    
   }
 }
 

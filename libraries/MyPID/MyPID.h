@@ -16,7 +16,7 @@ class MyPID {
 		Kp = p;
 		Ki = i;
 		Kd = d;
-		prevTime = millis();
+		prevTime = micros();
 		prevRef = ref;
 		prevInput = in;
 		
@@ -28,13 +28,13 @@ class MyPID {
 	
 	void resetITerm() {
 		iTerm = 0;
-		prevTime = millis();
+		prevTime = micros();
 	}
 
-	float calculate(float ref, float input) {
+	float calculate(float ref, float input, bool debug) {
 		// Calculate sampling time
-		long dt = (millis() - prevTime); // Convert to seconds
-		float dt_float = dt * 0.001 ;
+		long dt = (micros() - prevTime); // Convert to seconds
+		float dt_float = (float)dt ;//* 0.001 ;
 		
 		float error = ref - input;
 		pTerm = Kp * (ref - input);
@@ -56,7 +56,7 @@ class MyPID {
 		}
 		
 		// Update state
-		prevTime = millis();
+		prevTime = micros();
 		prevRef = ref;
 		prevInput = input;
 		

@@ -1,6 +1,8 @@
 void SerialSend_Minimal(byte mode)
 {
-  // M_selected_pot_tuning_aserial_data_mode INPUT_THRUST va vb vc vd current_attitude current_rate attitude_correction rate_correction stable_p stable_i stable_d rate_p rate_i rate_d alpha E
+  // M selected_pot_tuning_aserial_data_mode INPUT_THRUST va vb vc vd current_attitude current_rate attitude_correction rate_correction stable_p stable_i stable_d rate_p rate_i rate_d alpha E
+  // M 0_0 328.00 0 0 0 0 0.99 0.00 nan 0.00 0.9990 0.0000 0.1000 0.0000 0.0000 0.0000 0.44 E
+
   
   Serial.print(F("M "));
   Serial.print(selected_pot_tuning);
@@ -42,14 +44,14 @@ void SerialSend_Minimal(byte mode)
     Serial.print(INPUT_STB_PID_I, 4);   Serial.print(F(" "));
     Serial.print(INPUT_STB_PID_D, 4);   Serial.print(F(" "));
   
-  #ifdef CASCADE_PIDS    
+  #ifdef CASCADE_PIDS   
     Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" "));
     Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" "));
     Serial.print(INPUT_RAT_PID_D, 4);   Serial.print(F(" "));
   #else
-    Serial.print(0.0000, 4);   Serial.print(F(" "));
-    Serial.print(0.0000, 4);   Serial.print(F(" "));
-    Serial.print(0.0000, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_RAT_PID_P, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_RAT_PID_I, 4);   Serial.print(F(" "));
+    Serial.print(INPUT_RAT_PID_D, 4);   Serial.print(F(" "));
   #endif
   }
 

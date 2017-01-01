@@ -128,16 +128,18 @@ void pid_reset()
   att_pid_bd.resetITerm();  
   att_pid_ac.resetITerm();
 
+#ifdef CASCADE_PIDS
   rate_pid_ac.resetITerm();
   rate_pid_bd.resetITerm();  
+#endif  
 }
 
 unsigned long pid_select_channel;
 unsigned long pid_tune_channel;
+unsigned short index;
+float c[3];
 void update_pid_settings()
 {
-  float c[3];
-
   if( ppm_read && ppm_sync ) {
     cli();
     pid_select_channel = ppm_channels[PID_SELECT_CHANNEL];
@@ -160,34 +162,75 @@ void update_pid_settings()
 #define INPUT_RAT_PID_D       input_values[6]
 */
 
-  unsigned int index = (pid_select_channel < 1300 ? 1 : (pid_select_channel > 1700 ? 3 : 2) ) ;
-  input_values[ index ] += ( 
-    pid_tune_channel < 1100 ? -0.0010 :     
-    pid_tune_channel < 1300 ? -0.0001 : 
-    pid_tune_channel > 1900 ? +0.0010 :     
-    pid_tune_channel > 1700 ? +0.0001 : 
-    0.0000  );
-  input_values[ index ] = constrain( input_values[ index ], 0, 10.0 );
+/*
+ *
+ TX MIXER
+ CHANNEL 7 MASTER
+ CHANNEL 5 SLAVE 
+ 0% OFFSET
+ NEGATIVE: 80%
+ POSITIVE: 80%
+ 
+stable P = 1000 +/- 10 => 0
+stable I = 1100 +/- 10 => 1
+  rate P = 1400 +/- 10 => 3
+stable D = 1600 +/- 10 => 2
+ rate I = 1900 +/- 10  => 4
+ rate P = 2000 +/- 10  => 5
+ 
+ */
 
-  c[0] = INPUT_STB_PID_P; 
-  c[1] = INPUT_STB_PID_I; 
-  c[2] = INPUT_STB_PID_D;
-  att_pid_bd.setControlCoeffs(c);
-  att_pid_ac.setControlCoeffs(c);  
-
-#ifdef CASCADE_PIDS
-  c[0] = INPUT_RAT_PID_P; c[1] = INPUT_RAT_PID_I; c[2] = INPUT_RAT_PID_D;
-  rate_pid_ac.setControlCoeffs(c);
-  rate_pid_bd.setControlCoeffs(c);
-#endif    
+  index = (
+      pid_select_channel > 990  &&  pid_select_channel < 1010 ? 1 :   // 1000  +/- 10
+      pid_select_channel > 1090 &&  pid_select_channel < 1110 ? 2 :   // 1100  +/- 10
+      pid_select_channel > 1590 &&  pid_select_channel < 1610 ? 3 :   // 1600  +/- 10
+      pid_select_channel > 1390 &&  pid_select_channel < 1410 ? 4 :   // 1400  +/- 10      
+      pid_select_channel > 1890 &&  pid_select_channel < 1910 ? 5 :   // 1900  +/- 10          
+      pid_select_channel > 1990 &&  pid_select_channel < 2010 ? 6 :   // 2000  +/- 10    
+      32          
+    ) ;
+    
+  if( index >=1 && index <= 6 ) {
+    
+    input_values[ index ] += ( 
+      pid_tune_channel < 1100 ? -0.0010 :     
+      pid_tune_channel < 1300 ? -0.0001 : 
+      pid_tune_channel > 1900 ? +0.0010 :     
+      pid_tune_channel > 1700 ? +0.0001 : 
+      0.0000  );
+    input_values[ index ] = constrain( input_values[ index ], 0, 10.0 );
+  
+    c[0] = INPUT_STB_PID_P; 
+    c[1] = INPUT_STB_PID_I; 
+    c[2] = INPUT_STB_PID_D;
+    att_pid_ac.setControlCoeffs(c);  
+    att_pid_bd.setControlCoeffs(c);  
+  
+  #ifdef CASCADE_PIDS
+    c[0] = INPUT_RAT_PID_P; 
+    c[1] = INPUT_RAT_PID_I; 
+    c[2] = INPUT_RAT_PID_D;
+    rate_pid_ac.setControlCoeffs(c);
+    rate_pid_bd.setControlCoeffs(c);
+  #endif    
+  
+    if( INPUT_STB_PID_I == 0 ) {
+      att_pid_ac.resetITerm();    
+      att_pid_bd.resetITerm();      
+    }
+    if( INPUT_RAT_PID_I == 0 ) {
+      rate_pid_ac.resetITerm();  
+      rate_pid_bd.resetITerm();    
+    }  
+  }
 }
 
 void do_pid_compute()
 {
 //  attitude_correction[YAW] = yaw_pid.calculate(setpoint[YAW],  current_attitude[YAW]);
-  attitude_correction[YAW] = yaw_pid.calculate(setpoint[YAW], current_rate[YAW]  );
-  attitude_correction[BD] = att_pid_bd.calculate(setpoint[BD], current_attitude[BD]);  
-  attitude_correction[AC] = att_pid_ac.calculate(setpoint[AC], current_attitude[AC]);    
+  attitude_correction[YAW] = yaw_pid.calculate(setpoint[YAW], current_rate[YAW], false  );
+  attitude_correction[AC] = att_pid_ac.calculate(setpoint[AC], current_attitude[AC], true ); 
+  attitude_correction[BD] = att_pid_bd.calculate(setpoint[BD], current_attitude[BD], false );   
 
 #ifdef CASCADE_PIDS
 //  rate_correction[YAW] = yaw_pid.calculate( attitude_correction[YAW], current_rate[YAW]  );
