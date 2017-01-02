@@ -27,7 +27,9 @@ unsigned long foo = 0;
 void read_throttle()
 {
   if( system_check & INIT_ESC_ARMED ) {
-    //INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+//    INPUT_THRUST = constrain(INPUT_THRUST, MIN_INPUT_THRUST, MAX_INPUT_THRUST);  // todo: determine max when arming
+//    return;
+    
     if( ppm_read && ppm_sync ) {
       cli();
       foo = ppm_channels[THROTTLE_CHANNEL] ;    

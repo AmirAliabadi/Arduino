@@ -147,8 +147,8 @@ float rate_correction[3]        = {0.0f, 0.0f, 0.0f};
 uint16_t system_check = INIT_CLEARED;
 
 #ifdef DEBUG
-long log_line = 0;
-long last_log = 0;
+unsigned long log_line = 0;
+unsigned long last_log = 0;
 #endif
 
 struct EEPROMData {
@@ -209,7 +209,7 @@ void dmpDataReady() {
 }
 
 //////////////////////////////////////////////////////////////////////
-unsigned short last_tx = 0;
+unsigned long last_tx = 0;
 void loop()
 {
   do_blink();
@@ -221,8 +221,8 @@ void loop()
     read_setpoint();
     if( mpuInterrupt ) read_mpu();  
     update_pid_settings();
-   
-    last_tx = millis();
+
+    last_tx = millis();  
   }
 
   if( mpuInterrupt ) read_mpu();   

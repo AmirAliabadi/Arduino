@@ -24,6 +24,9 @@ class MyPID {
 		maxLimit = maxCtrl;
 		
 		iTerm = 0;
+		
+		sum_errors = 0;
+		last_output = 0;		
 	}
 	
 	void resetITerm() {
@@ -34,13 +37,34 @@ class MyPID {
 	float calculate(float ref, float input, bool debug) {
 		// Calculate sampling time
 		long dt = (micros() - prevTime); // Convert to seconds
-		if( dt > 500 ) {
+		if( dt > 0 ) {
 		float dt_float = (float)dt ;//* 0.001 ;
 		
 		float error = ref - input;
 		
 		pTerm  =  Kp * (ref - input);
-		iTerm +=  Ki/1000.0 * (error * dt);
+		sum_errors = sum_errors + error;
+		
+		if( debug ) {
+			// # -0.50 7300 -316.62 0.03 -29.65
+/* 			Serial.print("# ");
+			Serial.print(error);
+			Serial.print(" ");
+			Serial.print(dt);
+			Serial.print(" ");
+			Serial.print(sum_errors);
+			Serial.print(" ");
+			Serial.print(Ki);
+			Serial.print(" "); */
+		}			
+		
+		iTerm +=  Ki/100000.0 * (error * dt);
+			
+		if( debug ) {
+			Serial.print(iTerm);
+			Serial.print("\t");
+		}
+		
 		dTerm  = -Kd * (input - prevInput)/dt_float; // dError/dt = - dInput/dt	
 
 		if( iTerm >  75.0 ) iTerm =  75.0;
@@ -48,6 +72,8 @@ class MyPID {
 		
 		// Calculate control
 		float output = pTerm + iTerm + dTerm;
+		
+		if( debug ) { Serial.println(output); }
 		
 		// Anti-windup
 		if (output > maxLimit) {
@@ -83,6 +109,7 @@ class MyPID {
 	float pTerm;
 	float iTerm;
 	float dTerm;
+	float sum_errors;
 	float minLimit;
 	float maxLimit;
 	float Kp, Ki, Kd;
