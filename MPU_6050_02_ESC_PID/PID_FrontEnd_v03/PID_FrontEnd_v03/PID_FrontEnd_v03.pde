@@ -108,8 +108,12 @@ void setup()
   println(Serial.list());   // * Initialize Serial
   
   if( Serial.list().length > 0 ) {
-    myPort = new Serial(this, Serial.list()[0], 115200);                //   Communication with
-    myPort.bufferUntil(10);         //   the Arduino
+    for( int p=0 ; p<Serial.list().length; p++ ) {
+      try {
+        myPort = new Serial(this, Serial.list()[p], 115200);                //   Communication with
+        myPort.bufferUntil(10);         //   the Arduino
+      } catch(Exception excption) { }
+    }
   }
   
   controlP5 = new ControlP5(this);                                    // * Initialize the various
